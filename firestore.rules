@@ -16,5 +16,10 @@ service cloud.firestore {
       allow update: if request.auth != null || 
                    (request.resource.data.diff(resource.data).affectedKeys().hasOnly(['views']));
     }
+
+    match /essays/{essayId} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
   }
 }

@@ -1,7 +1,6 @@
 import { Link } from 'react-router-dom';
-import { LazyLoadImage } from 'react-lazy-load-image-component';
 import { motion } from 'framer-motion';
-import 'react-lazy-load-image-component/src/effects/blur.css';
+import LazyImage from './LazyImage';
 import SpotlightCard from './SpotlightCard';
 
 const PostCard = ({ post, index }) => {
@@ -24,17 +23,11 @@ const PostCard = ({ post, index }) => {
                                 transition={{ duration: 0.5 }}
                                 className="w-full h-full bg-gray-200 dark:bg-gray-800"
                             >
-                                <LazyLoadImage
+                                <LazyImage
                                     alt={post.title}
                                     src={post.coverImage || 'https://camo.githubusercontent.com/520c5cfb0b63284eeb8c1d869660ffd7ab93b6a1310ffc6da27442f14d37a437/68747470733a2f2f6e706d2e656c656d6563646e2e636f6d2f616e7a686979752d6173736574732f696d6167652f636f6d6d6f6e2f6769746875622d696e666f2f4b6e6f636b2d436f64652e676966'}
-                                    effect="blur"
                                     className="w-full h-full object-cover"
                                     wrapperClassName="w-full h-full"
-                                    placeholder={
-                                        <div className="w-full h-full bg-gray-200 dark:bg-gray-800 animate-pulse flex items-center justify-center">
-                                            <i className="fas fa-image text-gray-400 text-2xl"></i>
-                                        </div>
-                                    }
                                 />
                             </motion.div>
                         </Link>

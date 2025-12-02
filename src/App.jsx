@@ -9,6 +9,8 @@ import PostDetail from './pages/public/PostDetail';
 import Archives from './pages/public/Archives';
 import Tags from './pages/public/Tags';
 import Changelog from './pages/public/Changelog';
+import Equipment from './pages/public/Equipment';
+import Essay from './pages/public/Essay';
 import PrivateRoute from './components/PrivateRoute';
 import PageWrapper from './components/PageWrapper';
 import ScrollToTop from './components/ScrollToTop';
@@ -47,9 +49,24 @@ function App() {
               <Tags />
             </PageWrapper>
           } />
+          <Route path="/tags/:tag" element={
+            <PageWrapper>
+              <Tags />
+            </PageWrapper>
+          } />
           <Route path="/changelog" element={
             <PageWrapper>
               <Changelog />
+            </PageWrapper>
+          } />
+          <Route path="/equipment" element={
+            <PageWrapper>
+              <Equipment />
+            </PageWrapper>
+          } />
+          <Route path="/essay" element={
+            <PageWrapper>
+              <Essay />
             </PageWrapper>
           } />
 

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import Sidebar from '../components/Sidebar';
@@ -9,15 +10,18 @@ const MainLayout = ({ children, showSidebar = true }) => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
 
+    const location = useLocation();
+    const isAdmin = location.pathname.startsWith('/admin');
+
     return (
-        <div className="min-h-screen flex flex-col relative overflow-hidden">
+        <div className="min-h-screen flex flex-col relative">
             {/* Background Decoration */}
             <div className="fixed inset-0 pointer-events-none z-0">
                 <PixelBackground />
             </div>
 
             <div className="relative z-10 flex flex-col min-h-screen">
-                <Navbar toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)} />
+                {!isAdmin && <Navbar toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)} />}
 
                 <main className="flex-grow w-full">
                     {children}

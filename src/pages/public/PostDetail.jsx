@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { collection, query, where, getDocs, updateDoc, increment, doc } from 'firebase/firestore';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import rehypeSlug from 'rehype-slug';
 import { db } from '../../firebase';
 import MainLayout from '../../layouts/MainLayout';
 import Sidebar from '../../components/Sidebar';
@@ -11,6 +12,8 @@ const PostDetail = () => {
     const { slug } = useParams();
     const [post, setPost] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [toc, setToc] = useState([]);
+    const [activeSection, setActiveSection] = useState('');
 
     useEffect(() => {
         const fetchPost = async () => {
@@ -38,6 +41,41 @@ const PostDetail = () => {
             fetchPost();
         }
     }, [slug]);
+
+    useEffect(() => {
+        if (post?.content) {
+            const headers = post.content.match(/^#{1,3} .+/gm);
+            if (headers) {
+                const newToc = headers.map(header => {
+                    const level = header.match(/^#+/)[0].length;
+                    const text = header.replace(/^#+ /, '');
+                    const id = text.toLowerCase().replace(/[^\w\u4e00-\u9fa5]+/g, '-').replace(/^-+|-+$/g, '');
+                    return { id, text, level };
+                });
+                setToc(newToc);
+            }
+        }
+    }, [post]);
+
+    useEffect(() => {
+        const observer = new IntersectionObserver(
+            (entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        setActiveSection(entry.target.id);
+                    }
+                });
+            },
+            { rootMargin: '-100px 0px -66% 0px' }
+        );
+
+        const headings = document.querySelectorAll('h1, h2, h3');
+        headings.forEach((heading) => observer.observe(heading));
+
+        return () => {
+            headings.forEach((heading) => observer.unobserve(heading));
+        };
+    }, [toc]);
 
     if (loading) return (
         <MainLayout>
@@ -71,33 +109,57 @@ const PostDetail = () => {
                     <div className="absolute inset-0 bg-black/50 backdrop-blur-[2px]"></div>
                 </div>
 
-                <div className="relative z-10 h-full container mx-auto px-4 flex flex-col justify-center text-white">
-                    <h1 className="text-3xl md:text-5xl font-display font-bold mb-6 text-shadow-lg leading-tight max-w-4xl">
-                        {post.title}
-                    </h1>
-                    <div className="flex flex-wrap items-center gap-4 text-sm md:text-base opacity-90">
-                        <div className="flex items-center gap-2">
-                            <i className="far fa-calendar-alt"></i>
-                            <time>{post.createdAt?.toDate().toLocaleDateString('zh-TW')}</time>
+                <div className="relative z-10 h-full container mx-auto px-4 flex flex-col justify-center text-white max-w-7xl">
+                    <div className="w-full lg:w-3/4">
+                        {/* Tags & Badges Row */}
+                        <div className="flex flex-wrap items-center gap-2 mb-4">
+                            <span className="bg-[#6c757d] text-white text-xs px-2 py-1 rounded-md">原創</span>
+                            <span className="bg-[#6c757d] text-white text-xs px-2 py-1 rounded-md">製作教程</span>
+                            {post.tags && post.tags.map(tag => (
+                                <span key={tag} className="flex items-center gap-1 text-xs px-2 py-1 rounded-md border border-white/30 hover:bg-white/20 transition-colors">
+                                    <i className="fas fa-tag text-[10px]"></i>
+                                    {tag}
+                                </span>
+                            ))}
                         </div>
-                        <span className="hidden md:inline">|</span>
-                        <div className="flex items-center gap-2">
-                            <i className="far fa-eye"></i>
-                            <span>{post.views || 0} 閱讀</span>
+
+                        {/* Title */}
+                        <h1 className="text-3xl md:text-5xl font-display font-bold mb-6 text-shadow-lg leading-tight">
+                            {post.title}
+                        </h1>
+
+                        {/* Metadata Row */}
+                        <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm opacity-90">
+                            <div className="flex items-center gap-2" title="發表於">
+                                <i className="far fa-calendar-alt"></i>
+                                <span>發表於 {post.createdAt?.toDate().toLocaleDateString('zh-TW')}</span>
+                            </div>
+                            <span className="hidden md:inline text-white/40">|</span>
+                            <div className="flex items-center gap-2" title="更新於">
+                                <i className="fas fa-history"></i>
+                                <span>更新於 {post.createdAt?.toDate().toLocaleDateString('zh-TW')}</span>
+                            </div>
+                            <span className="hidden md:inline text-white/40">|</span>
+                            <div className="flex items-center gap-2" title="字數統計">
+                                <i className="fas fa-file-word"></i>
+                                <span>字數統計: {(post.content?.length / 1000).toFixed(1)}k</span>
+                            </div>
+                            <span className="hidden md:inline text-white/40">|</span>
+                            <div className="flex items-center gap-2" title="閱讀時長">
+                                <i className="far fa-clock"></i>
+                                <span>閱讀時長: {Math.ceil((post.content?.length || 0) / 400)} 分鐘</span>
+                            </div>
+                            <span className="hidden md:inline text-white/40">|</span>
+                            <div className="flex items-center gap-2" title="閱讀量">
+                                <i className="far fa-eye"></i>
+                                <span>閱讀量: {post.views || 0}</span>
+                            </div>
+                            <span className="hidden md:inline text-white/40">|</span>
+                            <div className="flex items-center gap-2" title="評論數">
+                                <i className="far fa-comment-dots"></i>
+                                <span>評論數: 0</span>
+                            </div>
                         </div>
-                        {post.tags && post.tags.length > 0 && (
-                            <>
-                                <span className="hidden md:inline">|</span>
-                                <div className="flex items-center gap-2">
-                                    <i className="fas fa-tag"></i>
-                                    {post.tags.map(tag => (
-                                        <span key={tag} className="bg-white/20 px-2 py-0.5 rounded text-xs">
-                                            {tag}
-                                        </span>
-                                    ))}
-                                </div>
-                            </>
-                        )}
                     </div>
                 </div>
             </div>
@@ -113,7 +175,7 @@ const PostDetail = () => {
                                 prose-img:rounded-xl prose-img:shadow-lg
                                 prose-blockquote:border-l-4 prose-blockquote:border-primary prose-blockquote:bg-gray-50 dark:prose-blockquote:bg-gray-800/50 prose-blockquote:py-2 prose-blockquote:px-4 prose-blockquote:not-italic
                             ">
-                                <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                                <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeSlug]}>
                                     {post.content}
                                 </ReactMarkdown>
                             </article>
@@ -134,9 +196,7 @@ const PostDetail = () => {
 
                     {/* Sidebar */}
                     <div className="hidden lg:block w-1/4">
-                        <div className="sticky top-24">
-                            <Sidebar />
-                        </div>
+                        <Sidebar toc={toc} activeSection={activeSection} />
                     </div>
                 </div>
             </div>

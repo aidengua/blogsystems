@@ -6,6 +6,7 @@ import MainLayout from '../../layouts/MainLayout';
 import HeroDashboard from '../../components/HeroDashboard';
 import PostCard from '../../components/PostCard';
 import Sidebar from '../../components/Sidebar';
+
 import { motion } from 'framer-motion';
 
 const Home = () => {
@@ -41,17 +42,16 @@ const Home = () => {
     return (
         <MainLayout>
             <div className="relative min-h-screen">
-                {/* Background */}
-
-
                 {/* Dashboard Overlay */}
                 <div className="relative z-10">
-                    <HeroDashboard />
+                    <HeroDashboard posts={posts} />
 
-                    <div className="container mx-auto px-4 py-12 max-w-7xl">
+                    <div className="container mx-auto px-4 pb-12 pt-0 max-w-7xl">
                         <div className="flex flex-col lg:flex-row gap-8">
                             {/* Main Content */}
                             <div className="w-full lg:w-3/4 space-y-8">
+
+
                                 {loading ? (
                                     <div className="flex justify-center py-20">
                                         <div className="animate-spin rounded-full h-12 w-12 border-4 border-primary border-t-transparent"></div>

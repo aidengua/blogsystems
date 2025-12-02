@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useTheme } from '../contexts/ThemeContext';
+import { collection, query, getDocs, where } from 'firebase/firestore';
+import { db } from '../firebase';
 import clsx from 'clsx';
 import SearchModal from './SearchModal';
 
@@ -38,7 +40,26 @@ const Navbar = ({ toggleSidebar }) => {
 
         window.addEventListener('keydown', handleKeyDown);
         return () => window.removeEventListener('keydown', handleKeyDown);
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
     }, []);
+
+    // Random Post Logic
+    const navigate = useNavigate();
+    const handleRandomPost = async () => {
+        try {
+            const q = query(collection(db, 'posts'), where('status', '==', 'published'));
+            const querySnapshot = await getDocs(q);
+            const posts = querySnapshot.docs.map(doc => doc.data());
+
+            if (posts.length > 0) {
+                const randomPost = posts[Math.floor(Math.random() * posts.length)];
+                navigate(`/posts/${randomPost.slug}`);
+            }
+        } catch (error) {
+            console.error("Error fetching random post:", error);
+        }
+    };
 
     const navClass = clsx(
         'fixed top-0 w-full z-50 transition-all duration-300 ease-in-out px-4 lg:px-8 py-3',
@@ -98,10 +119,80 @@ const Navbar = ({ toggleSidebar }) => {
                     {/* Center: Navigation Links (Desktop) */}
                     <div className="hidden lg:flex items-center gap-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
                         <NavItem to="/" icon="fas fa-home" label="首頁" />
-                        <NavItem to="/archives" icon="fas fa-archive" label="歸檔" />
-                        <NavItem to="/tags" icon="fas fa-tags" label="標籤" />
+
+                        {/* Library Dropdown */}
+                        <div className="relative group">
+                            <button className={clsx(
+                                'relative px-4 py-2 rounded-full transition-all duration-300 flex items-center gap-2 group-hover:bg-yellow-500 group-hover:text-black',
+                                {
+                                    'text-gray-800 dark:text-gray-100': scrolled,
+                                    'text-white': !scrolled && location.pathname === '/',
+                                    'text-gray-800 dark:text-white': !scrolled && location.pathname !== '/',
+                                }
+                            )}>
+                                <i className="fas fa-book text-sm"></i>
+                                <span className="font-medium text-sm">文庫</span>
+                                <i className="fas fa-chevron-down text-xs opacity-70 group-hover:rotate-180 transition-transform"></i>
+                            </button>
+
+                            {/* Horizontal Dropdown Menu */}
+                            <div className="absolute top-full left-1/2 -translate-x-1/2 pt-4 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform group-hover:translate-y-0 translate-y-2">
+                                <div className="bg-gray-900 border border-yellow-500 rounded-full px-6 py-3 flex items-center gap-6 shadow-xl whitespace-nowrap">
+                                    <Link to="/archives" className="flex items-center gap-2 text-white hover:text-yellow-500 transition-colors">
+                                        <i className="fas fa-archive"></i>
+                                        <span className="text-sm font-medium">全部文章</span>
+                                    </Link>
+                                    <Link to="/archives" className="flex items-center gap-2 text-white hover:text-yellow-500 transition-colors">
+                                        <i className="fas fa-th-large"></i>
+                                        <span className="text-sm font-medium">分類列表</span>
+                                    </Link>
+                                    <Link to="/tags" className="flex items-center gap-2 text-white hover:text-yellow-500 transition-colors">
+                                        <i className="fas fa-tags"></i>
+                                        <span className="text-sm font-medium">標籤列表</span>
+                                    </Link>
+                                </div>
+                            </div>
+                        </div>
+
                         <NavItem to="/changelog" icon="fas fa-history" label="更新日誌" />
-                        <NavItem to="/about" icon="fas fa-user" label="關於" />
+
+                        {/* My Dropdown */}
+                        <div className="relative group">
+                            <button className={clsx(
+                                'relative px-4 py-2 rounded-full transition-all duration-300 flex items-center gap-2 group-hover:bg-yellow-500 group-hover:text-black',
+                                {
+                                    'text-gray-800 dark:text-gray-100': scrolled,
+                                    'text-white': !scrolled && location.pathname === '/',
+                                    'text-gray-800 dark:text-white': !scrolled && location.pathname !== '/',
+                                }
+                            )}>
+                                <i className="fas fa-user text-sm"></i>
+                                <span className="font-medium text-sm">我的</span>
+                                <i className="fas fa-chevron-down text-xs opacity-70 group-hover:rotate-180 transition-transform"></i>
+                            </button>
+
+                            {/* Horizontal Dropdown Menu */}
+                            <div className="absolute top-full left-1/2 -translate-x-1/2 pt-4 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform group-hover:translate-y-0 translate-y-2">
+                                <div className="bg-gray-900 border border-yellow-500 rounded-full px-6 py-3 flex items-center gap-6 shadow-xl whitespace-nowrap">
+                                    <button onClick={handleRandomPost} className="flex items-center gap-2 text-white hover:text-yellow-500 transition-colors">
+                                        <i className="fas fa-shoe-prints"></i>
+                                        <span className="text-sm font-medium">隨便逛逛</span>
+                                    </button>
+                                    <Link to="/about" className="flex items-center gap-2 text-white hover:text-yellow-500 transition-colors">
+                                        <i className="fas fa-paper-plane"></i>
+                                        <span className="text-sm font-medium">關於本站</span>
+                                    </Link>
+                                    <Link to="/equipment" className="flex items-center gap-2 text-white hover:text-yellow-500 transition-colors">
+                                        <i className="fas fa-shapes"></i>
+                                        <span className="text-sm font-medium">我的裝備</span>
+                                    </Link>
+                                    <Link to="/essay" className="flex items-center gap-2 text-white hover:text-yellow-500 transition-colors">
+                                        <i className="fas fa-pen-fancy"></i>
+                                        <span className="text-sm font-medium">短文</span>
+                                    </Link>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     {/* Right: Actions */}
