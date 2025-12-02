@@ -1,0 +1,20 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /posts/{postId} {
+      // Allow anyone to read posts
+      allow read: if true;
+      
+      // Allow authenticated admins to create/update/delete
+      // Note: You should replace 'request.auth != null' with a more specific admin check if possible
+      allow create, delete: if request.auth != null;
+      
+      // Allow updates if:
+      // 1. User is authenticated (admin editing post)
+      // OR
+      // 2. Only the 'views' field is being changed (public view counting)
+      allow update: if request.auth != null || 
+                   (request.resource.data.diff(resource.data).affectedKeys().hasOnly(['views']));
+    }
+  }
+}

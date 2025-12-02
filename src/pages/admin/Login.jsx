@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
 import { auth } from '../../firebase';
+import MainLayout from '../../layouts/MainLayout';
+import { motion } from 'framer-motion';
 
 const Login = () => {
     const [email, setEmail] = useState('');
@@ -26,52 +28,96 @@ const Login = () => {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-100">
-            <div className="bg-white p-8 rounded shadow-md w-full max-w-md">
-                <h2 className="text-2xl font-bold mb-6 text-center">
-                    {isRegistering ? 'Admin Register' : 'Admin Login'}
-                </h2>
-                {error && <p className="text-red-500 mb-4">{error}</p>}
-                <form onSubmit={handleSubmit}>
-                    <div className="mb-4">
-                        <label className="block text-gray-700 mb-2">Email</label>
-                        <input
-                            type="email"
-                            className="w-full p-2 border rounded"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            required
-                        />
+        <MainLayout>
+            <div className="min-h-[80vh] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 relative">
+                {/* Background Decoration */}
+                <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                    <div className="absolute -top-[20%] -left-[10%] w-[50%] h-[50%] rounded-full bg-blue-400/20 blur-3xl animate-pulse"></div>
+                    <div className="absolute top-[40%] -right-[10%] w-[40%] h-[40%] rounded-full bg-purple-400/20 blur-3xl animate-pulse delay-1000"></div>
+                </div>
+
+                <div className="max-w-md w-full space-y-8 relative z-10">
+                    <div className="card-glass p-10 animate-slide-up">
+                        <div className="text-center mb-8">
+                            <h2 className="text-3xl font-display font-bold text-gray-900 dark:text-white">
+                                {isRegistering ? '管理員註冊' : '管理員登入'}
+                            </h2>
+                            <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+                                歡迎回來，請輸入您的憑證以繼續
+                            </p>
+                        </div>
+
+                        {error && (
+                            <div className="bg-red-50 dark:bg-red-900/30 border-l-4 border-red-500 p-4 mb-6 rounded-r">
+                                <p className="text-sm text-red-700 dark:text-red-300">{error}</p>
+                            </div>
+                        )}
+
+                        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+                            <div className="space-y-4">
+                                <div>
+                                    <label htmlFor="email-address" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                        電子郵件
+                                    </label>
+                                    <input
+                                        id="email-address"
+                                        name="email"
+                                        type="email"
+                                        autoComplete="email"
+                                        required
+                                        className="appearance-none relative block w-full px-4 py-3 border border-gray-300 dark:border-gray-600 placeholder-gray-500 text-gray-900 dark:text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent focus:z-10 sm:text-sm bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm transition-all"
+                                        placeholder="admin@example.com"
+                                        value={email}
+                                        onChange={(e) => setEmail(e.target.value)}
+                                    />
+                                </div>
+                                <div>
+                                    <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                        密碼
+                                    </label>
+                                    <input
+                                        id="password"
+                                        name="password"
+                                        type="password"
+                                        autoComplete="current-password"
+                                        required
+                                        className="appearance-none relative block w-full px-4 py-3 border border-gray-300 dark:border-gray-600 placeholder-gray-500 text-gray-900 dark:text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent focus:z-10 sm:text-sm bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm transition-all"
+                                        placeholder="••••••••"
+                                        value={password}
+                                        onChange={(e) => setPassword(e.target.value)}
+                                    />
+                                </div>
+                            </div>
+
+                            <div>
+                                <motion.button
+                                    whileHover={{ scale: 1.02 }}
+                                    whileTap={{ scale: 0.98 }}
+                                    type="submit"
+                                    className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-xl text-white bg-primary hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-all duration-300 shadow-lg hover:shadow-xl"
+                                >
+                                    <span className="absolute left-0 inset-y-0 flex items-center pl-3">
+                                        <i className={`fas ${isRegistering ? 'fa-user-plus' : 'fa-sign-in-alt'} text-blue-200 group-hover:text-blue-100`}></i>
+                                    </span>
+                                    {isRegistering ? '註冊帳號' : '登入系統'}
+                                </motion.button>
+                            </div>
+                        </form>
+
+                        <div className="mt-6 text-center">
+                            <button
+                                onClick={() => setIsRegistering(!isRegistering)}
+                                className="text-sm font-medium text-primary hover:text-blue-600 transition-colors"
+                            >
+                                {isRegistering
+                                    ? '已有帳號？點此登入'
+                                    : '需要帳號？點此註冊'}
+                            </button>
+                        </div>
                     </div>
-                    <div className="mb-6">
-                        <label className="block text-gray-700 mb-2">Password</label>
-                        <input
-                            type="password"
-                            className="w-full p-2 border rounded"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            required
-                        />
-                    </div>
-                    <button
-                        type="submit"
-                        className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600 mb-4"
-                    >
-                        {isRegistering ? 'Register' : 'Login'}
-                    </button>
-                </form>
-                <div className="text-center">
-                    <button
-                        onClick={() => setIsRegistering(!isRegistering)}
-                        className="text-blue-500 hover:underline"
-                    >
-                        {isRegistering
-                            ? 'Already have an account? Login'
-                            : 'Need an account? Register'}
-                    </button>
                 </div>
             </div>
-        </div>
+        </MainLayout>
     );
 };
 

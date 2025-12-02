@@ -9,45 +9,49 @@ export default {
     extend: {
       colors: {
         primary: {
-          50: '#eff6ff',
-          100: '#dbeafe',
-          200: '#bfdbfe',
-          300: '#93c5fd',
-          400: '#60a5fa',
-          500: '#3b82f6',
-          600: '#2563eb',
-          700: '#1d4ed8',
-          800: '#1e40af',
-          900: '#1e3a8a',
+          DEFAULT: '#49b1f5',
+          dark: '#2563eb',
         },
-        accent: {
-          400: '#fbbf24',
-          500: '#f59e0b',
-          600: '#d97706',
-        },
-        dark: {
-          800: '#1f2937',
-          900: '#111827',
+        butterfly: {
+          bg: '#f0f9eb',
+          text: '#4c4948',
+          card: 'rgba(255, 255, 255, 0.9)',
+          darkCard: 'rgba(31, 41, 55, 0.9)',
         }
       },
       fontFamily: {
-        sans: ['Inter', 'system-ui', 'sans-serif'],
-        display: ['Poppins', 'sans-serif'],
-        mono: ['JetBrains Mono', 'monospace'],
+        sans: ['-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', '"Helvetica Neue"', 'Lato', 'Roboto', '"PingFang SC"', '"Microsoft YaHei"', 'sans-serif'],
+        display: ['"Titillium Web"', '"PingFang SC"', '"Microsoft YaHei"', 'sans-serif'],
+        mono: ['"JetBrains Mono"', 'monospace'],
       },
       animation: {
-        'fade-in': 'fadeIn 0.5s ease-in-out',
-        'slide-up': 'slideUp 0.4s ease-out',
+        'fade-in': 'fadeIn 0.6s ease-in-out',
+        'fade-in-up': 'fadeInUp 0.8s ease-out',
+        'slide-up': 'slideUp 0.5s ease-out',
+        'zoom-in': 'zoomIn 0.3s ease-in-out',
+        'marquee': 'marquee 25s linear infinite',
       },
       keyframes: {
         fadeIn: {
           '0%': { opacity: '0' },
           '100%': { opacity: '1' },
         },
+        fadeInUp: {
+          '0%': { opacity: '0', transform: 'translateY(20px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
+        },
         slideUp: {
           '0%': { transform: 'translateY(20px)', opacity: '0' },
           '100%': { transform: 'translateY(0)', opacity: '1' },
         },
+        zoomIn: {
+          '0%': { transform: 'scale(0.95)', opacity: '0' },
+          '100%': { transform: 'scale(1)', opacity: '1' },
+        },
+        marquee: {
+          '0%': { transform: 'translateX(100%)' },
+          '100%': { transform: 'translateX(-100%)' },
+        }
       },
     },
   },

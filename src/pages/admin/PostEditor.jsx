@@ -5,7 +5,8 @@ import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { db, storage } from '../../firebase';
-import Navbar from '../../components/Navbar';
+import MainLayout from '../../layouts/MainLayout';
+import { motion } from 'framer-motion';
 
 const PostEditor = () => {
     const { id } = useParams();
@@ -38,7 +39,21 @@ const PostEditor = () => {
         }
     }, [id]);
 
-    // ... handleImageUpload ...
+    const handleImageUpload = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        try {
+            const storageRef = ref(storage, `covers/${Date.now()}_${file.name}`);
+            const snapshot = await uploadBytes(storageRef, file);
+            const url = await getDownloadURL(snapshot.ref);
+            setImageUrl(url);
+            setCoverImage(file);
+        } catch (error) {
+            console.error("Error uploading image: ", error);
+            alert("Error uploading image");
+        }
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -75,102 +90,147 @@ const PostEditor = () => {
     };
 
     return (
-        <div className="min-h-screen bg-gray-50 dark:bg-gray-950 pt-20 pb-12 transition-colors duration-300">
-            {/* ... Navbar and Header ... */}
-            <Navbar />
-            <div className="container mx-auto px-4 max-w-5xl">
-                <div className="flex justify-between items-center mb-8">
-                    <h1 className="text-3xl font-bold text-gray-900 dark:text-white">{id ? '編輯文章' : '新增文章'}</h1>
-                    <div className="flex gap-4">
-                        <button
+        <MainLayout>
+            <div className="container mx-auto px-4 py-8 max-w-7xl">
+                {/* Sticky Header */}
+                <div className="sticky top-20 z-20 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md py-4 -mx-4 px-4 mb-6 border-b border-gray-200 dark:border-gray-800 flex justify-between items-center">
+                    <div>
+                        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+                            {id ? '編輯文章' : '撰寫新文章'}
+                        </h1>
+                        <p className="text-sm text-gray-500 dark:text-gray-400 hidden md:block">
+                            {title || '未命名文章'}
+                        </p>
+                    </div>
+                    <div className="flex gap-3">
+                        <motion.button
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
                             type="button"
                             onClick={() => setPreviewMode(!previewMode)}
-                            className="px-4 py-2 rounded-lg bg-gray-200 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-700 transition-colors"
+                            className="px-4 py-2 rounded-xl bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors flex items-center"
                         >
-                            {previewMode ? '編輯模式' : '預覽模式'}
-                        </button>
-                        <button
+                            <i className={`fas ${previewMode ? 'fa-edit' : 'fa-eye'} mr-2`}></i>
+                            {previewMode ? '返回編輯' : '預覽'}
+                        </motion.button>
+                        <motion.button
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
                             onClick={() => navigate('/admin')}
-                            className="px-4 py-2 rounded-lg bg-gray-200 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-700 transition-colors"
+                            className="px-4 py-2 rounded-xl bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
                         >
                             取消
-                        </button>
-                        <button
+                        </motion.button>
+                        <motion.button
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
                             onClick={handleSubmit}
                             disabled={loading}
-                            className="px-6 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 disabled:bg-blue-400 transition-colors shadow-lg shadow-blue-500/30"
+                            className="px-6 py-2 rounded-xl bg-primary text-white hover:bg-blue-600 disabled:bg-blue-400 transition-all shadow-lg shadow-blue-500/30 flex items-center"
                         >
-                            {loading ? '儲存中...' : '發布文章'}
-                        </button>
+                            {loading ? (
+                                <>
+                                    <i className="fas fa-spinner fa-spin mr-2"></i>
+                                    儲存中...
+                                </>
+                            ) : (
+                                <>
+                                    <i className="fas fa-paper-plane mr-2"></i>
+                                    發布
+                                </>
+                            )}
+                        </motion.button>
                     </div>
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                     {/* Editor Column */}
                     <div className={`space-y-6 ${previewMode ? 'hidden lg:block' : ''}`}>
-                        <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-xl dark:shadow-gray-950/50 p-6 border border-gray-100 dark:border-gray-800">
-                            <div className="space-y-4">
+                        <div className="card-glass p-6">
+                            <div className="space-y-6">
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">文章標題</label>
+                                    <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">
+                                        文章標題
+                                    </label>
                                     <input
                                         type="text"
-                                        className="w-full p-3 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-blue-500 dark:text-white transition-all"
+                                        className="w-full p-4 bg-white/50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-primary dark:text-white transition-all text-lg font-medium placeholder-gray-400"
                                         value={title}
                                         onChange={(e) => setTitle(e.target.value)}
-                                        placeholder="輸入標題..."
+                                        placeholder="輸入引人入勝的標題..."
                                         required
                                     />
                                 </div>
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">網址 Slug</label>
-                                    <input
-                                        type="text"
-                                        className="w-full p-3 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-blue-500 dark:text-white transition-all"
-                                        value={slug}
-                                        onChange={(e) => setSlug(e.target.value)}
-                                        placeholder="post-url-slug"
-                                        required
-                                    />
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div>
+                                        <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">
+                                            網址 Slug
+                                        </label>
+                                        <div className="relative">
+                                            <span className="absolute left-4 top-3.5 text-gray-400">/posts/</span>
+                                            <input
+                                                type="text"
+                                                className="w-full pl-16 p-3 bg-white/50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-primary dark:text-white transition-all font-mono text-sm"
+                                                value={slug}
+                                                onChange={(e) => setSlug(e.target.value)}
+                                                placeholder="my-awesome-post"
+                                                required
+                                            />
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">
+                                            標籤
+                                        </label>
+                                        <div className="relative">
+                                            <span className="absolute left-4 top-3.5 text-gray-400"><i className="fas fa-tags"></i></span>
+                                            <input
+                                                type="text"
+                                                className="w-full pl-10 p-3 bg-white/50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-primary dark:text-white transition-all text-sm"
+                                                value={tags}
+                                                onChange={(e) => setTags(e.target.value)}
+                                                placeholder="React, Firebase, Tutorial"
+                                            />
+                                        </div>
+                                    </div>
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">標籤 (以逗號分隔)</label>
-                                    <input
-                                        type="text"
-                                        className="w-full p-3 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-blue-500 dark:text-white transition-all"
-                                        value={tags}
-                                        onChange={(e) => setTags(e.target.value)}
-                                        placeholder="React, Firebase, Tutorial"
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">封面圖片</label>
-                                    <div className="flex items-center space-x-4">
+                                    <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">
+                                        封面圖片
+                                    </label>
+                                    <div className="border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-xl p-6 text-center hover:border-primary transition-colors bg-white/30 dark:bg-gray-800/30">
                                         <input
                                             type="file"
+                                            id="cover-upload"
                                             onChange={handleImageUpload}
-                                            className="block w-full text-sm text-gray-500 dark:text-gray-400
-                                                file:mr-4 file:py-2 file:px-4
-                                                file:rounded-full file:border-0
-                                                file:text-sm file:font-semibold
-                                                file:bg-blue-50 file:text-blue-700
-                                                hover:file:bg-blue-100
-                                                dark:file:bg-gray-800 dark:file:text-gray-300
-                                            "
+                                            className="hidden"
                                         />
+                                        <label htmlFor="cover-upload" className="cursor-pointer flex flex-col items-center">
+                                            {imageUrl ? (
+                                                <div className="relative w-full h-48 rounded-lg overflow-hidden group">
+                                                    <img src={imageUrl} alt="Cover" className="w-full h-full object-cover" />
+                                                    <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                                        <span className="text-white font-medium">更換圖片</span>
+                                                    </div>
+                                                </div>
+                                            ) : (
+                                                <>
+                                                    <i className="fas fa-cloud-upload-alt text-4xl text-gray-400 mb-2"></i>
+                                                    <span className="text-sm text-gray-500 dark:text-gray-400">點擊上傳封面圖片</span>
+                                                </>
+                                            )}
+                                        </label>
                                     </div>
-                                    {imageUrl && (
-                                        <div className="mt-4 relative h-48 rounded-xl overflow-hidden">
-                                            <img src={imageUrl} alt="Cover" className="w-full h-full object-cover" />
-                                        </div>
-                                    )}
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">內容 (Markdown)</label>
+                                    <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">
+                                        內容 (Markdown)
+                                    </label>
                                     <textarea
-                                        className="w-full p-4 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-blue-500 dark:text-white font-mono h-[500px] transition-all resize-none"
+                                        className="w-full p-4 bg-white/50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-primary dark:text-white font-mono h-[600px] transition-all resize-none text-sm leading-relaxed"
                                         value={content}
                                         onChange={(e) => setContent(e.target.value)}
-                                        placeholder="開始撰寫..."
+                                        placeholder="# Hello World..."
                                         required
                                     />
                                 </div>
@@ -180,22 +240,35 @@ const PostEditor = () => {
 
                     {/* Preview Column */}
                     <div className={`space-y-6 ${!previewMode ? 'hidden lg:block' : ''}`}>
-                        <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-xl dark:shadow-gray-950/50 p-8 border border-gray-100 dark:border-gray-800 min-h-[800px]">
-                            <h2 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4">即時預覽</h2>
-                            <h1 className="text-4xl font-display font-bold text-gray-900 dark:text-white mb-6">{title || '文章標題'}</h1>
-                            {imageUrl && (
-                                <img src={imageUrl} alt="Cover" className="w-full h-64 object-cover rounded-xl mb-8 shadow-md" />
-                            )}
-                            <div className="prose prose-lg dark:prose-invert max-w-none prose-headings:font-display prose-headings:font-bold prose-h1:text-4xl prose-h2:text-3xl prose-a:text-blue-600 dark:prose-a:text-blue-400 prose-img:rounded-xl prose-img:shadow-lg text-gray-900 dark:text-gray-100">
+                        <div className="card-glass p-8 min-h-[800px] sticky top-32">
+                            <div className="flex items-center justify-between mb-6 pb-4 border-b border-gray-100 dark:border-gray-700">
+                                <h2 className="text-sm font-bold text-gray-400 uppercase tracking-wider">即時預覽</h2>
+                                <div className="flex gap-2">
+                                    <span className="w-3 h-3 rounded-full bg-red-400"></span>
+                                    <span className="w-3 h-3 rounded-full bg-yellow-400"></span>
+                                    <span className="w-3 h-3 rounded-full bg-green-400"></span>
+                                </div>
+                            </div>
+
+                            <article className="prose prose-lg dark:prose-invert max-w-none 
+                                prose-headings:font-display prose-headings:font-bold 
+                                prose-a:text-primary hover:prose-a:text-blue-600 
+                                prose-img:rounded-xl prose-img:shadow-lg
+                                prose-blockquote:border-l-4 prose-blockquote:border-primary prose-blockquote:bg-gray-50 dark:prose-blockquote:bg-gray-800/50 prose-blockquote:py-2 prose-blockquote:px-4 prose-blockquote:not-italic
+                            ">
+                                {imageUrl && (
+                                    <img src={imageUrl} alt="Cover" className="w-full h-64 object-cover rounded-xl mb-8 shadow-md" />
+                                )}
+                                <h1 className="mb-4">{title || '文章標題'}</h1>
                                 <ReactMarkdown remarkPlugins={[remarkGfm]}>
                                     {content || '內容預覽區域...'}
                                 </ReactMarkdown>
-                            </div>
+                            </article>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </MainLayout>
     );
 };
 
