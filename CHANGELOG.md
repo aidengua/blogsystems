@@ -6,11 +6,16 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 - **Essay Page**: Added a new public page (`/essay`) for "Short Thoughts" (短文心事), featuring a dark-themed hero section and a masonry-style grid for displaying essays.
+- **Admin Essay Management**:
+  - Added a Tab Switcher to toggle between "Posts" and "Essays".
+  - Implemented an Essay Table to view, edit, and delete essays.
+  - Reused the "Quick Publish" modal for editing essays.
 - **Admin Quick Publish**: Added a "Quick Publish Essay" feature to the Admin Dashboard.
   - Accessible via a new "新增短文" (New Essay) button in the dashboard header.
   - Opens a modal for quick text entry and publishing.
 - **Navigation**: Added a "短文" (Essay) link to the main navigation bar.
 - **Firestore Rules**: Updated security rules to allow public read access and authenticated write access for the `essays` collection.
+- **Deployment**: Successfully deployed to Firebase Hosting.
 
 ### Changed
 - **Hero Section**:

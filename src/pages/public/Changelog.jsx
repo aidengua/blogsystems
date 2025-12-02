@@ -6,6 +6,22 @@ const Changelog = () => {
     // Mock data for changelog - in a real app this could come from Firebase
     const changelogs = [
         {
+            version: "v1.3.0",
+            date: "2025-12-03",
+            title: "Essay & Admin Features",
+            content: (
+                <ul className="list-disc list-inside space-y-1 text-sm">
+                    <li><strong>Essay Page:</strong> New public page for "Short Thoughts" with masonry grid.</li>
+                    <li><strong>Admin Essay Management:</strong> Tab switcher to view, edit, and delete essays.</li>
+                    <li><strong>Admin Quick Publish:</strong> Quickly publish essays from the dashboard header.</li>
+                    <li><strong>Deployment:</strong> Successfully deployed to Firebase Hosting.</li>
+                    <li><strong>Hero Section:</strong> Refined vertical scrolling animation with random speeds.</li>
+                    <li><strong>Navigation:</strong> Added "Essay" link to the main menu.</li>
+                </ul>
+            ),
+            type: "feature"
+        },
+        {
             version: "v1.2.0",
             date: "2025-01-15",
             title: "LiquidGlass Design Update",
