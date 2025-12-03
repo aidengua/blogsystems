@@ -2,22 +2,28 @@
 
 All notable changes to this project will be documented in this file.
 
-## [Unreleased] - 2025-12-03
+## [v1.4.0] - 2025-12-04
 ### Added
-- **Category Functionality**:
-  - Added category selection in Post Editor ("作品紀錄", "比賽紀錄", "製作教程", "課堂筆記").
-  - Implemented category filtering on the Homepage with smooth animations.
-  - Updated Hero Dashboard category cards to trigger filtering.
-- **Sidebar Social Card**: Replaced WeChat card with Line card, featuring Line's brand colors and icon.
+- **Comment System**:
+  - Implemented a comprehensive comment system for both Blog Posts and Essays.
+  - **Public**: Visitors can leave comments (Name + Content).
+  - **Admin**: Added "留言管理" (Comments) tab in Dashboard for managing and deleting comments.
+  - **Essays**: Added expandable comment section to each essay card.
+  - **Notifications**: Integrated toast notifications for comment actions (submission, deletion).
+- **Sidebar Enhancements**:
+  - **Line Social Card**: Added 3D flip effect with QR code on the back.
+  - **Profile Card**: Redesigned with a "Status Pill", 3D tilt avatar animation, and glassmorphic GitHub button.
+  - **Activity Chart**: Optimized visuals with glassmorphic tooltip and theme-consistent colors.
 
 ### Changed
-- **Global Theme**:
-  - Unified blue color theme to `#709CEF` across the entire site.
-  - Updated Notification Bar hover colors and centered text.
-- **Dashboard**:
-  - Refined Trend Line Chart to display posts sequentially (Post 1, Post 2...) instead of dates.
-  - Set Y-axis maximum view count to 1000.
-  - Connected Notification Bar to display the latest essay dynamically.
+- **Global UI Upgrade**:
+  - Implemented a **Semantic Color System** (`bg-surface`, `text-main`, etc.) for consistent Light/Dark mode theming.
+  - Refactored **Navbar** to use semantic colors and unified dropdown styles.
+  - Updated **Homepage Text** from "Theme-AnZhiYu" to "音響設計之家".
+- **Visual Refinements**:
+  - Updated global avatar and author name to "呂宥德".
+  - Refined Line card animation to follow mouse movement.
+  - Removed image badge from Profile Card.
 
 ## [v1.3.0] - 2025-12-03
 

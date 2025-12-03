@@ -7,6 +7,7 @@ import rehypeSlug from 'rehype-slug';
 import { db } from '../../firebase';
 import MainLayout from '../../layouts/MainLayout';
 import Sidebar from '../../components/Sidebar';
+import CommentSection from '../../components/CommentSection';
 
 const PostDetail = () => {
     const { slug } = useParams();
@@ -182,7 +183,7 @@ const PostDetail = () => {
 
                             {/* Post Footer */}
                             <div className="mt-12 pt-8 border-t border-gray-100 dark:border-gray-700">
-                                <div className="flex justify-between items-center">
+                                <div className="flex justify-between items-center mb-12">
                                     <Link to="/" className="text-gray-500 hover:text-primary transition-colors">
                                         <i className="fas fa-arrow-left mr-2"></i> 返回首頁
                                     </Link>
@@ -190,6 +191,9 @@ const PostDetail = () => {
                                         {/* Share buttons could go here */}
                                     </div>
                                 </div>
+
+                                {/* Comment Section */}
+                                <CommentSection postId={post.id} postTitle={post.title} />
                             </div>
                         </div>
                     </div>

@@ -15,11 +15,15 @@ import PrivateRoute from './components/PrivateRoute';
 import PageWrapper from './components/PageWrapper';
 import ScrollToTop from './components/ScrollToTop';
 
+import { NotificationProvider } from './context/NotificationContext';
+import NotificationToast from './components/NotificationToast';
+
 function App() {
   const location = useLocation();
 
   return (
-    <>
+    <NotificationProvider>
+      <NotificationToast />
       <ScrollToTop />
       <AnimatePresence mode="wait">
         <Routes location={location} key={location.pathname}>
@@ -99,7 +103,7 @@ function App() {
           } />
         </Routes>
       </AnimatePresence>
-    </>
+    </NotificationProvider >
   );
 }
 

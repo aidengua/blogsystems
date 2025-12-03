@@ -17,7 +17,7 @@ const About = () => {
                 <div className="flex flex-col items-center mb-12 animate-fade-in">
                     <div className="relative mb-4">
                         <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-white/20 shadow-2xl">
-                            <img src="https://cloudflare-imgbed-5re.pages.dev/file/1736127040827_%E6%9C%AA%E5%91%BD%E5%90%8D%E8%A8%AD%E8%A8%88.png" alt="Avatar" className="w-full h-full object-cover" />
+                            <img src="https://cloudflare-imgbed-5re.pages.dev/file/1759506193400_1000004107.jpg" alt="Avatar" className="w-full h-full object-cover" />
                         </div>
                         <div className="absolute -bottom-2 -right-2 bg-green-500 w-8 h-8 rounded-full border-4 border-gray-900"></div>
                     </div>
@@ -42,7 +42,7 @@ const About = () => {
                         <div className="h-full bg-gradient-to-br from-blue-600 to-blue-500 rounded-3xl p-8 text-white shadow-xl relative overflow-hidden group flex flex-col justify-between">
                             <div className="relative z-10">
                                 <div className="text-blue-100 mb-1">你好，很高興認識你 👋</div>
-                                <h2 className="text-4xl font-bold mb-2">我叫 安知魚</h2>
+                                <h2 className="text-4xl font-bold mb-2">我叫 呂宥德</h2>
                                 <p className="text-blue-100">是一名 前端工程師、學生、獨立開發者、博主</p>
                             </div>
                             <div className="absolute right-0 bottom-0 opacity-10 transform translate-x-1/4 translate-y-1/4">

@@ -4,11 +4,14 @@ import { collection, getDocs, query, orderBy } from 'firebase/firestore';
 import { db } from '../../firebase';
 import MainLayout from '../../layouts/MainLayout';
 import LazyImage from '../../components/LazyImage';
-import mainImage from '../../assets/main.png'; // Using main image as placeholder for now
+import mainImage from '../../assets/main.png';
+import CommentSection from '../../components/CommentSection';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const Essay = () => {
     const [essays, setEssays] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [expandedEssayId, setExpandedEssayId] = useState(null);
 
     useEffect(() => {
         const fetchEssays = async () => {
@@ -30,6 +33,10 @@ const Essay = () => {
 
         fetchEssays();
     }, []);
+
+    const toggleComments = (id) => {
+        setExpandedEssayId(prevId => prevId === id ? null : id);
+    };
 
     return (
         <MainLayout>
@@ -76,12 +83,12 @@ const Essay = () => {
                     ) : (
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                             {essays.map((essay) => (
-                                <div key={essay.id} className="bg-[#1a1b26] rounded-xl p-6 border border-white/5 hover:border-white/10 transition-colors group">
+                                <div key={essay.id} className="bg-[#1a1b26] rounded-xl p-6 border border-white/5 hover:border-white/10 transition-colors group flex flex-col">
                                     <div className="text-gray-300 text-lg mb-8 font-medium leading-relaxed min-h-[80px]">
                                         {essay.content}
                                     </div>
 
-                                    <div className="flex justify-between items-center pt-4 border-t border-white/5">
+                                    <div className="mt-auto pt-4 border-t border-white/5 flex justify-between items-center">
                                         <div className="flex items-center gap-2 text-gray-500 text-sm">
                                             <i className="far fa-clock"></i>
                                             <span>
@@ -92,10 +99,34 @@ const Essay = () => {
                                                 })}
                                             </span>
                                         </div>
-                                        <button className="text-gray-500 hover:text-white transition-colors">
+                                        <button
+                                            onClick={() => toggleComments(essay.id)}
+                                            className={`transition-colors flex items-center gap-2 ${expandedEssayId === essay.id ? 'text-[#709CEF]' : 'text-gray-500 hover:text-white'}`}
+                                        >
                                             <i className="fas fa-comment-alt"></i>
+                                            <span className="text-sm">{expandedEssayId === essay.id ? '隱藏留言' : '查看留言'}</span>
                                         </button>
                                     </div>
+
+                                    {/* Expandable Comment Section */}
+                                    <AnimatePresence>
+                                        {expandedEssayId === essay.id && (
+                                            <motion.div
+                                                initial={{ height: 0, opacity: 0 }}
+                                                animate={{ height: 'auto', opacity: 1 }}
+                                                exit={{ height: 0, opacity: 0 }}
+                                                transition={{ duration: 0.3 }}
+                                                className="overflow-hidden"
+                                            >
+                                                <div className="pt-6 mt-4 border-t border-white/5">
+                                                    <CommentSection
+                                                        postId={essay.id}
+                                                        postTitle={essay.content ? (essay.content.length > 20 ? essay.content.substring(0, 20) + '...' : essay.content) : 'Short Essay'}
+                                                    />
+                                                </div>
+                                            </motion.div>
+                                        )}
+                                    </AnimatePresence>
                                 </div>
                             ))}
                         </div>

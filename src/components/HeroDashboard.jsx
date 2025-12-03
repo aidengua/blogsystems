@@ -170,7 +170,7 @@ const FeatureCard = ({ posts, showRecommend, setShowRecommend }) => (
                         <div className="mt-auto w-full flex justify-between items-end">
                             <div className="text-left">
                                 <div className="text-xs opacity-60">新品主題</div>
-                                <div className="text-2xl font-bold">Theme-AnZhiYu</div>
+                                <div className="text-2xl font-bold">音響設計之家</div>
                             </div>
                             <button
                                 onClick={() => setShowRecommend(true)}

@@ -1,0 +1,110 @@
+import { useState, useEffect } from 'react';
+import { collection, query, where, orderBy, onSnapshot } from 'firebase/firestore';
+import { motion, AnimatePresence } from 'framer-motion';
+import { db } from '../firebase';
+import CommentForm from './CommentForm';
+
+const CommentSection = ({ postId, postTitle }) => {
+    const [comments, setComments] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        if (!postId) return;
+
+        const q = query(
+            collection(db, 'comments'),
+            where('postId', '==', postId),
+            where('isVisible', '==', true),
+            orderBy('createdAt', 'desc')
+        );
+
+        const unsubscribe = onSnapshot(q, (snapshot) => {
+            const commentsData = snapshot.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data()
+            }));
+            setComments(commentsData);
+            setLoading(false);
+        }, (error) => {
+            console.error("Error fetching comments:", error);
+            setLoading(false);
+        });
+
+        return () => unsubscribe();
+    }, [postId]);
+
+    return (
+        <div className="space-y-8">
+            <CommentForm postId={postId} postTitle={postTitle} />
+
+            <div className="space-y-6">
+                <h3 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                    <i className="far fa-comments"></i>
+                    留言列表 ({comments.length})
+                </h3>
+
+                {loading ? (
+                    <div className="flex justify-center py-8">
+                        <div className="animate-spin rounded-full h-8 w-8 border-2 border-[#709CEF] border-t-transparent"></div>
+                    </div>
+                ) : comments.length > 0 ? (
+                    <div className="space-y-4">
+                        <AnimatePresence mode="popLayout">
+                            {comments.map((comment) => (
+                                <motion.div
+                                    key={comment.id}
+                                    layout
+                                    initial={{ opacity: 0, y: 20, scale: 0.95 }}
+                                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                                    exit={{ opacity: 0, scale: 0.9 }}
+                                    transition={{ duration: 0.3 }}
+                                    className="bg-white dark:bg-[#1e1e1e] p-6 rounded-xl border border-gray-100 dark:border-gray-800 shadow-sm"
+                                >
+                                    <div className="flex justify-between items-start mb-3">
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#709CEF] to-[#5B89E5] flex items-center justify-center text-white font-bold text-lg shadow-lg shadow-[#709CEF]/30">
+                                                {comment.author.charAt(0).toUpperCase()}
+                                            </div>
+                                            <div>
+                                                <div className="font-bold text-gray-900 dark:text-white">
+                                                    {comment.author}
+                                                </div>
+                                                <div className="text-xs text-gray-500 dark:text-gray-400">
+                                                    {comment.createdAt?.toDate() ? comment.createdAt.toDate().toLocaleDateString('zh-TW', {
+                                                        year: 'numeric',
+                                                        month: 'long',
+                                                        day: 'numeric',
+                                                        hour: '2-digit',
+                                                        minute: '2-digit'
+                                                    }) : '剛剛'}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <p className="text-gray-700 dark:text-gray-300 whitespace-pre-wrap leading-relaxed">
+                                        {comment.content}
+                                    </p>
+                                </motion.div>
+                            ))}
+                        </AnimatePresence>
+                    </div>
+                ) : (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        className="text-center py-12 bg-gray-50 dark:bg-[#1e1e1e]/50 rounded-xl border border-dashed border-gray-200 dark:border-gray-800"
+                    >
+                        <div className="text-4xl text-gray-300 dark:text-gray-600 mb-3">
+                            <i className="far fa-comment-alt"></i>
+                        </div>
+                        <p className="text-gray-500 dark:text-gray-400">
+                            目前還沒有留言，成為第一個留言的人吧！
+                        </p>
+                    </motion.div>
+                )}
+            </div>
+        </div>
+    );
+};
+
+export default CommentSection;
