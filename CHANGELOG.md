@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 
 ## [Unreleased] - 2025-12-03
+### Added
+- **Category Functionality**:
+  - Added category selection in Post Editor ("作品紀錄", "比賽紀錄", "製作教程", "課堂筆記").
+  - Implemented category filtering on the Homepage with smooth animations.
+  - Updated Hero Dashboard category cards to trigger filtering.
+- **Sidebar Social Card**: Replaced WeChat card with Line card, featuring Line's brand colors and icon.
+
+### Changed
+- **Global Theme**:
+  - Unified blue color theme to `#709CEF` across the entire site.
+  - Updated Notification Bar hover colors and centered text.
+- **Dashboard**:
+  - Refined Trend Line Chart to display posts sequentially (Post 1, Post 2...) instead of dates.
+  - Set Y-axis maximum view count to 1000.
+  - Connected Notification Bar to display the latest essay dynamically.
+
+## [v1.3.0] - 2025-12-03
 
 ### Added
 - **Essay Page**: Added a new public page (`/essay`) for "Short Thoughts" (短文心事), featuring a dark-themed hero section and a masonry-style grid for displaying essays.

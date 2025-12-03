@@ -2,32 +2,48 @@ import { useState, useEffect } from 'react';
 import { collection, query, orderBy, getDocs, where } from 'firebase/firestore';
 import { db } from '../../firebase';
 import MainLayout from '../../layouts/MainLayout';
+import { useSearchParams } from 'react-router-dom';
 
 import HeroDashboard from '../../components/HeroDashboard';
 import PostCard from '../../components/PostCard';
 import Sidebar from '../../components/Sidebar';
 
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const Home = () => {
     const [posts, setPosts] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [searchParams, setSearchParams] = useSearchParams();
+    const currentCategory = searchParams.get('category');
 
     useEffect(() => {
         const fetchPosts = async () => {
+            setLoading(true);
             try {
                 // Query published posts ordered by creation date
                 // Note: This requires a composite index in Firebase (status + createdAt)
-                const q = query(
+                let q = query(
                     collection(db, 'posts'),
                     where('status', '==', 'published'),
                     orderBy('createdAt', 'desc')
                 );
+
+                // If category is selected, we might need to filter client-side if no composite index exists for (status + category + createdAt)
+                // Or we can add a where clause if index exists.
+                // For simplicity and robustness without index management, let's filter client-side for now
+                // or add the where clause if we are confident.
+                // Let's try client-side filtering first to avoid "index needed" errors blocking the user immediately.
+
                 const querySnapshot = await getDocs(q);
-                const postsData = querySnapshot.docs.map(doc => ({
+                let postsData = querySnapshot.docs.map(doc => ({
                     id: doc.id,
                     ...doc.data()
                 }));
+
+                if (currentCategory) {
+                    postsData = postsData.filter(post => post.category === currentCategory);
+                }
+
                 setPosts(postsData);
             } catch (error) {
                 console.error("Error fetching posts:", error);
@@ -37,7 +53,7 @@ const Home = () => {
         };
 
         fetchPosts();
-    }, []);
+    }, [currentCategory]);
 
     return (
         <MainLayout>
@@ -50,7 +66,30 @@ const Home = () => {
                         <div className="flex flex-col lg:flex-row gap-8">
                             {/* Main Content */}
                             <div className="w-full lg:w-3/4 space-y-8">
-
+                                <AnimatePresence mode="wait">
+                                    {currentCategory && (
+                                        <motion.div
+                                            initial={{ opacity: 0, height: 0, marginBottom: 0 }}
+                                            animate={{ opacity: 1, height: 'auto', marginBottom: 32 }}
+                                            exit={{ opacity: 0, height: 0, marginBottom: 0 }}
+                                            transition={{ duration: 0.3, ease: "easeInOut" }}
+                                            className="overflow-hidden"
+                                        >
+                                            <div className="flex items-center justify-between bg-[#1e1e1e] p-4 rounded-xl border border-gray-800">
+                                                <div className="flex items-center gap-2 text-white">
+                                                    <i className="fas fa-filter text-blue-500"></i>
+                                                    <span className="font-bold">目前分類：{currentCategory}</span>
+                                                </div>
+                                                <button
+                                                    onClick={() => setSearchParams({})}
+                                                    className="text-sm text-gray-400 hover:text-white transition-colors flex items-center gap-1"
+                                                >
+                                                    <i className="fas fa-times"></i> 清除篩選
+                                                </button>
+                                            </div>
+                                        </motion.div>
+                                    )}
+                                </AnimatePresence>
 
                                 {loading ? (
                                     <div className="flex justify-center py-20">
@@ -72,8 +111,18 @@ const Home = () => {
 
                                 {!loading && posts.length === 0 && (
                                     <div className="text-center py-20 card-glass p-8">
-                                        <h3 className="text-2xl font-bold text-gray-700 dark:text-gray-300">暫無文章</h3>
+                                        <h3 className="text-2xl font-bold text-gray-700 dark:text-gray-300">
+                                            {currentCategory ? `分類 "${currentCategory}" 尚無文章` : '暫無文章'}
+                                        </h3>
                                         <p className="text-gray-500 mt-2">請稍後再回來查看</p>
+                                        {currentCategory && (
+                                            <button
+                                                onClick={() => setSearchParams({})}
+                                                className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-500 transition-colors"
+                                            >
+                                                查看所有文章
+                                            </button>
+                                        )}
                                     </div>
                                 )}
                             </div>

@@ -17,8 +17,11 @@ const PostEditor = () => {
     const [slug, setSlug] = useState('');
     const [imageUrl, setImageUrl] = useState('');
     const [tags, setTags] = useState('');
+    const [category, setCategory] = useState(''); // New category state
     const [loading, setLoading] = useState(false);
     const [previewMode, setPreviewMode] = useState(false);
+
+    const CATEGORIES = ["作品紀錄", "比賽紀錄", "製作教程", "課堂筆記"];
 
     useEffect(() => {
         if (id) {
@@ -32,6 +35,7 @@ const PostEditor = () => {
                     setSlug(data.slug);
                     setImageUrl(data.coverImage);
                     setTags(data.tags ? data.tags.join(', ') : '');
+                    setCategory(data.category || ''); // Load category
                 }
             };
             fetchPost();
@@ -40,6 +44,10 @@ const PostEditor = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        if (!category) {
+            alert("請選擇一個文章分類");
+            return;
+        }
         setLoading(true);
 
         const tagsArray = tags.split(',').map(tag => tag.trim()).filter(tag => tag !== '');
@@ -64,6 +72,7 @@ const PostEditor = () => {
             slug: finalSlug,
             coverImage: imageUrl,
             tags: tagsArray,
+            category, // Save category
             updatedAt: serverTimestamp(),
         };
 
@@ -162,6 +171,28 @@ const PostEditor = () => {
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div>
                                         <label className="block text-sm font-bold text-gray-400 mb-2">
+                                            文章分類 <span className="text-red-500">*</span>
+                                        </label>
+                                        <div className="relative">
+                                            <span className="absolute left-4 top-3.5 text-gray-500"><i className="fas fa-folder"></i></span>
+                                            <select
+                                                value={category}
+                                                onChange={(e) => setCategory(e.target.value)}
+                                                className="w-full pl-10 p-3 bg-black/30 border border-gray-700 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-300 transition-all text-sm appearance-none cursor-pointer"
+                                                required
+                                            >
+                                                <option value="" disabled>選擇分類</option>
+                                                {CATEGORIES.map(cat => (
+                                                    <option key={cat} value={cat}>{cat}</option>
+                                                ))}
+                                            </select>
+                                            <div className="absolute right-4 top-4 pointer-events-none text-gray-500">
+                                                <i className="fas fa-chevron-down text-xs"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-bold text-gray-400 mb-2">
                                             網址 Slug (選填)
                                         </label>
                                         <div className="relative">
@@ -175,20 +206,20 @@ const PostEditor = () => {
                                             />
                                         </div>
                                     </div>
-                                    <div>
-                                        <label className="block text-sm font-bold text-gray-400 mb-2">
-                                            標籤
-                                        </label>
-                                        <div className="relative">
-                                            <span className="absolute left-4 top-3.5 text-gray-500"><i className="fas fa-tags"></i></span>
-                                            <input
-                                                type="text"
-                                                className="w-full pl-10 p-3 bg-black/30 border border-gray-700 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-300 transition-all text-sm placeholder-gray-600"
-                                                value={tags}
-                                                onChange={(e) => setTags(e.target.value)}
-                                                placeholder="React, Firebase, Tutorial"
-                                            />
-                                        </div>
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-bold text-gray-400 mb-2">
+                                        標籤
+                                    </label>
+                                    <div className="relative">
+                                        <span className="absolute left-4 top-3.5 text-gray-500"><i className="fas fa-tags"></i></span>
+                                        <input
+                                            type="text"
+                                            className="w-full pl-10 p-3 bg-black/30 border border-gray-700 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-300 transition-all text-sm placeholder-gray-600"
+                                            value={tags}
+                                            onChange={(e) => setTags(e.target.value)}
+                                            placeholder="React, Firebase, Tutorial"
+                                        />
                                     </div>
                                 </div>
                                 <div>

@@ -66,7 +66,7 @@ const HomeTagBar = () => {
                 {/* Home Button */}
                 <Link
                     to="/"
-                    className="flex-shrink-0 px-6 py-2 bg-yellow-500 hover:bg-yellow-400 text-white font-bold rounded-xl transition-colors flex items-center gap-2 shadow-lg shadow-yellow-500/20"
+                    className="flex-shrink-0 px-6 py-2 bg-[#709CEF] hover:bg-[#709CEF] hover:brightness-110 text-white font-bold rounded-xl transition-all flex items-center gap-2 shadow-lg shadow-[#709CEF]/20"
                 >
                     <i className="fas fa-home"></i>
                     <span>首頁</span>
@@ -77,7 +77,7 @@ const HomeTagBar = () => {
                     <Link
                         key={tag}
                         to={`/tags/${tag}`}
-                        className="flex-shrink-0 px-5 py-2 bg-[#1e1e1e] hover:bg-blue-600 border border-gray-800 hover:border-blue-500 text-gray-300 hover:text-white rounded-xl transition-all duration-300 whitespace-nowrap"
+                        className="flex-shrink-0 px-5 py-2 bg-[#1e1e1e] hover:bg-[#709CEF] border border-gray-800 hover:border-[#709CEF] text-gray-300 hover:text-white rounded-xl transition-all duration-300 whitespace-nowrap"
                     >
                         <span className="opacity-50 mr-1">#</span>
                         {tag}

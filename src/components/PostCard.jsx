@@ -34,8 +34,8 @@ const PostCard = ({ post, index }) => {
                     </div>
 
                     {/* Content Section */}
-                    <div className="w-full md:w-[55%] p-6 md:p-8 flex flex-col justify-center bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm">
-                        <div className="text-xs text-gray-500 dark:text-gray-400 mb-2 flex items-center gap-2">
+                    <div className="w-full md:w-[55%] p-6 md:p-8 flex flex-col justify-center bg-surface/50 backdrop-blur-sm">
+                        <div className="text-xs text-muted mb-2 flex items-center gap-2">
                             <i className="far fa-calendar-alt"></i>
                             <time>{post.createdAt?.toDate().toLocaleDateString()}</time>
                             {post.tags && post.tags.length > 0 && (
@@ -48,12 +48,14 @@ const PostCard = ({ post, index }) => {
                         </div>
 
                         <Link to={`/posts/${post.slug}`}>
-                            <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-3 hover:text-primary transition-colors line-clamp-2">
+                            <h2 className="text-2xl font-bold text-main mb-3 hover:text-primary transition-colors line-clamp-2">
                                 {post.title}
                             </h2>
                         </Link>
 
-                        <p className="text-gray-600 dark:text-gray-300 mb-4 line-clamp-3 text-sm leading-relaxed">
+
+
+                        <p className="text-muted mb-4 line-clamp-3 text-sm leading-relaxed">
                             {post.summary || post.content?.substring(0, 150) + '...'}
                         </p>
 
@@ -73,8 +75,8 @@ const PostCard = ({ post, index }) => {
                         </div>
                     </div>
                 </div>
-            </SpotlightCard>
-        </motion.div>
+            </SpotlightCard >
+        </motion.div >
     );
 };
 

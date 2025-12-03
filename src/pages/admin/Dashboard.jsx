@@ -61,15 +61,19 @@ const Dashboard = () => {
             const pieData = Object.entries(tagCounts).map(([name, value]) => ({ name, value }));
             setTagData(pieData);
 
-            // Prepare View Trend Data for Line Chart (Cumulative views by date)
-            // Since we don't have daily history, we show "Views per Post" ordered by date
-            // or "Cumulative Views over time" (simulated)
-            // Let's show "Views per Post" over time to see which content performs best
-            const lineData = postsData.map(post => ({
-                date: post.createdAt?.toDate().toLocaleDateString('zh-TW', { month: 'numeric', day: 'numeric' }),
+            // Prepare View Trend Data for Line Chart (Post Sequence)
+            // Sort posts by date ascending for the chart
+            const sortedPostsForChart = [...postsData].sort((a, b) =>
+                a.createdAt?.toDate() - b.createdAt?.toDate()
+            );
+
+            const lineData = sortedPostsForChart.map((post, index) => ({
+                name: `Post ${index + 1}`,
+                title: post.title,
                 views: post.views || 0,
-                title: post.title
+                date: post.createdAt?.toDate().toLocaleDateString('zh-TW')
             }));
+
             setViewData(lineData);
 
             setLoading(false);
@@ -160,12 +164,15 @@ const Dashboard = () => {
     // Custom Tooltip for Line Chart
     const CustomTooltip = ({ active, payload, label }) => {
         if (active && payload && payload.length) {
+            const data = payload[0].payload;
             return (
                 <div className="bg-[#1e1e1e] border border-gray-700 p-3 rounded-lg shadow-xl">
-                    <p className="text-gray-300 text-sm mb-1">{label}</p>
-                    <p className="text-blue-400 font-bold text-sm">{payload[0].payload.title}</p>
+                    <p className="text-gray-300 text-sm mb-1">{data.date}</p>
+                    <p className="text-[#709CEF] font-bold text-sm mb-1 line-clamp-1 max-w-[200px]">
+                        {data.title}
+                    </p>
                     <p className="text-white font-bold text-lg">
-                        {payload[0].value} <span className="text-xs text-gray-500 font-normal">瀏覽</span>
+                        {data.views} <span className="text-xs text-gray-500 font-normal">瀏覽</span>
                     </p>
                 </div>
             );
@@ -279,7 +286,7 @@ const Dashboard = () => {
                                     </defs>
                                     <CartesianGrid strokeDasharray="3 3" stroke="#374151" vertical={false} />
                                     <XAxis
-                                        dataKey="date"
+                                        dataKey="name"
                                         stroke="#9ca3af"
                                         tick={{ fill: '#9ca3af', fontSize: 12 }}
                                         tickLine={false}
@@ -290,6 +297,8 @@ const Dashboard = () => {
                                         tick={{ fill: '#9ca3af', fontSize: 12 }}
                                         tickLine={false}
                                         axisLine={false}
+                                        domain={[0, 1000]}
+                                        allowDataOverflow={true}
                                     />
                                     <Tooltip content={<CustomTooltip />} />
                                     <Area

@@ -9,14 +9,35 @@ export default {
     extend: {
       colors: {
         primary: {
-          DEFAULT: '#49b1f5',
-          dark: '#2563eb',
+          DEFAULT: 'var(--color-primary)',
+          dark: 'var(--color-primary-dark)',
+        },
+        // Semantic Colors
+        base: 'var(--bg-base)',
+        surface: 'var(--bg-surface)',
+        overlay: 'var(--bg-overlay)',
+        main: 'var(--text-main)',
+        muted: 'var(--text-muted)',
+        highlight: 'var(--text-highlight)',
+
+        blue: {
+          50: '#eff6ff',
+          100: '#dbeafe',
+          200: '#bfdbfe',
+          300: '#93c5fd',
+          400: '#8AB3F5', // Lighter shade of #709CEF
+          500: '#709CEF', // Main color
+          600: '#5A86D9', // Darker shade for hover
+          700: '#1d4ed8',
+          800: '#1e40af',
+          900: '#1e3a8a',
+          950: '#172554',
         },
         butterfly: {
-          bg: '#f0f9eb',
-          text: '#4c4948',
-          card: 'rgba(255, 255, 255, 0.9)',
-          darkCard: 'rgba(31, 41, 55, 0.9)',
+          bg: 'var(--bg-base)',
+          text: 'var(--text-main)',
+          card: 'var(--bg-surface)',
+          darkCard: 'var(--bg-surface)', // Unified to surface
         }
       },
       fontFamily: {

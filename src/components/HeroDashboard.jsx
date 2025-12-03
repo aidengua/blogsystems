@@ -18,19 +18,46 @@ import img9 from '../assets/data/9.png';
 
 // --- Sub-components ---
 
-const NotificationBar = () => (
-    <div className="w-full mb-4 px-4 py-2 liquid-glass flex items-center gap-3 shadow-sm hover:shadow-md transition-shadow group cursor-pointer">
-        <div className="shrink-0 animate-pulse text-blue-500">
-            <i className="fas fa-bullhorn"></i>
-        </div>
-        <div className="flex-grow overflow-hidden relative h-6">
-            <div className="absolute whitespace-nowrap animate-marquee flex items-center h-full text-sm text-gray-600 dark:text-gray-300 group-hover:text-blue-500 transition-colors">
-                由於日本不顧我方嚴正聲明與國際抗議，一意孤行，於 2023 年 8 月 24 日將核廢水排入大海... 本著國際環保主義的內心...
+import { collection, query, orderBy, limit, getDocs } from 'firebase/firestore';
+import { db } from '../firebase';
+
+const NotificationBar = () => {
+    const [latestEssay, setLatestEssay] = useState(null);
+
+    useEffect(() => {
+        const fetchLatestEssay = async () => {
+            try {
+                const q = query(
+                    collection(db, 'essays'),
+                    orderBy('createdAt', 'desc'),
+                    limit(1)
+                );
+                const querySnapshot = await getDocs(q);
+                if (!querySnapshot.empty) {
+                    setLatestEssay(querySnapshot.docs[0].data().content);
+                }
+            } catch (error) {
+                console.error("Error fetching latest essay:", error);
+            }
+        };
+
+        fetchLatestEssay();
+    }, []);
+
+    return (
+        <Link to="/essay" className="w-full mb-4 px-4 py-2 liquid-glass flex items-center justify-center gap-3 shadow-sm hover:shadow-md transition-shadow group cursor-pointer block">
+            <div className="shrink-0 animate-pulse text-[#709CEF]">
+                <i className="fas fa-bullhorn"></i>
             </div>
-        </div>
-        <i className="fas fa-arrow-right text-gray-400 group-hover:translate-x-1 transition-transform"></i>
-    </div>
-);
+            <div className="flex-grow overflow-hidden relative h-6 flex items-center justify-center">
+                <div className="whitespace-nowrap text-sm text-gray-600 dark:text-gray-300 group-hover:text-[#709CEF] transition-colors text-center w-full">
+                    {latestEssay || "載入最新動態中..."}
+                </div>
+            </div>
+            <i className="fas fa-arrow-right text-gray-400 group-hover:translate-x-1 transition-transform group-hover:text-[#709CEF]"></i>
+        </Link>
+    );
+};
 
 const IntroCard = () => {
     const images = [img1, img2, img3, img4, img5, img6, img7, img8, img9];
@@ -216,26 +243,26 @@ const HeroDashboard = ({ posts = [] }) => {
                         <CategoryCard
                             title="作品紀錄"
                             icon="fa-clipboard-list"
-                            colorClass="bg-gradient-to-r from-cyan-400 to-blue-500"
-                            to="/category/portfolio"
+                            colorClass="bg-[#72B5AD]"
+                            to="/?category=作品紀錄"
                         />
                         <CategoryCard
                             title="比賽紀錄"
                             icon="fa-fire"
-                            colorClass="bg-gradient-to-r from-pink-500 to-rose-500"
-                            to="/category/competition"
+                            colorClass="bg-[#C982A1]"
+                            to="/?category=比賽紀錄"
                         />
                         <CategoryCard
                             title="製作教程"
                             icon="fa-layer-group"
-                            colorClass="bg-gradient-to-r from-green-400 to-emerald-500"
-                            to="/category/tutorial"
+                            colorClass="bg-[#83A17E]"
+                            to="/?category=製作教程"
                         />
                         <CategoryCard
                             title="課堂筆記"
                             icon="fa-book"
-                            colorClass="bg-gradient-to-r from-amber-400 to-orange-500"
-                            to="/category/notes"
+                            colorClass="bg-[#C3B579]"
+                            to="/?category=課堂筆記"
                         />
                     </div>
                 </div>

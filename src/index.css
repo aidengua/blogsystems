@@ -4,13 +4,27 @@
 @plugin "@tailwindcss/typography";
 
 @theme {
-    --color-primary: #49b1f5;
-    --color-primary-dark: #2563eb;
+    --color-primary: #709CEF;
+    --color-primary-dark: #5A86D9;
 
-    --color-butterfly-bg: #f0f9eb;
-    --color-butterfly-text: #4c4948;
-    --color-butterfly-card: rgba(255, 255, 255, 0.9);
+    /* Semantic Colors */
+    --bg-base: #f0f9eb;
+    --bg-surface: rgba(255, 255, 255, 0.9);
+    --bg-overlay: rgba(255, 255, 255, 0.7);
+
+    --text-main: #4c4948;
+    --text-muted: #858585;
+    --text-highlight: #709CEF;
+
+    --border-base: rgba(0, 0, 0, 0.05);
+    --border-highlight: rgba(112, 156, 239, 0.5);
+
+    /* Legacy Butterfly mappings (for backward compatibility during refactor) */
+    --color-butterfly-bg: var(--bg-base);
+    --color-butterfly-text: var(--text-main);
+    --color-butterfly-card: var(--bg-surface);
     --color-butterfly-darkCard: rgba(31, 41, 55, 0.9);
+    /* Will be overridden in dark mode */
 
     --font-display: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", "Segoe UI", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
     --font-sans: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", "Segoe UI", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
@@ -70,6 +84,24 @@
 }
 
 @custom-variant dark (&:where(.dark, .dark *));
+
+@layer base {
+    .dark {
+        --bg-base: #121212;
+        --bg-surface: rgba(30, 30, 30, 0.9);
+        --bg-overlay: rgba(30, 30, 30, 0.7);
+
+        --text-main: #e5e7eb;
+        --text-muted: #9ca3af;
+        --text-highlight: #709CEF;
+
+        --border-base: rgba(255, 255, 255, 0.1);
+        --border-highlight: rgba(112, 156, 239, 0.5);
+
+        /* Legacy overrides */
+        --color-butterfly-card: var(--bg-surface);
+    }
+}
 
 /* Hide Scrollbar Globally */
 ::-webkit-scrollbar {

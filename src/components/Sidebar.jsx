@@ -163,15 +163,15 @@ const Sidebar = ({ mobile, close, toc, activeSection }) => {
             {/* Announcement Card */}
             {!toc && (
                 <div className="liquid-glass p-4 mb-6 group cursor-pointer overflow-hidden relative">
-                    <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-blue-400 opacity-90 dark:opacity-80 transition-all duration-500 group-hover:scale-110"></div>
+                    <div className="absolute inset-0 bg-gradient-to-r from-[#06C755] to-[#00B900] opacity-90 dark:opacity-80 transition-all duration-500 group-hover:scale-110"></div>
                     <div className="relative z-10 flex items-center justify-between text-white">
                         <div className="flex flex-col">
-                            <span className="text-xs opacity-80 mb-1">公眾號 微信</span>
-                            <span className="font-bold text-lg">快人一步獲取最新文章</span>
+                            <span className="text-xs opacity-80 mb-1">官方帳號 Line</span>
+                            <span className="font-bold text-lg">加入好友獲取最新資訊</span>
                         </div>
-                        <i className="fab fa-weixin text-3xl opacity-80 group-hover:rotate-12 transition-transform"></i>
+                        <i className="fab fa-line text-3xl opacity-80 group-hover:rotate-12 transition-transform"></i>
                     </div>
-                    <i className="fas fa-play absolute right-2 bottom-2 text-white/10 text-4xl"></i>
+                    <i className="fas fa-comment-dots absolute right-2 bottom-2 text-white/10 text-4xl"></i>
                 </div>
             )}
 
