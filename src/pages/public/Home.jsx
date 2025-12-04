@@ -96,18 +96,21 @@ const Home = () => {
                                         <div className="animate-spin rounded-full h-12 w-12 border-4 border-primary border-t-transparent"></div>
                                     </div>
                                 ) : (
-                                    posts.map((post, index) => (
-                                        <motion.div
-                                            key={post.id}
-                                            initial={{ opacity: 0, y: 20 }}
-                                            whileInView={{ opacity: 1, y: 0 }}
-                                            viewport={{ once: true }}
-                                            transition={{ duration: 0.5, delay: index * 0.1 }}
-                                        >
-                                            <PostCard post={post} index={index} />
-                                        </motion.div>
-                                    ))
-                                )}
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        {posts.map((post, index) => (
+                                            <motion.div
+                                                key={post.id}
+                                                initial={{ opacity: 0, y: 20 }}
+                                                whileInView={{ opacity: 1, y: 0 }}
+                                                viewport={{ once: true }}
+                                                transition={{ duration: 0.5, delay: index * 0.1 }}
+                                            >
+                                                <PostCard post={post} index={index} />
+                                            </motion.div>
+                                        ))}
+                                    </div>
+                                )
+                                }
 
                                 {!loading && posts.length === 0 && (
                                     <div className="text-center py-20 card-glass p-8">

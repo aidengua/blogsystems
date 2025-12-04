@@ -8,6 +8,7 @@ import About from './pages/public/About';
 import PostDetail from './pages/public/PostDetail';
 import Archives from './pages/public/Archives';
 import Tags from './pages/public/Tags';
+import Categories from './pages/public/Categories';
 import Changelog from './pages/public/Changelog';
 import Equipment from './pages/public/Equipment';
 import Essay from './pages/public/Essay';
@@ -46,6 +47,11 @@ function App() {
           <Route path="/archives" element={
             <PageWrapper>
               <Archives />
+            </PageWrapper>
+          } />
+          <Route path="/categories" element={
+            <PageWrapper>
+              <Categories />
             </PageWrapper>
           } />
           <Route path="/tags" element={

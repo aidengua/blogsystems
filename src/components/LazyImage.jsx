@@ -15,7 +15,7 @@ const LazyImage = ({ src, alt, className, wrapperClassName }) => {
                 src={src}
                 alt={alt}
                 className={clsx(
-                    "transition-all duration-500 ease-in-out",
+                    "transition-opacity duration-500 ease-in-out",
                     isLoaded ? "opacity-100" : "opacity-0",
                     className
                 )}

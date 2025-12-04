@@ -166,6 +166,7 @@ const Navbar = ({ toggleSidebar }) => {
                         </div>
 
                         <NavItem to="/changelog" icon="fas fa-history" label="更新日誌" />
+                        <NavItem to="/essay" icon="fas fa-pen-fancy" label="短文" />
 
                         {/* My Dropdown */}
                         <div className="relative group">
@@ -190,10 +191,6 @@ const Navbar = ({ toggleSidebar }) => {
                                     <Link to="/equipment" className="flex items-center gap-2 px-4 py-2 rounded-full text-gray-400 hover:bg-[#60a5fa] hover:text-white transition-all duration-300">
                                         <i className="fas fa-shapes"></i>
                                         <span className="text-sm font-medium">我的裝備</span>
-                                    </Link>
-                                    <Link to="/essay" className="flex items-center gap-2 px-4 py-2 rounded-full text-gray-400 hover:bg-[#60a5fa] hover:text-white transition-all duration-300">
-                                        <i className="fas fa-pen-fancy"></i>
-                                        <span className="text-sm font-medium">短文</span>
                                     </Link>
                                 </div>
                             </div>

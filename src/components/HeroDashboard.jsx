@@ -21,6 +21,8 @@ import img9 from '../assets/data/9.png';
 import { collection, query, orderBy, limit, getDocs } from 'firebase/firestore';
 import { db } from '../firebase';
 
+import SpotlightCard from './SpotlightCard';
+
 const NotificationBar = () => {
     const [latestEssay, setLatestEssay] = useState(null);
 
@@ -45,16 +47,20 @@ const NotificationBar = () => {
     }, []);
 
     return (
-        <Link to="/essay" className="w-full mb-4 px-4 py-2 liquid-glass flex items-center justify-center gap-3 shadow-sm hover:shadow-md transition-shadow group cursor-pointer block">
-            <div className="shrink-0 animate-pulse text-[#709CEF]">
-                <i className="fas fa-bullhorn"></i>
-            </div>
-            <div className="flex-grow overflow-hidden relative h-6 flex items-center justify-center">
-                <div className="whitespace-nowrap text-sm text-gray-600 dark:text-gray-300 group-hover:text-[#709CEF] transition-colors text-center w-full">
-                    {latestEssay || "載入最新動態中..."}
+        <Link to="/essay" className="block w-full mb-4 group cursor-pointer">
+            <SpotlightCard className="px-4 py-2 shadow-sm hover:shadow-md transition-shadow" spotlightColor="rgba(112, 156, 239, 0.15)">
+                <div className="flex items-center justify-center gap-3 w-full h-full">
+                    <div className="shrink-0 animate-pulse text-[#709CEF]">
+                        <i className="fas fa-bullhorn"></i>
+                    </div>
+                    <div className="flex-grow overflow-hidden relative h-6 flex items-center justify-center">
+                        <div className="whitespace-nowrap text-sm text-gray-600 dark:text-gray-300 group-hover:text-[#709CEF] transition-colors text-center w-full">
+                            {latestEssay || "載入最新動態中..."}
+                        </div>
+                    </div>
+                    <i className="fas fa-arrow-right text-gray-400 group-hover:translate-x-1 transition-transform group-hover:text-[#709CEF]"></i>
                 </div>
-            </div>
-            <i className="fas fa-arrow-right text-gray-400 group-hover:translate-x-1 transition-transform group-hover:text-[#709CEF]"></i>
+            </SpotlightCard>
         </Link>
     );
 };
@@ -66,7 +72,7 @@ const IntroCard = () => {
     const marqueeImages = [...images, ...images];
 
     return (
-        <div className="relative h-64 md:h-80 glass-base overflow-hidden group cursor-pointer hover:shadow-2xl transition-all duration-500 bg-[#1a1a1a]">
+        <SpotlightCard className="relative h-64 md:h-80 overflow-hidden group cursor-pointer hover:shadow-2xl transition-all duration-500 bg-[#1a1a1a]" spotlightColor="rgba(112, 156, 239, 0.15)">
             <div className="absolute inset-0 flex flex-col md:flex-row">
                 {/* Left Content */}
                 <div className="w-full md:w-1/2 p-8 md:p-12 flex flex-col justify-center z-10 relative">
@@ -114,33 +120,34 @@ const IntroCard = () => {
             {/* Decorative Elements */}
             <div className="absolute top-0 right-0 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
             <div className="absolute bottom-0 left-0 w-64 h-64 bg-purple-500/10 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2 pointer-events-none"></div>
-        </div>
+        </SpotlightCard>
     );
 };
 
 const CategoryCard = ({ title, icon, colorClass, to }) => (
     <Link to={to} className={clsx(
-        "relative h-20 glass-base overflow-hidden group cursor-pointer hover:shadow-xl transition-all duration-500 ease-[cubic-bezier(0.25,0.1,0.25,1.0)] flex-1 hover:flex-[1.5] min-w-0 block",
-        colorClass
+        "relative h-20 flex-1 hover:flex-[1.5] min-w-0 block transition-all duration-500 ease-[cubic-bezier(0.25,0.1,0.25,1.0)] group cursor-pointer"
     )}>
-        {/* Text Content */}
-        <div className="absolute top-6 left-6 z-10">
-            <span className="text-2xl font-bold text-white tracking-wider">{title}</span>
-        </div>
+        <SpotlightCard className={clsx("h-full w-full overflow-hidden hover:shadow-xl transition-all duration-500", colorClass)} spotlightColor="rgba(255, 255, 255, 0.2)">
+            {/* Text Content */}
+            <div className="absolute top-6 left-6 z-10">
+                <span className="text-2xl font-bold text-white tracking-wider">{title}</span>
+            </div>
 
-        {/* Watermark Icon */}
-        <i className={clsx(
-            "fas absolute -bottom-6 -right-6 text-[8rem] text-white/20 group-hover:scale-110 group-hover:rotate-0 -rotate-12 transition-all duration-500 ease-out",
-            icon
-        )}></i>
+            {/* Watermark Icon */}
+            <i className={clsx(
+                "fas absolute -bottom-6 -right-6 text-[8rem] text-white/20 group-hover:scale-110 group-hover:rotate-0 -rotate-12 transition-all duration-500 ease-out",
+                icon
+            )}></i>
 
-        {/* Shine Effect */}
-        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out"></div>
+            {/* Shine Effect */}
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out"></div>
+        </SpotlightCard>
     </Link>
 );
 
 const FeatureCard = ({ posts, showRecommend, setShowRecommend }) => (
-    <div className="relative h-full glass-base overflow-hidden group hover:shadow-2xl transition-all duration-500 bg-gray-900">
+    <SpotlightCard className="relative h-full overflow-hidden group hover:shadow-2xl transition-all duration-500 bg-gray-900" spotlightColor="rgba(112, 156, 239, 0.15)">
         <AnimatePresence mode="wait">
             {!showRecommend ? (
                 <motion.div
@@ -221,7 +228,7 @@ const FeatureCard = ({ posts, showRecommend, setShowRecommend }) => (
                 </motion.div>
             )}
         </AnimatePresence>
-    </div>
+    </SpotlightCard>
 );
 
 

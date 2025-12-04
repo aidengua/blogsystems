@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { collection, query, where, getDocs, updateDoc, increment, doc } from 'firebase/firestore';
+import { collection, query, where, getDocs, updateDoc, increment, doc, getCountFromServer } from 'firebase/firestore';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeSlug from 'rehype-slug';
@@ -15,6 +15,7 @@ const PostDetail = () => {
     const [loading, setLoading] = useState(true);
     const [toc, setToc] = useState([]);
     const [activeSection, setActiveSection] = useState('');
+    const [commentCount, setCommentCount] = useState(0);
 
     useEffect(() => {
         const fetchPost = async () => {
@@ -30,6 +31,11 @@ const PostDetail = () => {
                     updateDoc(docRef, {
                         views: increment(1)
                     }).catch(err => console.log("View increment failed:", err));
+
+                    // Fetch comment count
+                    const commentsQ = query(collection(db, 'comments'), where('postId', '==', postDoc.id));
+                    const snapshot = await getCountFromServer(commentsQ);
+                    setCommentCount(snapshot.data().count);
                 }
             } catch (error) {
                 console.error("Error fetching post:", error);
@@ -115,7 +121,6 @@ const PostDetail = () => {
                         {/* Tags & Badges Row */}
                         <div className="flex flex-wrap items-center gap-2 mb-4">
                             <span className="bg-[#6c757d] text-white text-xs px-2 py-1 rounded-md">原創</span>
-                            <span className="bg-[#6c757d] text-white text-xs px-2 py-1 rounded-md">製作教程</span>
                             {post.tags && post.tags.map(tag => (
                                 <span key={tag} className="flex items-center gap-1 text-xs px-2 py-1 rounded-md border border-white/30 hover:bg-white/20 transition-colors">
                                     <i className="fas fa-tag text-[10px]"></i>
@@ -158,7 +163,7 @@ const PostDetail = () => {
                             <span className="hidden md:inline text-white/40">|</span>
                             <div className="flex items-center gap-2" title="評論數">
                                 <i className="far fa-comment-dots"></i>
-                                <span>評論數: 0</span>
+                                <span>評論數: {commentCount}</span>
                             </div>
                         </div>
                     </div>

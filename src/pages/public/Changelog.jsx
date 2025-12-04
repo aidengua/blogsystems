@@ -1,12 +1,40 @@
 import { useState } from 'react';
 import MainLayout from '../../layouts/MainLayout';
 import { motion } from 'framer-motion';
+import SpotlightCard from '../../components/SpotlightCard';
 
 const Changelog = () => {
     // Mock data for changelog - in a real app this could come from Firebase
     const changelogs = [
         {
+            version: "v1.4.1",
+            date: "2025-12-04",
+            title: "UX Refinements",
+            content: (
+                <ul className="list-disc list-inside space-y-1 text-sm">
+                    <li><strong>Navbar Update:</strong> Moved "Short Article" (Essay) button to the main navigation bar for better accessibility.</li>
+                    <li><strong>Layout Fixes:</strong> Resolved layout issues in the Essay notification card on the dashboard.</li>
+                    <li><strong>Visual Polish:</strong> Enhanced spotlight effects across all interactive cards.</li>
+                </ul>
+            ),
+            type: "improvement"
+        },
+        {
             version: "v1.4.0",
+            date: "2025-12-04",
+            title: "Global UI Upgrade & Comments",
+            content: (
+                <ul className="list-disc list-inside space-y-1 text-sm">
+                    <li><strong>Comment System:</strong> Full comment functionality for Posts and Essays with Admin management.</li>
+                    <li><strong>Global UI Upgrade:</strong> Unified semantic color system and refactored Navbar for consistent theming.</li>
+                    <li><strong>Sidebar Enhancements:</strong> Redesigned Profile Card (3D tilt), Line Social Card (Flip), and optimized charts.</li>
+                    <li><strong>Visual Refinements:</strong> Updated homepage text to "音響設計之家" and refined animations.</li>
+                </ul>
+            ),
+            type: "feature"
+        },
+        {
+            version: "v1.3.5",
             date: "2025-12-03",
             title: "Category & Theme Refinement",
             content: (
@@ -96,7 +124,10 @@ const Changelog = () => {
 
                                 {/* Content Card */}
                                 <div className="w-full md:w-[calc(50%-2rem)] pl-16 md:pl-0">
-                                    <div className="liquid-glass p-6 hover:scale-[1.02] transition-transform duration-300 group relative overflow-hidden">
+                                    <SpotlightCard
+                                        className="p-6 hover:scale-[1.02] transition-transform duration-300 group relative overflow-hidden"
+                                        spotlightColor="rgba(112, 156, 239, 0.15)"
+                                    >
                                         {/* Decorative Gradient Blob */}
                                         <div className={`absolute -top-10 -right-10 w-32 h-32 bg-gradient-to-br rounded-full blur-3xl opacity-20 group-hover:opacity-40 transition-opacity duration-500
                                             ${log.type === 'major' ? 'from-blue-500 to-purple-500' :
@@ -120,11 +151,11 @@ const Changelog = () => {
                                             <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-3 group-hover:text-blue-400 transition-colors">
                                                 {log.title}
                                             </h3>
-                                            <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
+                                            <div className="text-gray-600 dark:text-gray-300 leading-relaxed">
                                                 {log.content}
-                                            </p>
+                                            </div>
                                         </div>
-                                    </div>
+                                    </SpotlightCard>
                                 </div>
 
                                 {/* Empty space for the other side of the timeline */}
