@@ -1,49 +1,146 @@
 import { useEffect, useState } from 'react';
 import MainLayout from '../../layouts/MainLayout';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
+import { incrementVisits, subscribeToStats, subscribeToWeeklyStats } from '../../services/stats';
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 
 const About = () => {
     const [currentTime, setCurrentTime] = useState(new Date());
+    const [wordIndex, setWordIndex] = useState(0);
+    const [stats, setStats] = useState({ total: 0, today: 0, yesterday: 0 });
+    const [weeklyStats, setWeeklyStats] = useState([]);
+    const [isFlipped, setIsFlipped] = useState(false);
+    const words = ['實踐', '體驗', '創造', '生活', '學習'];
 
     useEffect(() => {
         const timer = setInterval(() => setCurrentTime(new Date()), 1000);
-        return () => clearInterval(timer);
+        const wordTimer = setInterval(() => {
+            setWordIndex((prev) => (prev + 1) % words.length);
+        }, 2000);
+
+        // Initialize stats
+        incrementVisits();
+        const unsubscribe = subscribeToStats(setStats);
+        const unsubscribeWeekly = subscribeToWeeklyStats(setWeeklyStats);
+
+        return () => {
+            clearInterval(timer);
+            clearInterval(wordTimer);
+            unsubscribe();
+            unsubscribeWeekly();
+        };
     }, []);
 
     return (
         <MainLayout>
             <div className="min-h-screen pt-24 pb-12 px-4 container mx-auto max-w-7xl">
                 {/* Header Section */}
-                <div className="flex flex-col items-center mb-12 animate-fade-in">
-                    <div className="relative mb-4">
-                        <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-white/20 shadow-2xl">
-                            <img src="https://cloudflare-imgbed-5re.pages.dev/file/1759506193400_1000004107.jpg" alt="Avatar" className="w-full h-full object-cover" />
+                {/* Header Section */}
+                <div className="flex flex-col items-center justify-center py-8 mb-8 animate-fade-in relative">
+                    <div className="flex items-center justify-center gap-4 md:gap-8 w-full max-w-4xl relative">
+
+                        {/* Left Tags */}
+                        <div className="hidden lg:flex flex-col gap-3 items-end">
+                            <motion.div
+                                initial={{ x: -30, opacity: 0 }}
+                                animate={{ x: 0, opacity: 1, y: [0, -4, 0] }}
+                                transition={{ x: { delay: 0.1 }, opacity: { delay: 0.1 }, y: { duration: 3, repeat: Infinity, ease: "easeInOut", delay: 0 } }}
+                                className="px-2.5 py-1 rounded-full bg-gray-800/80 border border-gray-700 text-gray-200 flex items-center gap-2 shadow-lg backdrop-blur-sm hover:scale-105 transition-transform text-xs"
+                            >
+                                <span className="text-base">🤖</span> <span>熱愛科技產品</span>
+                            </motion.div>
+                            <motion.div
+                                initial={{ x: -30, opacity: 0 }}
+                                animate={{ x: 0, opacity: 1, y: [0, -4, 0] }}
+                                transition={{ x: { delay: 0.2 }, opacity: { delay: 0.2 }, y: { duration: 3.5, repeat: Infinity, ease: "easeInOut", delay: 0.5 } }}
+                                className="px-2.5 py-1 rounded-full bg-gray-800/80 border border-gray-700 text-gray-200 flex items-center gap-2 shadow-lg backdrop-blur-sm hover:scale-105 transition-transform mr-6 text-xs"
+                            >
+                                <span className="text-base">🔍</span> <span>分享好用網站</span>
+                            </motion.div>
+                            <motion.div
+                                initial={{ x: -30, opacity: 0 }}
+                                animate={{ x: 0, opacity: 1, y: [0, -4, 0] }}
+                                transition={{ x: { delay: 0.3 }, opacity: { delay: 0.3 }, y: { duration: 2.8, repeat: Infinity, ease: "easeInOut", delay: 1 } }}
+                                className="px-2.5 py-1 rounded-full bg-gray-800/80 border border-gray-700 text-gray-200 flex items-center gap-2 shadow-lg backdrop-blur-sm hover:scale-105 transition-transform mr-3 text-xs"
+                            >
+                                <span className="text-base">🏠</span> <span>智慧家具專家</span>
+                            </motion.div>
+                            <motion.div
+                                initial={{ x: -30, opacity: 0 }}
+                                animate={{ x: 0, opacity: 1, y: [0, -4, 0] }}
+                                transition={{ x: { delay: 0.4 }, opacity: { delay: 0.4 }, y: { duration: 3.2, repeat: Infinity, ease: "easeInOut", delay: 0.2 } }}
+                                className="px-2.5 py-1 rounded-full bg-gray-800/80 border border-gray-700 text-gray-200 flex items-center gap-2 shadow-lg backdrop-blur-sm hover:scale-105 transition-transform text-xs"
+                            >
+                                <span className="text-base">🔨</span> <span>設計製作專家</span>
+                            </motion.div>
                         </div>
-                        <div className="absolute -bottom-2 -right-2 bg-green-500 w-8 h-8 rounded-full border-4 border-gray-900"></div>
+
+                        {/* Central Avatar */}
+                        <div className="relative z-10 shrink-0">
+                            <div className="w-32 h-32 md:w-40 md:h-40 rounded-full overflow-hidden border-4 border-gray-800 shadow-2xl relative z-10 bg-gray-900">
+                                <img src="https://cloudflare-imgbed-5re.pages.dev/file/1759506193400_1000004107.jpg" alt="Avatar" className="w-full h-full object-cover" />
+                            </div>
+                            <div className="absolute bottom-2 right-2 md:bottom-3 md:right-3 w-6 h-6 md:w-8 md:h-8 bg-green-500 rounded-full border-4 border-gray-900 z-20 shadow-lg"></div>
+                        </div>
+
+                        {/* Right Tags */}
+                        <div className="hidden lg:flex flex-col gap-3 items-start">
+                            <motion.div
+                                initial={{ x: 30, opacity: 0 }}
+                                animate={{ x: 0, opacity: 1, y: [0, -4, 0] }}
+                                transition={{ x: { delay: 0.1 }, opacity: { delay: 0.1 }, y: { duration: 3.1, repeat: Infinity, ease: "easeInOut", delay: 0.3 } }}
+                                className="px-2.5 py-1 rounded-full bg-gray-800/80 border border-gray-700 text-gray-200 flex items-center gap-2 shadow-lg backdrop-blur-sm hover:scale-105 transition-transform text-xs"
+                            >
+                                <span>專業點子維修</span> <span className="text-base">🤝</span>
+                            </motion.div>
+                            <motion.div
+                                initial={{ x: 30, opacity: 0 }}
+                                animate={{ x: 0, opacity: 1, y: [0, -4, 0] }}
+                                transition={{ x: { delay: 0.2 }, opacity: { delay: 0.2 }, y: { duration: 3.4, repeat: Infinity, ease: "easeInOut", delay: 0.8 } }}
+                                className="px-2.5 py-1 rounded-full bg-gray-800/80 border border-gray-700 text-gray-200 flex items-center gap-2 shadow-lg backdrop-blur-sm hover:scale-105 transition-transform ml-6 text-xs"
+                            >
+                                <span>腳踏實地實作</span> <span className="text-base">🏃</span>
+                            </motion.div>
+                            <motion.div
+                                initial={{ x: 30, opacity: 0 }}
+                                animate={{ x: 0, opacity: 1, y: [0, -4, 0] }}
+                                transition={{ x: { delay: 0.3 }, opacity: { delay: 0.3 }, y: { duration: 2.9, repeat: Infinity, ease: "easeInOut", delay: 0.1 } }}
+                                className="px-2.5 py-1 rounded-full bg-gray-800/80 border border-gray-700 text-gray-200 flex items-center gap-2 shadow-lg backdrop-blur-sm hover:scale-105 transition-transform ml-3 text-xs"
+                            >
+                                <span>參賽小組實作</span> <span className="text-base">🧱</span>
+                            </motion.div>
+                            <motion.div
+                                initial={{ x: 30, opacity: 0 }}
+                                animate={{ x: 0, opacity: 1, y: [0, -4, 0] }}
+                                transition={{ x: { delay: 0.4 }, opacity: { delay: 0.4 }, y: { duration: 3.3, repeat: Infinity, ease: "easeInOut", delay: 0.6 } }}
+                                className="px-2.5 py-1 rounded-full bg-gray-800/80 border border-gray-700 text-gray-200 flex items-center gap-2 shadow-lg backdrop-blur-sm hover:scale-105 transition-transform text-xs"
+                            >
+                                <span>脾氣相當詭異</span> <span className="text-base">💢</span>
+                            </motion.div>
+                        </div>
                     </div>
-                    <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2">關於本站</h1>
-                    <div className="flex flex-wrap gap-2 justify-center">
-                        {['數碼科技愛好者', '分享與熱心幫助', '智能家居小能手', '設計開發一條龍'].map((tag, i) => (
-                            <span key={i} className="px-3 py-1 rounded-full bg-gray-200 dark:bg-gray-800 text-xs text-gray-600 dark:text-gray-300 border border-gray-300 dark:border-gray-700">
-                                {tag}
-                            </span>
-                        ))}
+
+                    <div className="mt-6 text-center">
+                        <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-2 tracking-tight">關於作者</h1>
+                        <p className="text-sm md:text-base text-gray-500 dark:text-gray-400 font-medium">音響設計，熱愛創造✨</p>
                     </div>
                 </div>
 
                 {/* Bento Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 auto-rows-[minmax(180px,auto)] mb-4">
 
-                    {/* 1. Intro Card (Large Blue) */}
+                    {/* 1. Intro Card (Large Purple) */}
                     <motion.div
                         initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
                         className="col-span-1 md:col-span-2 lg:col-span-2 row-span-1"
                     >
-                        <div className="h-full bg-gradient-to-br from-blue-600 to-blue-500 rounded-3xl p-8 text-white shadow-xl relative overflow-hidden group flex flex-col justify-between">
+                        <div className="h-full bg-gradient-to-br from-purple-600 to-indigo-600 rounded-3xl p-8 text-white shadow-xl relative overflow-hidden group flex flex-col justify-center">
                             <div className="relative z-10">
-                                <div className="text-blue-100 mb-1">你好，很高興認識你 👋</div>
-                                <h2 className="text-4xl font-bold mb-2">我叫 呂宥德</h2>
-                                <p className="text-blue-100">是一名 前端工程師、學生、獨立開發者、博主</p>
+                                <div className="text-purple-100 mb-2 flex items-center gap-2">你好，很高興遇見你👋</div>
+                                <h2 className="text-4xl font-bold mb-4">我叫 呂宥德</h2>
+                                <p className="text-purple-100 text-sm md:text-base leading-relaxed opacity-90">
+                                    是一位 音響設計師、網頁前端開發、高中學生、Minecraft玩家、只有千人訂閱的YouTuber
+                                </p>
                             </div>
                             <div className="absolute right-0 bottom-0 opacity-10 transform translate-x-1/4 translate-y-1/4">
                                 <i className="fas fa-code text-9xl"></i>
@@ -60,7 +157,19 @@ const About = () => {
                             <div className="relative z-10">
                                 <div className="text-gray-400 text-sm mb-2">追求</div>
                                 <div className="text-3xl font-bold leading-tight">
-                                    源于<br />熱愛而去 感受<br /><span className="text-blue-500">學習</span>
+                                    源于<br />熱愛而去<br />
+                                    <AnimatePresence mode="wait">
+                                        <motion.span
+                                            key={words[wordIndex]}
+                                            initial={{ opacity: 0, y: 10 }}
+                                            animate={{ opacity: 1, y: 0 }}
+                                            exit={{ opacity: 0, y: -10 }}
+                                            transition={{ duration: 0.2 }}
+                                            className="text-purple-400 inline-block mt-1"
+                                        >
+                                            {words[wordIndex]}
+                                        </motion.span>
+                                    </AnimatePresence>
                                 </div>
                             </div>
                         </div>
@@ -97,56 +206,129 @@ const About = () => {
                         initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}
                         className="col-span-1 md:col-span-2 lg:col-span-2"
                     >
-                        <div className="h-full bg-gray-900 dark:bg-black rounded-3xl p-8 text-white shadow-xl border border-gray-800 flex flex-col justify-center">
-                            <div className="text-gray-400 text-sm mb-2">生涯</div>
-                            <h3 className="text-2xl font-bold mb-8">無限進步 <span className="text-blue-500 text-sm font-normal ml-2">EDU,軟件工程專業</span></h3>
-
-                            <div className="relative pt-8 pb-4">
-                                <div className="absolute top-1/2 left-0 right-0 h-1 bg-gray-700 -translate-y-1/2"></div>
-                                <div className="absolute top-1/2 left-0 right-0 h-1 bg-blue-500 -translate-y-1/2 w-3/4"></div> {/* Progress bar */}
-
-                                <div className="relative flex justify-between text-sm text-gray-400">
-                                    <span>2020</span>
-                                    <span>現在</span>
+                        <div className="h-full bg-gray-900 dark:bg-black rounded-3xl p-8 text-white shadow-xl border border-gray-800 flex flex-col justify-between relative overflow-hidden">
+                            <div>
+                                <div className="text-gray-400 text-sm mb-2">追求</div>
+                                <h3 className="text-3xl font-bold mb-6">無限進步</h3>
+                                <div className="space-y-3 mb-8">
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-3 h-3 rounded-full bg-blue-500"></div>
+                                        <span className="text-gray-300">音響設計</span>
+                                    </div>
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-3 h-3 rounded-full bg-blue-500"></div>
+                                        <span className="text-gray-300">網頁設計</span>
+                                    </div>
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-3 h-3 rounded-full bg-blue-500"></div>
+                                        <span className="text-gray-300">生涯規劃</span>
+                                    </div>
                                 </div>
+                            </div>
 
-                                <div className="absolute top-1/2 left-[20%] -translate-y-1/2 -mt-8 text-blue-400 font-bold">EDU</div>
+                            <div className="relative mt-4">
+                                <div className="flex justify-between items-end mb-2">
+                                    <span className="text-purple-400 font-bold text-lg drop-shadow-[0_0_10px_rgba(168,85,247,0.5)]">Audio Design</span>
+                                    <span className="text-blue-400 font-bold text-lg drop-shadow-[0_0_10px_rgba(59,130,246,0.5)]">Product Design</span>
+                                </div>
+                                <div className="relative h-1.5 bg-gray-800 rounded-full w-full">
+                                    <div className="absolute inset-0 bg-gradient-to-r from-purple-500 to-blue-500 rounded-full opacity-80"></div>
+                                    {/* Markers */}
+                                    <div className="absolute left-[10%] top-1/2 -translate-y-1/2 w-0.5 h-4 bg-gray-500"></div>
+                                    <div className="absolute right-[10%] top-1/2 -translate-y-1/2 w-0.5 h-4 bg-gray-500"></div>
+                                </div>
+                                <div className="flex justify-between text-sm text-gray-400 mt-2 font-mono">
+                                    <span className="ml-[8%]">2018</span>
+                                    <span className="mr-[8%]">2025</span>
+                                </div>
                             </div>
                         </div>
                     </motion.div>
 
-                    {/* 5. Statistics Card */}
+                    {/* 5. Statistics Card (Flip Card) */}
                     <motion.div
                         initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}
-                        className="col-span-1 md:col-span-1 lg:col-span-1"
+                        className="col-span-1 md:col-span-1 lg:col-span-1 h-[300px] perspective-1000"
                     >
-                        <div className="h-full bg-gray-900 dark:bg-black rounded-3xl p-6 text-white shadow-xl border border-gray-800 flex flex-col justify-between">
-                            <div>
-                                <div className="text-gray-400 text-sm mb-4">數據</div>
-                                <h3 className="text-2xl font-bold mb-6">訪問統計</h3>
-                                <div className="grid grid-cols-2 gap-4 mb-4">
-                                    <div>
-                                        <div className="text-xs text-gray-500">今日人數</div>
-                                        <div className="text-2xl font-bold">57</div>
-                                    </div>
-                                    <div>
-                                        <div className="text-xs text-gray-500">今日訪問</div>
-                                        <div className="text-2xl font-bold">383</div>
-                                    </div>
-                                    <div>
-                                        <div className="text-xs text-gray-500">昨日人數</div>
-                                        <div className="text-2xl font-bold">0</div>
-                                    </div>
-                                    <div>
-                                        <div className="text-xs text-gray-500">昨日訪問</div>
-                                        <div className="text-2xl font-bold">0</div>
+                        <motion.div
+                            animate={{ rotateY: isFlipped ? 180 : 0 }}
+                            transition={{ duration: 0.6, type: "spring", stiffness: 260, damping: 20 }}
+                            style={{ transformStyle: 'preserve-3d' }}
+                            className="relative w-full h-full"
+                        >
+                            {/* Front Side */}
+                            <div
+                                className="absolute inset-0 bg-gray-900 dark:bg-black rounded-3xl p-6 text-white shadow-xl border border-gray-800 flex flex-col justify-between"
+                                style={{ backfaceVisibility: 'hidden' }}
+                            >
+                                <div>
+                                    <div className="text-gray-400 text-sm mb-4">數據</div>
+                                    <h3 className="text-2xl font-bold mb-6">訪問統計</h3>
+                                    <div className="grid grid-cols-2 gap-4 mb-4">
+                                        <div>
+                                            <div className="text-xs text-gray-500">今日人數</div>
+                                            <div className="text-2xl font-bold">{stats.today}</div>
+                                        </div>
+                                        <div>
+                                            <div className="text-xs text-gray-500">總訪問量</div>
+                                            <div className="text-2xl font-bold">{stats.total}</div>
+                                        </div>
+                                        <div>
+                                            <div className="text-xs text-gray-500">昨日人數</div>
+                                            <div className="text-2xl font-bold">{stats.yesterday}</div>
+                                        </div>
+                                        <div>
+                                            <div className="text-xs text-gray-500">昨日訪問</div>
+                                            <div className="text-2xl font-bold">{stats.yesterday}</div>
+                                        </div>
                                     </div>
                                 </div>
+                                <button
+                                    onClick={() => setIsFlipped(true)}
+                                    className="w-full py-2 rounded-xl bg-gray-800 hover:bg-gray-700 transition-colors text-sm flex items-center justify-center gap-2"
+                                >
+                                    <i className="fas fa-chart-bar"></i> 更多統計
+                                </button>
                             </div>
-                            <button className="w-full py-2 rounded-xl bg-gray-800 hover:bg-gray-700 transition-colors text-sm flex items-center justify-center gap-2">
-                                <i className="fas fa-chart-bar"></i> 更多統計
-                            </button>
-                        </div>
+
+                            {/* Back Side */}
+                            <div
+                                className="absolute inset-0 bg-gray-900 dark:bg-black rounded-3xl p-6 text-white shadow-xl border border-gray-800 flex flex-col justify-between"
+                                style={{ backfaceVisibility: 'hidden', transform: 'rotateY(180deg)' }}
+                            >
+                                <div>
+                                    <div className="flex justify-between items-center mb-4">
+                                        <h3 className="text-lg font-bold">近7日訪問</h3>
+                                        <button
+                                            onClick={() => setIsFlipped(false)}
+                                            className="text-gray-400 hover:text-white"
+                                        >
+                                            <i className="fas fa-times"></i>
+                                        </button>
+                                    </div>
+                                    <div className="h-[160px] w-full">
+                                        <ResponsiveContainer width="100%" height="100%">
+                                            <BarChart data={weeklyStats}>
+                                                <XAxis dataKey="date" tick={{ fontSize: 10, fill: '#9ca3af' }} axisLine={false} tickLine={false} />
+                                                <Tooltip
+                                                    contentStyle={{ backgroundColor: '#1f2937', border: 'none', borderRadius: '8px', fontSize: '12px' }}
+                                                    itemStyle={{ color: '#fff' }}
+                                                    cursor={{ fill: 'rgba(255,255,255,0.1)' }}
+                                                />
+                                                <Bar dataKey="visits" radius={[4, 4, 0, 0]}>
+                                                    {weeklyStats.map((entry, index) => (
+                                                        <Cell key={`cell-${index}`} fill={index === weeklyStats.length - 1 ? '#3b82f6' : '#4b5563'} />
+                                                    ))}
+                                                </Bar>
+                                            </BarChart>
+                                        </ResponsiveContainer>
+                                    </div>
+                                </div>
+                                <div className="text-center text-xs text-gray-500 mt-2">
+                                    持續增長的足跡 📈
+                                </div>
+                            </div>
+                        </motion.div>
                     </motion.div>
 
                     {/* 6. Location Map */}
@@ -156,12 +338,20 @@ const About = () => {
                     >
                         <div className="h-full bg-gray-900 dark:bg-black rounded-3xl overflow-hidden shadow-xl border border-gray-800 relative group min-h-[250px]">
                             <div className="absolute inset-0 bg-gray-800">
-                                {/* Placeholder for Map */}
-                                <div className="w-full h-full opacity-50 bg-[url('https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/World_map_blank_without_borders.svg/2000px-World_map_blank_without_borders.svg.png')] bg-cover bg-center"></div>
+                                <iframe
+                                    width="100%"
+                                    height="100%"
+                                    frameBorder="0"
+                                    scrolling="no"
+                                    marginHeight="0"
+                                    marginWidth="0"
+                                    src="https://maps.google.com/maps?q=臺北市內湖區康寧路三段99巷25號&t=&z=15&ie=UTF8&iwloc=&output=embed"
+                                    className="w-full h-[130%] -mt-[10%] opacity-80 hover:opacity-100 transition-opacity duration-500"
+                                ></iframe>
                             </div>
-                            <div className="absolute bottom-0 left-0 right-0 bg-black/60 backdrop-blur-md p-4">
-                                <div className="text-2xl font-bold text-white">長沙</div>
-                                <div className="text-gray-300">我現在住在 <span className="text-white font-bold">中國，長沙市</span></div>
+                            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/60 to-transparent p-6 pt-12 pointer-events-none">
+                                <div className="text-3xl font-bold text-white mb-1">台北</div>
+                                <div className="text-gray-300">我現在住在 <span className="text-white font-bold">台灣，台北市</span></div>
                             </div>
                         </div>
                     </motion.div>
@@ -171,18 +361,20 @@ const About = () => {
                         initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.7 }}
                         className="col-span-1 md:col-span-2 lg:col-span-2"
                     >
-                        <div className="h-full bg-gray-900 dark:bg-black rounded-3xl p-8 text-white shadow-xl border border-gray-800 flex justify-between items-center">
-                            <div>
-                                <div className="text-gray-400 text-sm">生于</div>
-                                <div className="text-4xl font-bold text-blue-400">2002</div>
+                        <div className="h-full bg-gray-900 dark:bg-black rounded-3xl p-8 text-white shadow-xl border border-gray-800 flex flex-col md:flex-row justify-between gap-8">
+                            <div className="flex flex-col justify-between gap-6">
+                                <div>
+                                    <div className="text-gray-400 text-sm mb-1">出生於</div>
+                                    <div className="text-5xl font-bold text-blue-400">2007</div>
+                                </div>
+                                <div>
+                                    <div className="text-gray-400 text-sm mb-1">現在職業</div>
+                                    <div className="text-4xl font-bold text-purple-400">高二學生</div>
+                                </div>
                             </div>
-                            <div>
-                                <div className="text-gray-400 text-sm">湖南信息學院</div>
-                                <div className="text-2xl font-bold text-orange-400">軟件工程</div>
-                            </div>
-                            <div>
-                                <div className="text-gray-400 text-sm">現在職業</div>
-                                <div className="text-2xl font-bold text-purple-400">軟件工程師 🧑‍💻</div>
+                            <div className="flex flex-col justify-center">
+                                <div className="text-gray-400 text-sm mb-2">專業與興趣</div>
+                                <div className="text-4xl font-bold text-orange-400 leading-tight">音響設計與<br />網頁設計</div>
                             </div>
                         </div>
                     </motion.div>
@@ -194,13 +386,13 @@ const About = () => {
                     >
                         <div className="h-full bg-gray-900 dark:bg-black rounded-3xl p-6 text-white shadow-xl border border-gray-800 relative overflow-hidden flex flex-col justify-center">
                             <div className="relative z-10">
-                                <div className="text-gray-400 text-sm">性格</div>
-                                <div className="text-3xl font-bold mb-1">執政官</div>
-                                <div className="text-2xl font-bold text-pink-300 mb-4">ESFJ-A</div>
-                                <div className="text-xs text-gray-500">在 16personalities 了解更多</div>
+                                <div className="text-gray-400 text-sm mb-2">性格</div>
+                                <div className="text-4xl font-bold mb-2">建築師</div>
+                                <div className="text-3xl font-bold text-purple-300 mb-8">INTJ-A</div>
+                                <div className="text-xs text-gray-500">在 16personalities 了解更多關於建築師</div>
                             </div>
-                            <div className="absolute right-[-20px] bottom-[-20px] w-32 h-32 opacity-80">
-                                <i className="fas fa-user-friends text-8xl text-green-500/50"></i>
+                            <div className="absolute right-0 bottom-0 w-48 h-48 opacity-90 translate-y-4 translate-x-4">
+                                <img src="https://cloudflare-imgbed-5re.pages.dev/file/1732083431257_image.png" alt="INTJ-A" className="w-full h-full object-contain" />
                             </div>
                         </div>
                     </motion.div>

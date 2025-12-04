@@ -111,7 +111,7 @@ const Equipment = () => {
         <MainLayout>
             <div className="container mx-auto px-4 pt-24 pb-12 max-w-7xl">
                 {/* Hero Section (Card Style) */}
-                <div className="relative h-[300px] md:h-[400px] w-full rounded-[40px] overflow-hidden mb-12 group shadow-2xl">
+                <div className="relative h-[240px] md:h-[320px] w-full rounded-[40px] overflow-hidden mb-12 group shadow-2xl">
                     <div
                         className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105"
                         style={{ backgroundImage: 'url("https://images.unsplash.com/photo-1550009158-9ebf69173e03?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80")' }}

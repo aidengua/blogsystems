@@ -124,7 +124,7 @@ const Sidebar = ({ mobile, close, toc, activeSection }) => {
             <div className="liquid-glass p-6 mb-6 relative overflow-hidden group">
                 {/* Status Pill */}
                 <div className="absolute top-4 left-0 right-0 flex justify-center z-10">
-                    <div className="px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs text-white/90 font-medium shadow-lg">
+                    <div className="px-4 py-1.5 rounded-full bg-black/5 dark:bg-white/10 backdrop-blur-md border border-black/10 dark:border-white/20 text-xs text-gray-700 dark:text-white/90 font-medium shadow-lg">
                         晚上就是拿來敲代碼的
                     </div>
                 </div>
@@ -148,7 +148,7 @@ const Sidebar = ({ mobile, close, toc, activeSection }) => {
                     }}
                     style={{ transition: 'transform 0.1s ease-out' }}
                 >
-                    <div className="w-32 h-32 rounded-2xl overflow-hidden border-4 border-white/20 shadow-2xl transition-all duration-300 transform-style-3d">
+                    <div className="w-32 h-32 rounded-2xl overflow-hidden border-4 border-white/50 dark:border-white/20 shadow-2xl transition-all duration-300 transform-style-3d">
                         <img
                             src="https://cloudflare-imgbed-5re.pages.dev/file/1759506193400_1000004107.jpg"
                             alt="Avatar"
@@ -161,15 +161,15 @@ const Sidebar = ({ mobile, close, toc, activeSection }) => {
                 {/* Bottom Info */}
                 <div className="flex justify-between items-end relative z-10">
                     <div>
-                        <h3 className="text-2xl font-bold text-white mb-1">呂宥德</h3>
-                        <p className="text-sm text-white/60 font-medium">夢想家音響工作室</p>
+                        <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-1">呂宥德</h3>
+                        <p className="text-sm text-gray-600 dark:text-white/60 font-medium">夢想家音響工作室</p>
                     </div>
 
                     <a
                         href="https://github.com"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-md flex items-center justify-center text-white transition-all hover:scale-110"
+                        className="w-10 h-10 rounded-full bg-black/5 dark:bg-white/10 hover:bg-black/10 dark:hover:bg-white/20 backdrop-blur-md flex items-center justify-center text-gray-700 dark:text-white transition-all hover:scale-110"
                     >
                         <i className="fab fa-github text-xl"></i>
                     </a>

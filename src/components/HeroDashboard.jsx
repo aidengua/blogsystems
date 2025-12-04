@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import clsx from 'clsx';
@@ -65,11 +65,83 @@ const NotificationBar = () => {
     );
 };
 
+const TiltCard = ({ children, className }) => {
+    const cardRef = useRef(null);
+    const [rotate, setRotate] = useState({ x: 0, y: 0 });
+
+    const handleMouseMove = (e) => {
+        if (!cardRef.current) return;
+        const rect = cardRef.current.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        const centerX = rect.width / 2;
+        const centerY = rect.height / 2;
+
+        const rotateX = ((y - centerY) / centerY) * -20;
+        const rotateY = ((x - centerX) / centerX) * 20;
+
+        setRotate({ x: rotateX, y: rotateY });
+    };
+
+    const handleMouseLeave = () => {
+        setRotate({ x: 0, y: 0 });
+    };
+
+    return (
+        <motion.div
+            ref={cardRef}
+            onMouseMove={handleMouseMove}
+            onMouseLeave={handleMouseLeave}
+            style={{ perspective: '1000px' }}
+            className={clsx("relative shrink-0 mb-4", className)}
+        >
+            <motion.div
+                animate={{
+                    rotateX: rotate.x,
+                    rotateY: rotate.y,
+                    scale: rotate.x !== 0 ? 1.1 : 1
+                }}
+                transition={{ type: "spring", stiffness: 400, damping: 15 }}
+                style={{ transformStyle: 'preserve-3d' }}
+                className="w-full h-full"
+            >
+                {children}
+            </motion.div>
+        </motion.div>
+    );
+};
+
+const MarqueeColumn = ({ images, duration }) => {
+    return (
+        <div className="relative w-1/3 h-full overflow-hidden">
+            <motion.div
+                className="flex flex-col will-change-transform"
+                animate={{ y: ["0%", "-50%"] }}
+                transition={{
+                    duration: duration,
+                    repeat: Infinity,
+                    ease: "linear",
+                    repeatType: "loop"
+                }}
+            >
+                {[...images, ...images].map((img, index) => (
+                    <TiltCard key={index} className="aspect-square rounded-xl overflow-hidden shadow-lg border-2 border-white/20 hover:border-white/60 transition-colors">
+                        <img
+                            src={img}
+                            alt={`Gallery Image ${index}`}
+                            className="w-full h-full object-cover pointer-events-none"
+                            loading="lazy"
+                            decoding="async"
+                        />
+                    </TiltCard>
+                ))}
+            </motion.div>
+        </div>
+    );
+};
+
 const IntroCard = () => {
     const images = [img1, img2, img3, img4, img5, img6, img7, img8, img9];
-
-    // Duplicate images for seamless loop
-    const marqueeImages = [...images, ...images];
 
     return (
         <SpotlightCard className="relative h-64 md:h-80 overflow-hidden group cursor-pointer hover:shadow-2xl transition-all duration-500 bg-[#1a1a1a]" spotlightColor="rgba(112, 156, 239, 0.15)">
@@ -90,30 +162,9 @@ const IntroCard = () => {
                 {/* Right Image Grid (Vertical & Animated) */}
                 <div className="w-full md:w-1/2 relative overflow-hidden h-full">
                     <div className="absolute inset-0 flex gap-4 p-4 opacity-80 hover:opacity-100 transition-opacity duration-500">
-                        {/* Column 1 - Slow */}
-                        <div className="flex flex-col w-1/3 animate-marquee-vertical will-change-transform" style={{ animationDuration: '25s' }}>
-                            {marqueeImages.map((img, index) => (
-                                <div key={`col1-${index}`} className="aspect-square rounded-xl overflow-hidden shadow-lg border-2 border-white/20 hover:border-white/60 transition-colors shrink-0 mb-4">
-                                    <img src={img} alt={`Gallery Col 1 ${index}`} className="w-full h-full object-cover" />
-                                </div>
-                            ))}
-                        </div>
-                        {/* Column 2 - Medium */}
-                        <div className="flex flex-col w-1/3 animate-marquee-vertical will-change-transform" style={{ animationDuration: '20s' }}>
-                            {[...images.slice(3), ...images.slice(0, 3), ...images.slice(3), ...images.slice(0, 3)].map((img, index) => (
-                                <div key={`col2-${index}`} className="aspect-square rounded-xl overflow-hidden shadow-lg border-2 border-white/20 hover:border-white/60 transition-colors shrink-0 mb-4">
-                                    <img src={img} alt={`Gallery Col 2 ${index}`} className="w-full h-full object-cover" />
-                                </div>
-                            ))}
-                        </div>
-                        {/* Column 3 - Fast */}
-                        <div className="flex flex-col w-1/3 animate-marquee-vertical will-change-transform" style={{ animationDuration: '15s' }}>
-                            {[...images.slice(6), ...images.slice(0, 6), ...images.slice(6), ...images.slice(0, 6)].map((img, index) => (
-                                <div key={`col3-${index}`} className="aspect-square rounded-xl overflow-hidden shadow-lg border-2 border-white/20 hover:border-white/60 transition-colors shrink-0 mb-4">
-                                    <img src={img} alt={`Gallery Col 3 ${index}`} className="w-full h-full object-cover" />
-                                </div>
-                            ))}
-                        </div>
+                        <MarqueeColumn images={images} duration={25} />
+                        <MarqueeColumn images={[...images.slice(3), ...images.slice(0, 3)]} duration={20} />
+                        <MarqueeColumn images={[...images.slice(6), ...images.slice(0, 6)]} duration={15} />
                     </div>
                 </div>
             </div>

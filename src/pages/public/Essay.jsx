@@ -40,42 +40,39 @@ const Essay = () => {
 
     return (
         <MainLayout>
-            <div className="min-h-screen pb-20">
-                {/* Hero Section */}
-                <div className="relative h-[400px] w-full overflow-hidden mb-12">
-                    <div className="absolute inset-0">
-                        <LazyImage
-                            src={mainImage}
-                            alt="Essay Hero"
-                            className="w-full h-full object-cover"
-                            wrapperClassName="w-full h-full"
-                        />
-                        <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px]"></div>
+            <div className="container mx-auto px-4 pt-24 pb-12 max-w-7xl">
+                {/* Hero Section (Unified Design) */}
+                <div className="relative h-[240px] md:h-[320px] w-full rounded-[40px] overflow-hidden mb-12 group shadow-2xl">
+                    <div className="absolute inset-0 overflow-hidden">
+                        <div className="w-full h-full transition-transform duration-1000 ease-out group-hover:scale-105">
+                            <LazyImage
+                                src="https://cloudflare-imgbed-5re.pages.dev/file/1764850720558_gif.gif"
+                                alt="Essay Hero"
+                                className="w-full h-full object-cover blur-[2px]"
+                                wrapperClassName="w-full h-full"
+                            />
+                        </div>
+                        <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/60 to-transparent pointer-events-none"></div>
                     </div>
 
-                    <div className="absolute inset-0 flex flex-col justify-center px-8 md:px-16 max-w-7xl mx-auto">
-                        <div className="text-white/80 text-sm mb-2 font-mono tracking-wider">短文心事</div>
-                        <h1 className="text-4xl md:text-6xl font-bold text-white mb-6 tracking-tight">
-                            呂育德的日常生活
-                        </h1>
-                        <p className="text-white/70 text-lg max-w-2xl mb-8 font-light">
-                            隨時隨地，分享生活；幹話留言版。
-                        </p>
-
-                        <div className="absolute bottom-8 right-8 md:right-16">
-                            <Link
-                                to="/about"
-                                className="px-6 py-2 bg-white/20 hover:bg-white/30 backdrop-blur-md rounded-full text-white transition-all flex items-center gap-2 group"
-                            >
-                                <i className="fas fa-arrow-right -rotate-45 group-hover:rotate-0 transition-transform duration-300"></i>
-                                認識我
-                            </Link>
+                    <div className="relative z-10 h-full flex flex-col justify-center px-8 md:px-16">
+                        <div className="max-w-2xl animate-slide-right">
+                            <div className="text-yellow-500 font-bold mb-4 tracking-wider text-sm flex items-center gap-2">
+                                <span className="w-8 h-[2px] bg-yellow-500"></span>
+                                短文心事
+                            </div>
+                            <h1 className="text-4xl md:text-6xl font-bold text-white mb-6 leading-tight">
+                                日常生活
+                            </h1>
+                            <p className="text-lg md:text-xl text-gray-300 font-light flex items-center gap-2">
+                                隨時隨地，分享生活；<span className="font-bold text-white">幹話留言版</span>。
+                            </p>
                         </div>
                     </div>
                 </div>
 
                 {/* Content Grid */}
-                <div className="max-w-7xl mx-auto px-4">
+                <div>
                     {loading ? (
                         <div className="flex justify-center py-20">
                             <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
@@ -83,51 +80,60 @@ const Essay = () => {
                     ) : (
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                             {essays.map((essay) => (
-                                <div key={essay.id} className="bg-[#1a1b26] rounded-xl p-6 border border-white/5 hover:border-white/10 transition-colors group flex flex-col">
-                                    <div className="text-gray-300 text-lg mb-8 font-medium leading-relaxed min-h-[80px]">
-                                        {essay.content}
-                                    </div>
-
-                                    <div className="mt-auto pt-4 border-t border-white/5 flex justify-between items-center">
-                                        <div className="flex items-center gap-2 text-gray-500 text-sm">
-                                            <i className="far fa-clock"></i>
-                                            <span>
-                                                {essay.createdAt?.toLocaleDateString('zh-TW', {
-                                                    year: 'numeric',
-                                                    month: 'numeric',
-                                                    day: 'numeric'
-                                                })}
-                                            </span>
+                                <motion.div
+                                    key={essay.id}
+                                    initial={{ opacity: 0, y: 20 }}
+                                    whileInView={{ opacity: 1, y: 0 }}
+                                    viewport={{ once: true }}
+                                    className="group relative bg-gray-900 border border-gray-800 rounded-2xl overflow-hidden hover:border-blue-500/50 transition-all duration-300 hover:shadow-[0_0_20px_rgba(59,130,246,0.15)] flex flex-col"
+                                >
+                                    <div className="p-6 flex flex-col flex-grow">
+                                        <div className="text-white text-lg font-bold mb-4 leading-relaxed flex-grow">
+                                            {essay.content}
                                         </div>
-                                        <button
-                                            onClick={() => toggleComments(essay.id)}
-                                            className={`transition-colors flex items-center gap-2 ${expandedEssayId === essay.id ? 'text-[#709CEF]' : 'text-gray-500 hover:text-white'}`}
-                                        >
-                                            <i className="fas fa-comment-alt"></i>
-                                            <span className="text-sm">{expandedEssayId === essay.id ? '隱藏留言' : '查看留言'}</span>
-                                        </button>
-                                    </div>
 
-                                    {/* Expandable Comment Section */}
-                                    <AnimatePresence>
-                                        {expandedEssayId === essay.id && (
-                                            <motion.div
-                                                initial={{ height: 0, opacity: 0 }}
-                                                animate={{ height: 'auto', opacity: 1 }}
-                                                exit={{ height: 0, opacity: 0 }}
-                                                transition={{ duration: 0.3 }}
-                                                className="overflow-hidden"
+                                        <div className="w-full border-b-2 border-dashed border-gray-800 mb-4"></div>
+
+                                        <div className="mt-auto flex justify-between items-center">
+                                            <div className="flex items-center gap-2 bg-gray-800 rounded-full px-3 py-1.5 text-gray-300 text-xs font-mono">
+                                                <i className="fas fa-clock"></i>
+                                                <span>
+                                                    {essay.createdAt?.toLocaleDateString('zh-TW', {
+                                                        year: 'numeric',
+                                                        month: 'numeric',
+                                                        day: 'numeric'
+                                                    })}
+                                                </span>
+                                            </div>
+                                            <button
+                                                onClick={() => toggleComments(essay.id)}
+                                                className={`text-lg transition-colors ${expandedEssayId === essay.id ? 'text-blue-400' : 'text-gray-400 hover:text-white'}`}
                                             >
-                                                <div className="pt-6 mt-4 border-t border-white/5">
-                                                    <CommentSection
-                                                        postId={essay.id}
-                                                        postTitle={essay.content ? (essay.content.length > 20 ? essay.content.substring(0, 20) + '...' : essay.content) : 'Short Essay'}
-                                                    />
-                                                </div>
-                                            </motion.div>
-                                        )}
-                                    </AnimatePresence>
-                                </div>
+                                                <i className="fas fa-comment-alt"></i>
+                                            </button>
+                                        </div>
+
+                                        {/* Expandable Comment Section */}
+                                        <AnimatePresence>
+                                            {expandedEssayId === essay.id && (
+                                                <motion.div
+                                                    initial={{ height: 0, opacity: 0 }}
+                                                    animate={{ height: 'auto', opacity: 1 }}
+                                                    exit={{ height: 0, opacity: 0 }}
+                                                    transition={{ duration: 0.3 }}
+                                                    className="overflow-hidden"
+                                                >
+                                                    <div className="pt-6 mt-4 border-t border-gray-800">
+                                                        <CommentSection
+                                                            postId={essay.id}
+                                                            postTitle={essay.content ? (essay.content.length > 20 ? essay.content.substring(0, 20) + '...' : essay.content) : 'Short Essay'}
+                                                        />
+                                                    </div>
+                                                </motion.div>
+                                            )}
+                                        </AnimatePresence>
+                                    </div>
+                                </motion.div>
                             ))}
                         </div>
                     )}
