@@ -2,6 +2,28 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v1.5.0] - 2025-12-04
+### Added
+- **Mac-style Widgets**:
+  - Integrated Clock, Battery, Weather, and Photo widgets into the "Audio Design Home" card on the homepage.
+  - **Clock**: Analog clock with precise styling and liquid glass effect.
+  - **Battery**: Real-time battery status with unified glassmorphism style.
+  - **Weather**: Real-time Taipei weather data with dark glass aesthetic.
+  - **Photo**: "Golden Selection" photo slideshow with "More Recommend" button.
+- **Visitor Statistics**:
+  - Added real-time visitor tracking using Firebase Firestore.
+  - Implemented a 3D flip card on the About page showing weekly visitor stats.
+
+### Changed
+- **Essay Page Redesign**:
+  - Unified banner height and design with the Equipment page.
+  - Redesigned essay cards with bold text, dashed separators, and pill-shaped date badges.
+  - Updated banner image to a dynamic GIF with blur effect.
+- **Homepage Layout**:
+  - Centered widgets in the "Audio Design Home" card.
+  - Optimized widget sizes and spacing for better visual balance.
+  - Unified blur background effects across all widgets (`bg-black/20 backdrop-blur-xl`).
+
 ## [v1.4.0] - 2025-12-04
 ### Added
 - **Comment System**:

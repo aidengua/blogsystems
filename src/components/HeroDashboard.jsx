@@ -197,6 +197,11 @@ const CategoryCard = ({ title, icon, colorClass, to }) => (
     </Link>
 );
 
+import ClockWidget from './widgets/ClockWidget';
+import BatteryWidget from './widgets/BatteryWidget';
+import WeatherWidget from './widgets/WeatherWidget';
+import PhotoWidget from './widgets/PhotoWidget';
+
 const FeatureCard = ({ posts, showRecommend, setShowRecommend }) => (
     <SpotlightCard className="relative h-full overflow-hidden group hover:shadow-2xl transition-all duration-500 bg-gray-900" spotlightColor="rgba(112, 156, 239, 0.15)">
         <AnimatePresence mode="wait">
@@ -206,7 +211,7 @@ const FeatureCard = ({ posts, showRecommend, setShowRecommend }) => (
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
-                    className="absolute inset-0"
+                    className="relative h-full flex flex-col"
                 >
                     <div className="absolute inset-0 z-0">
                         <LazyImage
@@ -218,25 +223,22 @@ const FeatureCard = ({ posts, showRecommend, setShowRecommend }) => (
                         <div className="absolute inset-0 bg-gradient-to-b from-blue-900/30 to-black/80"></div>
                     </div>
 
+                    {/* Widgets Container */}
+                    <div className="absolute inset-0 z-20 flex flex-col items-center justify-center gap-3">
+                        <div className="flex flex-row gap-3">
+                            <ClockWidget />
+                            <BatteryWidget />
+                            <WeatherWidget />
+                        </div>
+                        <div className="w-[22.5rem] md:w-[25.5rem]">
+                            <PhotoWidget onMoreClick={() => setShowRecommend(true)} />
+                        </div>
+                    </div>
+
                     {/* Animated Particles/Stars (Simplified) */}
                     <div className="absolute inset-0 opacity-50 pointer-events-none">
                         <div className="absolute top-10 left-10 w-2 h-2 bg-white rounded-full animate-ping"></div>
                         <div className="absolute bottom-20 right-20 w-1 h-1 bg-white rounded-full animate-pulse"></div>
-                    </div>
-
-                    <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-6 z-10 text-white">
-                        <div className="mt-auto w-full flex justify-between items-end">
-                            <div className="text-left">
-                                <div className="text-xs opacity-60">新品主題</div>
-                                <div className="text-2xl font-bold">音響設計之家</div>
-                            </div>
-                            <button
-                                onClick={() => setShowRecommend(true)}
-                                className="px-4 py-2 bg-white/10 hover:bg-white/20 backdrop-blur-md rounded-full text-sm transition-colors flex items-center gap-2 cursor-pointer"
-                            >
-                                <i className="fas fa-arrow-right -rotate-45"></i> 更多推薦
-                            </button>
-                        </div>
                     </div>
                 </motion.div>
             ) : (
