@@ -9,6 +9,20 @@ import MainLayout from '../../layouts/MainLayout';
 import Sidebar from '../../components/Sidebar';
 import CommentSection from '../../components/CommentSection';
 
+const MetaItem = ({ icon, value, label }) => (
+    <div className="group relative flex items-center gap-2 cursor-help transition-opacity hover:opacity-100 opacity-80">
+        <i className={`${icon} text-sm`}></i>
+        <span className="text-sm font-medium font-mono">{value}</span>
+
+        {/* Tooltip */}
+        <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-1.5 bg-black/80 backdrop-blur-md border border-white/10 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-200 transform translate-y-2 group-hover:translate-y-0 whitespace-nowrap pointer-events-none z-20 shadow-xl">
+            {label}
+            {/* Triangle/Arrow */}
+            <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-black/80"></div>
+        </div>
+    </div>
+);
+
 const PostDetail = () => {
     const { slug } = useParams();
     const [post, setPost] = useState(null);
@@ -108,63 +122,86 @@ const PostDetail = () => {
     return (
         <MainLayout>
             {/* Post Header */}
-            <div className="relative h-[400px] w-full overflow-hidden">
+            <div className="relative h-[450px] w-full overflow-hidden">
                 <div
-                    className="absolute inset-0 bg-cover bg-center"
+                    className="absolute inset-0 bg-cover bg-center transform scale-105"
                     style={{ backgroundImage: `url(${post.coverImage || 'https://camo.githubusercontent.com/520c5cfb0b63284eeb8c1d869660ffd7ab93b6a1310ffc6da27442f14d37a437/68747470733a2f2f6e706d2e656c656d6563646e2e636f6d2f616e7a686979752d6173736574732f696d6167652f636f6d6d6f6e2f6769746875622d696e666f2f4b6e6f636b2d436f64652e676966'})` }}
                 >
-                    <div className="absolute inset-0 bg-black/50 backdrop-blur-[2px]"></div>
+                    <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/50 to-[#121212] backdrop-blur-[2px]"></div>
                 </div>
 
-                <div className="relative z-10 h-full container mx-auto px-4 flex flex-col justify-center text-white max-w-7xl">
-                    <div className="w-full lg:w-3/4">
-                        {/* Tags & Badges Row */}
-                        <div className="flex flex-wrap items-center gap-2 mb-4">
-                            <span className="bg-[#6c757d] text-white text-xs px-2 py-1 rounded-md">原創</span>
+                <div className="relative z-10 h-full container mx-auto px-4 flex flex-col justify-center text-white max-w-7xl pt-12">
+                    <div className="w-full lg:w-4/5">
+                        {/* Tags & Categories Row */}
+                        <div className="flex flex-wrap items-center gap-3 mb-6">
+                            {/* Original Badge */}
+                            <span className="bg-white/20 backdrop-blur-md border border-white/10 px-3 py-1 rounded-full text-xs font-medium tracking-wide">
+                                原創
+                            </span>
+
+                            {/* Category Badge (Simulated if not present in post data, or use first tag) */}
+                            {post.category && (
+                                <span className="bg-white/20 backdrop-blur-md border border-white/10 px-3 py-1 rounded-full text-xs font-medium tracking-wide">
+                                    {post.category}
+                                </span>
+                            )}
+
+                            {/* Tags */}
                             {post.tags && post.tags.map(tag => (
-                                <span key={tag} className="flex items-center gap-1 text-xs px-2 py-1 rounded-md border border-white/30 hover:bg-white/20 transition-colors">
-                                    <i className="fas fa-tag text-[10px]"></i>
-                                    {tag}
+                                <span key={tag} className="text-gray-300 text-sm hover:text-white transition-colors cursor-pointer">
+                                    #{tag}
                                 </span>
                             ))}
                         </div>
 
                         {/* Title */}
-                        <h1 className="text-3xl md:text-5xl font-display font-bold mb-6 text-shadow-lg leading-tight">
+                        <h1 className="text-3xl md:text-5xl lg:text-6xl font-display font-bold mb-8 text-shadow-xl leading-tight tracking-tight">
                             {post.title}
                         </h1>
 
                         {/* Metadata Row */}
-                        <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm opacity-90">
-                            <div className="flex items-center gap-2" title="發表於">
-                                <i className="far fa-calendar-alt"></i>
-                                <span>發表於 {post.createdAt?.toDate().toLocaleDateString('zh-TW')}</span>
-                            </div>
-                            <span className="hidden md:inline text-white/40">|</span>
-                            <div className="flex items-center gap-2" title="更新於">
-                                <i className="fas fa-history"></i>
-                                <span>更新於 {post.createdAt?.toDate().toLocaleDateString('zh-TW')}</span>
-                            </div>
-                            <span className="hidden md:inline text-white/40">|</span>
-                            <div className="flex items-center gap-2" title="字數統計">
-                                <i className="fas fa-file-word"></i>
-                                <span>字數統計: {(post.content?.length / 1000).toFixed(1)}k</span>
-                            </div>
-                            <span className="hidden md:inline text-white/40">|</span>
-                            <div className="flex items-center gap-2" title="閱讀時長">
-                                <i className="far fa-clock"></i>
-                                <span>閱讀時長: {Math.ceil((post.content?.length || 0) / 400)} 分鐘</span>
-                            </div>
-                            <span className="hidden md:inline text-white/40">|</span>
-                            <div className="flex items-center gap-2" title="閱讀量">
-                                <i className="far fa-eye"></i>
-                                <span>閱讀量: {post.views || 0}</span>
-                            </div>
-                            <span className="hidden md:inline text-white/40">|</span>
-                            <div className="flex items-center gap-2" title="評論數">
-                                <i className="far fa-comment-dots"></i>
-                                <span>評論數: {commentCount}</span>
-                            </div>
+                        <div className="flex flex-wrap items-center gap-6 text-sm font-medium text-gray-200">
+                            {/* Word Count */}
+                            <MetaItem
+                                icon="fas fa-file-alt"
+                                value={`${(post.content?.length / 1000).toFixed(1)}k`}
+                                label="字數統計"
+                            />
+
+                            {/* Read Time */}
+                            <MetaItem
+                                icon="far fa-clock"
+                                value={`${Math.ceil((post.content?.length || 0) / 400)} 分鐘`}
+                                label="閱讀時長"
+                            />
+
+                            {/* Date */}
+                            <MetaItem
+                                icon="far fa-calendar-alt"
+                                value={post.createdAt?.toDate().toLocaleDateString('zh-TW')}
+                                label="發布日期"
+                            />
+
+                            {/* Location (Placeholder as per design) */}
+                            <MetaItem
+                                icon="fas fa-map-marker-alt"
+                                value="台北"
+                                label="發布地點"
+                            />
+
+                            {/* Views (Fire icon) */}
+                            <MetaItem
+                                icon="fas fa-fire"
+                                value={post.views || 0}
+                                label="熱度"
+                            />
+
+                            {/* Comments */}
+                            <MetaItem
+                                icon="fas fa-comment"
+                                value={commentCount}
+                                label="評論數"
+                            />
                         </div>
                     </div>
                 </div>

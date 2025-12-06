@@ -7,6 +7,19 @@ const Changelog = () => {
     // Mock data for changelog - in a real app this could come from Firebase
     const changelogs = [
         {
+            version: "v1.5.1",
+            date: "2025-12-06",
+            title: "Visual & Performance Polish",
+            content: (
+                <ul className="list-disc list-inside space-y-1 text-sm">
+                    <li><strong>Article Banner:</strong> Redesigned with glassmorphic badges, large typography, and interactive metadata tooltips.</li>
+                    <li><strong>Footer Redesign:</strong> Compact layout with avatar, status indicators, and quick links.</li>
+                    <li><strong>Loading Optimization:</strong> Smart caching to skip loading screens when switching between Tag pages.</li>
+                </ul>
+            ),
+            type: "improvement"
+        },
+        {
             version: "v1.5.0",
             date: "2025-12-04",
             title: "Mac-style Widgets & Essay Redesign",

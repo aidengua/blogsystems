@@ -16,17 +16,22 @@ import PrivateRoute from './components/PrivateRoute';
 import PageWrapper from './components/PageWrapper';
 import ScrollToTop from './components/ScrollToTop';
 
+import { LoadingProvider } from './context/LoadingContext';
+import LoadingScreen from './components/LoadingScreen';
 import { NotificationProvider } from './context/NotificationContext';
 import NotificationToast from './components/NotificationToast';
+import ContextMenu from './components/ContextMenu';
 
 function App() {
   const location = useLocation();
 
   return (
-    <NotificationProvider>
-      <NotificationToast />
-      <ScrollToTop />
-      <AnimatePresence mode="wait">
+    <LoadingProvider>
+      <LoadingScreen />
+      <NotificationProvider>
+        <ContextMenu />
+        <NotificationToast />
+        <ScrollToTop />
         <Routes location={location} key={location.pathname}>
           {/* Public Routes */}
           <Route path="/" element={
@@ -108,8 +113,9 @@ function App() {
             </PrivateRoute>
           } />
         </Routes>
-      </AnimatePresence>
-    </NotificationProvider >
+
+      </NotificationProvider >
+    </LoadingProvider>
   );
 }
 

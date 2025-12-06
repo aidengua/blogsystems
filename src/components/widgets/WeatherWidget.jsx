@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import SpotlightCard from '../SpotlightCard';
 
 const WeatherWidget = () => {
     const [weather, setWeather] = useState(null);
@@ -63,35 +64,37 @@ const WeatherWidget = () => {
     }
 
     return (
-        <div className="relative w-28 h-28 md:w-32 md:h-32 bg-black/20 backdrop-blur-xl border border-white/10 rounded-[1.5rem] shadow-xl flex flex-col p-3 text-white overflow-hidden group hover:bg-[#1c1c1e] transition-all duration-300 font-sans">
-            {/* Location */}
-            <div className="text-sm font-medium flex items-center gap-1 mb-0.5 whitespace-nowrap">
-                台北市 <i className="fas fa-location-arrow text-[0.6rem]"></i>
-            </div>
-
-            {/* Main Temp */}
-            <div className="text-4xl font-light tracking-tighter leading-none mb-1">
-                {weather?.temp}°
-            </div>
-
-            {/* Condition */}
-            <div className="flex items-center gap-1.5 text-xs mb-auto whitespace-nowrap">
-                <i className={`fas ${getWeatherIcon(weather?.code, weather?.isDay)}`}></i>
-                <span>{getWeatherText(weather?.code)}</span>
-            </div>
-
-            {/* High/Low */}
-            <div className="flex gap-3 text-xs mt-1 w-full">
-                <div className="flex flex-col items-start">
-                    <span className="opacity-60 text-[0.6rem] leading-tight">最高</span>
-                    <span className="font-medium leading-tight">{weather?.max}°</span>
+        <SpotlightCard className="w-28 h-28 md:w-32 md:h-32 rounded-[1.5rem] shadow-xl group font-sans" spotlightColor="rgba(112, 156, 239, 0.2)">
+            <div className="w-full h-full flex flex-col p-3 text-white">
+                {/* Location */}
+                <div className="text-sm font-medium flex items-center gap-1 mb-0.5 whitespace-nowrap">
+                    台北市 <i className="fas fa-location-arrow text-[0.6rem]"></i>
                 </div>
-                <div className="flex flex-col items-start">
-                    <span className="opacity-60 text-[0.6rem] leading-tight">最低</span>
-                    <span className="font-medium leading-tight">{weather?.min}°</span>
+
+                {/* Main Temp */}
+                <div className="text-4xl font-light tracking-tighter leading-none mb-1">
+                    {weather?.temp}°
+                </div>
+
+                {/* Condition */}
+                <div className="flex items-center gap-1.5 text-xs mb-auto whitespace-nowrap">
+                    <i className={`fas ${getWeatherIcon(weather?.code, weather?.isDay)}`}></i>
+                    <span>{getWeatherText(weather?.code)}</span>
+                </div>
+
+                {/* High/Low */}
+                <div className="flex gap-3 text-xs mt-1 w-full">
+                    <div className="flex flex-col items-start">
+                        <span className="opacity-60 text-[0.6rem] leading-tight">最高</span>
+                        <span className="font-medium leading-tight">{weather?.max}°</span>
+                    </div>
+                    <div className="flex flex-col items-start">
+                        <span className="opacity-60 text-[0.6rem] leading-tight">最低</span>
+                        <span className="font-medium leading-tight">{weather?.min}°</span>
+                    </div>
                 </div>
             </div>
-        </div>
+        </SpotlightCard>
     );
 };
 

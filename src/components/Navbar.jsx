@@ -20,7 +20,7 @@ const ScrollIndicator = ({ progress }) => {
             onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
-            className="w-8 h-8 rounded-full bg-white/20 hover:bg-[#60a5fa] text-gray-300 hover:text-white flex items-center justify-center transition-all duration-300"
+            className="w-8 h-8 rounded-full bg-white/20 hover:bg-[#60a5fa] text-gray-300 hover:text-white flex items-center justify-center transition-all duration-300 !shrink-0 !grow-0 !w-8 !max-w-[2rem]"
         >
             {isHovered ? (
                 <i className="fas fa-arrow-up text-xs"></i>
@@ -90,39 +90,107 @@ const Navbar = ({ toggleSidebar }) => {
     };
 
     const navClass = clsx(
-        'fixed top-0 w-full z-50 transition-all duration-300 ease-in-out px-4 lg:px-8 py-3',
-        'bg-black/80 backdrop-blur-md text-gray-300 border-b border-white/10'
+        'fixed top-0 w-full z-50 transition-all duration-500 ease-in-out px-4 lg:px-8 py-3 border-b',
+        {
+            'bg-transparent border-transparent': scrolled,
+            'bg-black/80 backdrop-blur-md border-white/10': !scrolled
+        }
+    );
+
+    const capsuleClass = clsx(
+        'transition-all duration-500 ease-in-out flex items-center border',
+        {
+            'bg-black/80 backdrop-blur-md rounded-full shadow-lg border-white/20 px-4 py-1': scrolled,
+            'bg-transparent border-transparent': !scrolled
+        }
     );
 
     // Helper for active link
     const isActive = (path) => location.pathname === path;
 
     // Link Item Component
-    const NavItem = ({ to, icon, label }) => (
+    const NavItem = ({ to, label }) => (
         <Link
             to={to}
             className={clsx(
-                'relative px-4 py-2 rounded-full transition-all duration-300 flex items-center gap-2 group',
+                'relative px-4 py-2 rounded-full transition-all duration-300 flex items-center justify-center gap-2 group',
                 {
-                    'text-blue-400': isActive(to),
-                    'text-gray-400 hover:bg-[#60a5fa] hover:text-white hover:shadow-lg hover:shadow-blue-500/20': !isActive(to),
+                    'text-white': isActive(to),
+                    'text-white hover:bg-[#60a5fa] hover:text-white hover:shadow-lg hover:shadow-blue-500/20': !isActive(to),
                 }
             )}
         >
-            <i className={clsx(icon, 'text-sm transition-transform group-hover:scale-110')}></i>
-            <span className="font-medium text-sm">{label}</span>
+            <span className="font-bold text-sm">{label}</span>
         </Link>
     );
+
+    // Fluid Dropdown Component
+    const FluidDropdown = ({ items }) => {
+        const [hoveredIndex, setHoveredIndex] = useState(null);
+
+        return (
+            <div
+                className="bg-black/80 backdrop-blur-md border border-white/20 rounded-full p-2 flex items-center gap-2 shadow-2xl whitespace-nowrap"
+                onMouseLeave={() => setHoveredIndex(null)}
+            >
+                {items.map((item, index) => {
+                    const isHovered = hoveredIndex === index;
+                    const isAnyHovered = hoveredIndex !== null;
+
+                    return (
+                        <motion.div
+                            key={index}
+                            layout
+                            onHoverStart={() => setHoveredIndex(index)}
+                            animate={{
+                                scale: isHovered ? 1.1 : (isAnyHovered ? 0.95 : 1),
+                                opacity: isAnyHovered && !isHovered ? 0.8 : 1
+                            }}
+                            transition={{ type: "spring", stiffness: 400, damping: 25 }}
+                            className="relative"
+                        >
+                            {item.onClick ? (
+                                <button
+                                    onClick={item.onClick}
+                                    className="flex items-center gap-2 px-4 py-2 rounded-full text-white hover:text-white transition-colors"
+                                >
+                                    <span className="text-sm font-bold">{item.label}</span>
+                                </button>
+                            ) : (
+                                <Link
+                                    to={item.to}
+                                    className="flex items-center gap-2 px-4 py-2 rounded-full text-white hover:text-white transition-colors"
+                                >
+                                    <span className="text-sm font-bold">{item.label}</span>
+                                </Link>
+                            )}
+                            {/* Active Background Pill */}
+                            {isHovered && (
+                                <motion.div
+                                    layoutId="dropdown-pill"
+                                    className="absolute inset-0 bg-[#60a5fa] rounded-full -z-10"
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    exit={{ opacity: 0 }}
+                                    transition={{ duration: 0.2 }}
+                                />
+                            )}
+                        </motion.div>
+                    );
+                })}
+            </div>
+        );
+    };
 
     return (
         <>
             <nav className={navClass}>
-                <div className="max-w-7xl mx-auto flex justify-between items-center h-10">
+                <div className="max-w-7xl mx-auto flex justify-between items-center h-10 relative">
                     {/* Left: Logo / Name */}
-                    <div className="flex items-center gap-4">
+                    <div className={clsx(capsuleClass, "gap-4")}>
                         <button
                             onClick={toggleSidebar}
-                            className="lg:hidden text-lg hover:scale-110 transition-transform p-2"
+                            className="lg:hidden text-lg hover:scale-110 transition-transform p-2 text-white"
                         >
                             <i className="fas fa-bars"></i>
                         </button>
@@ -133,78 +201,63 @@ const Navbar = ({ toggleSidebar }) => {
                     </div>
 
                     {/* Center: Navigation Links (Desktop) */}
-                    <div className="hidden lg:flex items-center gap-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
-                        <NavItem to="/" icon="fas fa-home" label="首頁" />
+                    <div className={clsx(
+                        "hidden lg:flex items-center justify-center gap-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transition-all duration-500 ease-in-out border",
+                        {
+                            'bg-black/80 backdrop-blur-md rounded-full shadow-lg border-white/20 px-2 py-1': scrolled,
+                            'bg-transparent border-transparent': !scrolled
+                        }
+                    )}>
+                        <NavItem to="/" label="首頁" />
 
                         {/* Library Dropdown */}
-                        <div className="relative group">
+                        <div className="relative group flex items-center">
                             <button className={clsx(
-                                'relative px-4 py-2 rounded-full transition-all duration-300 flex items-center gap-2 text-gray-400 hover:bg-[#60a5fa] hover:text-white hover:shadow-lg hover:shadow-blue-500/20'
+                                'relative px-4 py-2 rounded-full transition-all duration-300 flex items-center justify-center gap-2 text-white hover:bg-[#60a5fa] hover:text-white hover:shadow-lg hover:shadow-blue-500/20'
                             )}>
-                                <i className="fas fa-book text-sm"></i>
-                                <span className="font-medium text-sm">文庫</span>
-                                <i className="fas fa-chevron-down text-xs opacity-70 group-hover:rotate-180 transition-transform"></i>
+                                <span className="font-bold text-sm">文庫</span>
                             </button>
 
                             {/* Horizontal Dropdown Menu */}
-                            <div className="absolute top-full left-1/2 -translate-x-1/2 pt-4 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform group-hover:translate-y-0 translate-y-2">
-                                <div className="bg-[#1a1a1a] border border-white/10 rounded-xl p-2 flex items-center gap-2 shadow-2xl whitespace-nowrap">
-                                    <Link to="/archives" className="flex items-center gap-2 px-4 py-2 rounded-full text-gray-400 hover:bg-[#60a5fa] hover:text-white transition-all duration-300">
-                                        <i className="fas fa-archive"></i>
-                                        <span className="text-sm font-medium">全部文章</span>
-                                    </Link>
-                                    <Link to="/categories" className="flex items-center gap-2 px-4 py-2 rounded-full text-gray-400 hover:bg-[#60a5fa] hover:text-white transition-all duration-300">
-                                        <i className="fas fa-th-large"></i>
-                                        <span className="text-sm font-medium">分類列表</span>
-                                    </Link>
-                                    <Link to="/tags" className="flex items-center gap-2 px-4 py-2 rounded-full text-gray-400 hover:bg-[#60a5fa] hover:text-white transition-all duration-300">
-                                        <i className="fas fa-tags"></i>
-                                        <span className="text-sm font-medium">標籤列表</span>
-                                    </Link>
-                                </div>
+                            <div className="absolute top-full left-1/2 -translate-x-1/2 pt-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform group-hover:translate-y-0 translate-y-2">
+                                <FluidDropdown items={[
+                                    { to: "/archives", label: "全部文章" },
+                                    { to: "/categories", label: "分類列表" },
+                                    { to: "/tags", label: "標籤列表" }
+                                ]} />
                             </div>
                         </div>
 
-                        <NavItem to="/changelog" icon="fas fa-history" label="更新日誌" />
-                        <NavItem to="/essay" icon="fas fa-pen-fancy" label="短文" />
+                        <NavItem to="/changelog" label="日誌" />
+                        <NavItem to="/essay" label="短文" />
 
                         {/* My Dropdown */}
-                        <div className="relative group">
+                        <div className="relative group flex items-center">
                             <button className={clsx(
-                                'relative px-6 py-1.5 rounded-full transition-all duration-300 flex items-center gap-2 text-gray-400 hover:bg-[#60a5fa] hover:text-white hover:shadow-lg hover:shadow-blue-500/20'
+                                'relative px-6 py-1.5 rounded-full transition-all duration-300 flex items-center justify-center gap-2 text-white hover:bg-[#60a5fa] hover:text-white hover:shadow-lg hover:shadow-blue-500/20'
                             )}>
-                                <i className="fas fa-user text-sm"></i>
-                                <span className="font-medium text-sm">作者空間</span>
+                                <span className="font-bold text-sm">作者</span>
                             </button>
 
                             {/* Horizontal Dropdown Menu */}
-                            <div className="absolute top-full left-1/2 -translate-x-1/2 pt-4 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform group-hover:translate-y-0 translate-y-2">
-                                <div className="bg-[#1a1a1a] border border-white/10 rounded-xl p-2 flex items-center gap-2 shadow-2xl whitespace-nowrap">
-                                    <button onClick={handleRandomPost} className="flex items-center gap-2 px-4 py-2 rounded-full text-gray-400 hover:bg-[#60a5fa] hover:text-white transition-all duration-300">
-                                        <i className="fas fa-shoe-prints"></i>
-                                        <span className="text-sm font-medium">隨便逛逛</span>
-                                    </button>
-                                    <Link to="/about" className="flex items-center gap-2 px-4 py-2 rounded-full text-gray-400 hover:bg-[#60a5fa] hover:text-white transition-all duration-300">
-                                        <i className="fas fa-paper-plane"></i>
-                                        <span className="text-sm font-medium">關於本站</span>
-                                    </Link>
-                                    <Link to="/equipment" className="flex items-center gap-2 px-4 py-2 rounded-full text-gray-400 hover:bg-[#60a5fa] hover:text-white transition-all duration-300">
-                                        <i className="fas fa-shapes"></i>
-                                        <span className="text-sm font-medium">我的裝備</span>
-                                    </Link>
-                                </div>
+                            <div className="absolute top-full left-1/2 -translate-x-1/2 pt-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform group-hover:translate-y-0 translate-y-2">
+                                <FluidDropdown items={[
+                                    { onClick: handleRandomPost, label: "隨便逛逛" },
+                                    { to: "/about", label: "關於本站" },
+                                    { to: "/equipment", label: "我的裝備" }
+                                ]} />
                             </div>
                         </div>
                     </div>
 
                     {/* Right: Actions */}
-                    <div className="flex items-center gap-3">
+                    <div
+                        className={clsx(capsuleClass, "gap-3 !p-1 !gap-1 !transition-none")}
+                    >
                         {/* Search Button */}
                         <button
                             onClick={() => setIsSearchOpen(true)}
-                            className={clsx(
-                                "p-2 rounded-full transition-all duration-300 hover:bg-gray-100 dark:hover:bg-gray-800"
-                            )}
+                            className="w-8 h-8 rounded-full bg-white/20 hover:bg-[#60a5fa] text-gray-300 hover:text-white flex items-center justify-center transition-colors duration-300"
                         >
                             <i className="fas fa-search text-sm"></i>
                         </button>
@@ -212,9 +265,7 @@ const Navbar = ({ toggleSidebar }) => {
                         {/* Dark Mode Toggle */}
                         <button
                             onClick={toggleTheme}
-                            className={clsx(
-                                "p-2 rounded-full transition-all duration-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:rotate-12"
-                            )}
+                            className="w-8 h-8 rounded-full bg-white/20 hover:bg-[#60a5fa] text-gray-300 hover:text-white flex items-center justify-center transition-colors duration-300 hover:rotate-12"
                         >
                             <i className={clsx("fas", isDark ? "fa-sun" : "fa-moon", "text-sm")}></i>
                         </button>
@@ -223,28 +274,30 @@ const Navbar = ({ toggleSidebar }) => {
                         <AnimatePresence mode="wait">
                             {Math.round(scrollProgress) > 1 && (
                                 <motion.div
-                                    initial={{ width: 0, opacity: 0, marginLeft: 0 }}
-                                    animate={{ width: "auto", opacity: 1, marginLeft: 12 }}
-                                    exit={{ width: 0, opacity: 0, marginLeft: 0 }}
+                                    initial={{ width: 0, opacity: 0 }}
+                                    animate={{ width: "auto", opacity: 1 }}
+                                    exit={{ width: 0, opacity: 0 }}
                                     transition={{ duration: 0.3, ease: "easeInOut" }}
                                     className="overflow-hidden flex items-center justify-end"
                                 >
-                                    {Math.round(scrollProgress) >= 99 ? (
-                                        <motion.button
-                                            key="backToTop"
-                                            initial={{ y: 20, opacity: 0 }}
-                                            animate={{ y: 0, opacity: 1 }}
-                                            exit={{ y: 20, opacity: 0 }}
-                                            transition={{ duration: 0.3 }}
-                                            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-                                            className="px-4 py-1.5 rounded-full bg-white/20 hover:bg-white/30 text-white text-xs font-medium flex items-center gap-2 whitespace-nowrap"
-                                        >
-                                            <i className="fas fa-arrow-up"></i>
-                                            <span>返回頂部</span>
-                                        </motion.button>
-                                    ) : (
-                                        <ScrollIndicator progress={scrollProgress} />
-                                    )}
+                                    <AnimatePresence mode="wait" initial={false}>
+                                        {Math.round(scrollProgress) >= 99 ? (
+                                            <motion.button
+                                                key="backToTop"
+                                                initial={{ opacity: 0 }}
+                                                animate={{ opacity: 1 }}
+                                                exit={{ opacity: 0 }}
+                                                transition={{ duration: 0.3 }}
+                                                onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                                                className="h-8 px-4 rounded-full bg-white/20 hover:bg-white/30 text-white text-xs font-medium flex items-center gap-2 whitespace-nowrap"
+                                            >
+                                                <i className="fas fa-arrow-up"></i>
+                                                <span>返回頂部</span>
+                                            </motion.button>
+                                        ) : (
+                                            <ScrollIndicator key="indicator" progress={scrollProgress} />
+                                        )}
+                                    </AnimatePresence>
                                 </motion.div>
                             )}
                         </AnimatePresence>

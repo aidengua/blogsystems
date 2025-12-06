@@ -16,6 +16,28 @@ const Sidebar = ({ mobile, close, toc, activeSection }) => {
     });
     const [activityData, setActivityData] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [chartDims, setChartDims] = useState({ width: 0, height: 0 });
+    const chartContainerRef = useRef(null);
+
+    useEffect(() => {
+        // Robust check: Only render chart when container has dimensions
+        if (!chartContainerRef.current) return;
+
+        const observer = new ResizeObserver((entries) => {
+            for (const entry of entries) {
+                const { width, height } = entry.contentRect;
+                if (width > 0 && height > 0) {
+                    setChartDims({ width, height });
+                } else {
+                    setChartDims({ width: 0, height: 0 });
+                }
+            }
+        });
+
+        observer.observe(chartContainerRef.current);
+
+        return () => observer.disconnect();
+    }, []);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -239,17 +261,23 @@ const Sidebar = ({ mobile, close, toc, activeSection }) => {
                         </div>
 
                         {/* Back Face (QR Code) */}
-                        <div className="absolute inset-0 h-full w-full rotate-y-180 backface-hidden bg-white dark:bg-[#1e1e1e] rounded-xl overflow-hidden flex items-center justify-center border border-[#06C755]/30 shadow-[0_0_15px_rgba(6,199,85,0.2)]">
-                            <div className="absolute inset-0 bg-gradient-to-br from-[#06C755]/5 to-transparent"></div>
-                            <div className="relative z-10 p-3 bg-white rounded-lg shadow-sm">
+                        <div className="absolute inset-0 h-full w-full rotate-y-180 backface-hidden bg-[#111] rounded-xl overflow-hidden flex items-center justify-between px-6 border border-white/10 shadow-2xl">
+                            {/* Left Text */}
+                            <div className="flex flex-col items-start z-10">
+                                <h3 className="text-2xl font-bold text-white tracking-wider mb-1">掃一掃</h3>
+                                <div className="flex items-center gap-1 text-xs text-gray-400">
+                                    <span>不錯過精彩文章</span>
+                                    <i className="fas fa-caret-right text-white"></i>
+                                </div>
+                            </div>
+
+                            {/* Right QR Code */}
+                            <div className="relative z-10 bg-white p-1.5 rounded-lg">
                                 <img
                                     src="https://cloudflare-imgbed-5re.pages.dev/file/1764755896344_1000037754.jpg"
                                     alt="Line QR Code"
-                                    className="w-20 h-20 object-contain"
+                                    className="w-16 h-16 object-contain"
                                 />
-                            </div>
-                            <div className="absolute bottom-2 text-[10px] text-[#06C755] font-bold tracking-wider opacity-80">
-                                SCAN ME
                             </div>
                         </div>
                     </div>
@@ -322,9 +350,10 @@ const Sidebar = ({ mobile, close, toc, activeSection }) => {
                     </div>
 
                     {/* Trend Chart */}
-                    <div className="mt-4 h-32 w-full">
-                        <ResponsiveContainer width="100%" height="100%">
-                            <AreaChart data={activityData}>
+                    <div ref={chartContainerRef} className="mt-4 h-32 w-full">
+                        {/* Manual render to prevent Recharts width(-1) error */}
+                        {chartDims.width > 0 && chartDims.height > 0 && (
+                            <AreaChart width={chartDims.width} height={chartDims.height} data={activityData}>
                                 <defs>
                                     <linearGradient id="colorCount" x1="0" y1="0" x2="0" y2="1">
                                         <stop offset="5%" stopColor="#709CEF" stopOpacity={0.4} />
@@ -352,7 +381,7 @@ const Sidebar = ({ mobile, close, toc, activeSection }) => {
                                     fill="url(#colorCount)"
                                 />
                             </AreaChart>
-                        </ResponsiveContainer>
+                        )}
                     </div>
                 </div>
             )}

@@ -41,7 +41,7 @@ const SpotlightCard = ({ children, className = "", spotlightColor = "rgba(59, 13
             />
 
             {/* Content */}
-            <div className="relative h-full">
+            <div className="relative w-full h-full">
                 {children}
             </div>
         </div>

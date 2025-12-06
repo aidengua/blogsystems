@@ -161,10 +161,9 @@ const IntroCard = () => {
 
                 {/* Right Image Grid (Vertical & Animated) */}
                 <div className="w-full md:w-1/2 relative overflow-hidden h-full">
-                    <div className="absolute inset-0 flex gap-4 p-4 opacity-80 hover:opacity-100 transition-opacity duration-500">
-                        <MarqueeColumn images={images} duration={25} />
-                        <MarqueeColumn images={[...images.slice(3), ...images.slice(0, 3)]} duration={20} />
-                        <MarqueeColumn images={[...images.slice(6), ...images.slice(0, 6)]} duration={15} />
+                    <div className="absolute inset-0 flex justify-center gap-4 p-4 opacity-80 hover:opacity-100 transition-opacity duration-500">
+                        <MarqueeColumn images={images} duration={30} />
+                        <MarqueeColumn images={[...images.slice(4), ...images.slice(0, 4)]} duration={25} />
                     </div>
                 </div>
             </div>

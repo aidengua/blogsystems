@@ -1,5 +1,12 @@
 # Changelog
 
+## [v1.5.1] - 2025-12-06
+### Added
+- **Article Banner Redesign**: Implemented a new premium banner design with glassmorphic badges, large typography, and interactive metadata tooltips.
+- **Footer Redesign**: Overhauled the footer with a compact layout, avatar integration, and status indicators.
+- **Loading Optimization**: Implemented smart caching to skip loading screens when switching between Tag pages.
+
+
 All notable changes to this project will be documented in this file.
 
 ## [v1.5.0] - 2025-12-04

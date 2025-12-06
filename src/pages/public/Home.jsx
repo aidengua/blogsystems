@@ -7,14 +7,17 @@ import { useSearchParams } from 'react-router-dom';
 import HeroDashboard from '../../components/HeroDashboard';
 import PostCard from '../../components/PostCard';
 import Sidebar from '../../components/Sidebar';
+import Pagination from '../../components/Pagination';
 
 import { motion, AnimatePresence } from 'framer-motion';
 
 const Home = () => {
     const [posts, setPosts] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [currentPage, setCurrentPage] = useState(1);
     const [searchParams, setSearchParams] = useSearchParams();
     const currentCategory = searchParams.get('category');
+    const ITEMS_PER_PAGE = 14;
 
     useEffect(() => {
         const fetchPosts = async () => {
@@ -45,6 +48,7 @@ const Home = () => {
                 }
 
                 setPosts(postsData);
+                setCurrentPage(1); // Reset to page 1 when category changes
             } catch (error) {
                 console.error("Error fetching posts:", error);
             } finally {
@@ -54,6 +58,18 @@ const Home = () => {
 
         fetchPosts();
     }, [currentCategory]);
+
+    // Calculate pagination
+    const totalPages = Math.ceil(posts.length / ITEMS_PER_PAGE);
+    const currentPosts = posts.slice(
+        (currentPage - 1) * ITEMS_PER_PAGE,
+        currentPage * ITEMS_PER_PAGE
+    );
+
+    const handlePageChange = (page) => {
+        setCurrentPage(page);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
 
     return (
         <MainLayout>
@@ -96,19 +112,28 @@ const Home = () => {
                                         <div className="animate-spin rounded-full h-12 w-12 border-4 border-primary border-t-transparent"></div>
                                     </div>
                                 ) : (
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                        {posts.map((post, index) => (
-                                            <motion.div
-                                                key={post.id}
-                                                initial={{ opacity: 0, y: 20 }}
-                                                whileInView={{ opacity: 1, y: 0 }}
-                                                viewport={{ once: true }}
-                                                transition={{ duration: 0.5, delay: index * 0.1 }}
-                                            >
-                                                <PostCard post={post} index={index} />
-                                            </motion.div>
-                                        ))}
-                                    </div>
+                                    <>
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                            {currentPosts.map((post, index) => (
+                                                <motion.div
+                                                    key={post.id}
+                                                    initial={{ opacity: 0, y: 10 }}
+                                                    whileInView={{ opacity: 1, y: 0 }}
+                                                    viewport={{ once: true, margin: "-50px" }}
+                                                    transition={{ duration: 0.3, delay: index * 0.05 }}
+                                                >
+                                                    <PostCard post={post} index={index} />
+                                                </motion.div>
+                                            ))}
+                                        </div>
+
+                                        {/* Pagination */}
+                                        <Pagination
+                                            currentPage={currentPage}
+                                            totalPages={totalPages}
+                                            onPageChange={handlePageChange}
+                                        />
+                                    </>
                                 )
                                 }
 
@@ -132,7 +157,7 @@ const Home = () => {
 
                             {/* Sidebar (Desktop) */}
                             <div className="hidden lg:block w-1/4">
-                                <div className="sticky top-24">
+                                <div>
                                     <Sidebar />
                                 </div>
                             </div>
