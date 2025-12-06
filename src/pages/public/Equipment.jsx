@@ -129,7 +129,7 @@ const Equipment = () => {
                                 實物裝備推薦
                             </h1>
                             <p className="text-lg md:text-xl text-gray-300 font-light flex items-center gap-2">
-                                跟 <span className="font-bold text-white">安知魚</span> 一起享受科技帶來的樂趣
+                                跟 <span className="font-bold text-white"> 欸等 </span> 一起享受科技帶來的樂趣
                             </p>
                         </div>
                     </div>

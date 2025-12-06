@@ -144,14 +144,14 @@ const IntroCard = () => {
     const images = [img1, img2, img3, img4, img5, img6, img7, img8, img9];
 
     return (
-        <SpotlightCard className="relative h-64 md:h-80 overflow-hidden group cursor-pointer hover:shadow-2xl transition-all duration-500 bg-[#1a1a1a]" spotlightColor="rgba(112, 156, 239, 0.15)">
-            <div className="absolute inset-0 flex flex-col md:flex-row">
+        <SpotlightCard className="relative h-auto md:h-80 overflow-hidden group cursor-pointer hover:shadow-2xl transition-all duration-500 bg-[#1a1a1a]" spotlightColor="rgba(112, 156, 239, 0.15)">
+            <div className="relative md:absolute inset-0 flex flex-col md:flex-row h-full">
                 {/* Left Content */}
-                <div className="w-full md:w-1/2 p-8 md:p-12 flex flex-col justify-center z-10 relative">
-                    <h2 className="text-4xl md:text-5xl font-bold text-white mb-4 tracking-tight font-display">
+                <div className="w-full md:w-1/2 p-6 md:p-12 flex flex-col justify-center z-10 relative">
+                    <h2 className="text-3xl md:text-5xl font-bold text-white mb-2 md:mb-4 tracking-tight font-display">
                         夢想家工作室
                     </h2>
-                    <p className="text-xl md:text-2xl text-gray-400 font-medium mb-6">
+                    <p className="text-lg md:text-2xl text-gray-400 font-medium mb-4 md:mb-6">
                         堅持卓越，成就非凡
                     </p>
                     <div className="text-gray-500 font-mono text-sm">
@@ -160,11 +160,15 @@ const IntroCard = () => {
                 </div>
 
                 {/* Right Image Grid (Vertical & Animated) */}
-                <div className="w-full md:w-1/2 relative overflow-hidden h-full">
+                <div className="w-full md:w-1/2 relative overflow-hidden h-48 md:h-full">
                     <div className="absolute inset-0 flex justify-center gap-4 p-4 opacity-80 hover:opacity-100 transition-opacity duration-500">
                         <MarqueeColumn images={images} duration={30} />
                         <MarqueeColumn images={[...images.slice(4), ...images.slice(0, 4)]} duration={25} />
                     </div>
+                    {/* Top Fade Overlay */}
+                    <div className="absolute top-0 left-0 right-0 h-16 bg-gradient-to-b from-[#1a1a1a] via-[#1a1a1a]/60 to-transparent z-10 pointer-events-none"></div>
+                    {/* Bottom Fade Overlay */}
+                    <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-[#1a1a1a] via-[#1a1a1a]/60 to-transparent z-10 pointer-events-none"></div>
                 </div>
             </div>
             {/* Decorative Elements */}
@@ -176,17 +180,17 @@ const IntroCard = () => {
 
 const CategoryCard = ({ title, icon, colorClass, to }) => (
     <Link to={to} className={clsx(
-        "relative h-20 flex-1 hover:flex-[1.5] min-w-0 block transition-all duration-500 ease-[cubic-bezier(0.25,0.1,0.25,1.0)] group cursor-pointer"
+        "relative h-16 md:h-20 flex-1 hover:flex-[1.5] min-w-0 block transition-all duration-500 ease-[cubic-bezier(0.25,0.1,0.25,1.0)] group cursor-pointer"
     )}>
-        <SpotlightCard className={clsx("h-full w-full overflow-hidden hover:shadow-xl transition-all duration-500", colorClass)} spotlightColor="rgba(255, 255, 255, 0.2)">
-            {/* Text Content */}
-            <div className="absolute top-6 left-6 z-10">
-                <span className="text-2xl font-bold text-white tracking-wider">{title}</span>
+        <SpotlightCard className={clsx("h-full w-full overflow-hidden hover:shadow-xl transition-all duration-500 relative", colorClass)} spotlightColor="rgba(255, 255, 255, 0.2)">
+            {/* Text Content - Centered on Mobile, Top-Left on Desktop */}
+            <div className="absolute inset-0 z-10 flex items-center justify-center md:block md:inset-auto md:top-6 md:left-6">
+                <span className="text-lg md:text-2xl font-bold text-white tracking-wider text-center md:text-left drop-shadow-md md:drop-shadow-none">{title}</span>
             </div>
 
             {/* Watermark Icon */}
             <i className={clsx(
-                "fas absolute -bottom-6 -right-6 text-[8rem] text-white/20 group-hover:scale-110 group-hover:rotate-0 -rotate-12 transition-all duration-500 ease-out",
+                "fas absolute -bottom-4 -right-4 md:-bottom-6 md:-right-6 text-[4rem] md:text-[8rem] text-white/10 group-hover:scale-110 group-hover:rotate-0 -rotate-12 transition-all duration-500 ease-out pointer-events-none",
                 icon
             )}></i>
 
@@ -223,13 +227,13 @@ const FeatureCard = ({ posts, showRecommend, setShowRecommend }) => (
                     </div>
 
                     {/* Widgets Container */}
-                    <div className="absolute inset-0 z-20 flex flex-col items-center justify-center gap-3">
-                        <div className="flex flex-row gap-3">
+                    <div className="absolute inset-0 z-20 flex flex-col items-center justify-center gap-3 p-4">
+                        <div className="flex flex-wrap justify-center gap-3">
                             <ClockWidget />
                             <BatteryWidget />
                             <WeatherWidget />
                         </div>
-                        <div className="w-[22.5rem] md:w-[25.5rem]">
+                        <div className="w-full max-w-[22.5rem] md:max-w-[25.5rem]">
                             <PhotoWidget onMoreClick={() => setShowRecommend(true)} />
                         </div>
                     </div>
@@ -298,7 +302,7 @@ const HeroDashboard = ({ posts = [] }) => {
                 {/* Left Column */}
                 <div className="col-span-1 lg:col-span-7 flex flex-col gap-4">
                     <IntroCard />
-                    <div className="flex flex-col md:flex-row gap-4 w-full">
+                    <div className="grid grid-cols-2 md:flex md:flex-row gap-4 w-full">
                         <CategoryCard
                             title="作品紀錄"
                             icon="fa-clipboard-list"

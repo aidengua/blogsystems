@@ -187,16 +187,15 @@ const Navbar = ({ toggleSidebar }) => {
             <nav className={navClass}>
                 <div className="max-w-7xl mx-auto flex justify-between items-center h-10 relative">
                     {/* Left: Logo / Name */}
-                    <div className={clsx(capsuleClass, "gap-4")}>
+                    <div className={clsx(capsuleClass, "gap-2 !p-1")}>
                         <button
                             onClick={toggleSidebar}
-                            className="lg:hidden text-lg hover:scale-110 transition-transform p-2 text-white"
+                            className="lg:hidden w-8 h-8 flex items-center justify-center text-white hover:scale-110 transition-transform"
                         >
-                            <i className="fas fa-bars"></i>
+                            <i className="fas fa-bars text-sm"></i>
                         </button>
-                        <Link to="/" className="text-xl font-bold tracking-wider hover:opacity-80 transition-opacity font-display flex items-center gap-2 text-white">
-                            <span className="hidden sm:inline">DreamersAudio博客</span>
-                            <span className="sm:hidden">Blog</span>
+                        <Link to="/" className="hidden sm:flex h-8 text-xl font-bold tracking-wider hover:opacity-80 transition-opacity font-display items-center gap-2 text-white px-2 leading-none">
+                            <span>DreamersAudio博客</span>
                         </Link>
                     </div>
 

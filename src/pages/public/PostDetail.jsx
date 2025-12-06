@@ -211,7 +211,7 @@ const PostDetail = () => {
             <div className="container mx-auto px-4 py-12 max-w-7xl">
                 <div className="flex flex-col lg:flex-row gap-8">
                     <div className="w-full lg:w-3/4">
-                        <div className="card-glass p-8 md:p-12">
+                        <div className="card-glass p-6 md:p-12">
                             <article className="prose prose-lg dark:prose-invert max-w-none 
                                 prose-headings:font-display prose-headings:font-bold 
                                 prose-a:text-primary hover:prose-a:text-blue-600 
