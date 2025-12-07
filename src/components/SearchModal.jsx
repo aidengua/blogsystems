@@ -146,7 +146,7 @@ const SearchModal = ({ isOpen, onClose }) => {
                                             key={post.id}
                                             to={`/posts/${post.slug}`}
                                             onClick={onClose}
-                                            className="block p-4 hover:bg-blue-600/10 transition-colors group"
+                                            className="block p-4 hover:bg-[#709CEF]/10 transition-colors group"
                                         >
                                             <div className="flex justify-between items-start mb-1">
                                                 <h3 className="text-blue-400 group-hover:text-blue-300 font-medium text-lg">

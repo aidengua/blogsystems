@@ -146,7 +146,7 @@ const Home = () => {
                                         {currentCategory && (
                                             <button
                                                 onClick={() => setSearchParams({})}
-                                                className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-500 transition-colors"
+                                                className="mt-4 px-4 py-2 bg-[#709CEF] text-white rounded-lg hover:bg-[#5B89E5] transition-colors"
                                             >
                                                 查看所有文章
                                             </button>

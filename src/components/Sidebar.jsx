@@ -254,16 +254,17 @@ const Sidebar = ({ mobile, close, toc, activeSection }) => {
         <div className="h-full flex flex-col">
 
             {/* Table of Contents (Post Only) */}
+            {/* Table of Contents (Post Only) */}
             {toc && (
                 <div
-                    className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-6 mb-6 shadow-2xl sticky top-24 relative group group/toc transition-all duration-300"
+                    className="bg-white/80 dark:bg-white/5 backdrop-blur-md border border-gray-200 dark:border-white/10 rounded-2xl p-6 mb-6 shadow-xl sticky top-24 relative group group/toc transition-all duration-300"
                     onMouseEnter={() => setIsTocHovered(true)}
                     onMouseLeave={() => setIsTocHovered(false)}
                 >
                     {/* Background Glow Effect */}
                     <div className="absolute -top-20 -right-20 w-40 h-40 bg-blue-500/20 rounded-full blur-3xl pointer-events-none group-hover:bg-blue-500/30 transition-colors duration-500"></div>
 
-                    <div className="flex items-center gap-2 mb-4 text-white font-bold pb-2 border-b border-white/5 relative z-10">
+                    <div className="flex items-center gap-2 mb-4 text-gray-900 dark:text-white font-bold pb-2 border-b border-gray-200 dark:border-white/5 relative z-10">
                         <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center shadow-lg shadow-blue-500/20">
                             <i className="fas fa-list-ul text-white text-xs"></i>
                         </div>

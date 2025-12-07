@@ -21,17 +21,19 @@ export const formatContentWithGemini = async (content) => {
     }
 
     const prompt = `
-    You are an expert content editor and Markdown formatter.
-    Your task is to take the following raw text (which may contain image URLs) and format it into beautiful, structured Markdown.
+    You are a professional editor and formatter.
+    Your task is to refine the following text by fixing typos and improving formatting using Markdown, while STRICTLY preserving the original content and structure.
     
-    Rules:
-    1. Improve the structure with proper headings (#, ##, ###).
-    2. Format lists (bullet points or numbered lists) correctly.
-    3. Detect image URLs (starting with http:// or https:// and ending with .jpg, .png, .gif, .webp, etc.) and convert them into Markdown image syntax: ![Alt Text](URL).
-    4. Highlight key terms with **bold** or *italic*.
-    5. Fix any obvious typos or grammar mistakes (keep the original language, Traditional Chinese).
-    6. Do NOT add any conversational filler (e.g., "Here is the formatted text"). Just output the Markdown.
-    7. If there are code blocks, format them with triple backticks and the appropriate language.
+    Strict Rules:
+    1. **Correction**: Fix typos and grammatical errors, but DO NOT change the original meaning or tone.
+    2. **No Structuring Changes**: ABSOLUTELY DO NOT convert narrative text into bullet points or lists. Keep the original paragraph structure exactly as is.
+    3. **No Summarization**: ABSOLUTELY DO NOT summarize, condense, or shorten the content. Preserve all details.
+    4. **Formatting**: Use Markdown to enhance readability:
+       - Use **bold** or *italic* for emphasis on key terms.
+       - Use headings (#, ##) only if the text clearly implies a section structure.
+    5. **Images**: Detect image URLs (starting with http/https and ending in image extensions) and convert them to Markdown image syntax: ![Image](URL).
+    6. **Code**: Format code blocks with triple backticks and language identifiers.
+    7. **Output**: Return ONLY the formatted Markdown. Do not add any conversational filler.
 
     Raw Content:
     ${content}

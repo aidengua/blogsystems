@@ -14,14 +14,13 @@ const Archives = () => {
             try {
                 const q = query(
                     collection(db, 'posts'),
-                    where('status', '==', 'published'),
-                    orderBy('createdAt', 'desc')
+                    where('status', '==', 'published')
                 );
                 const querySnapshot = await getDocs(q);
                 const postsData = querySnapshot.docs.map(doc => ({
                     id: doc.id,
                     ...doc.data()
-                }));
+                })).sort((a, b) => b.createdAt?.seconds - a.createdAt?.seconds);
                 setPosts(postsData);
             } catch (error) {
                 console.error("Error fetching posts:", error);

@@ -186,13 +186,13 @@ const About = () => {
                             <div className="flex gap-4 overflow-hidden">
                                 <div className="flex gap-4 animate-scroll">
                                     {['fab fa-react', 'fab fa-vuejs', 'fab fa-node', 'fab fa-python', 'fab fa-html5', 'fab fa-css3', 'fab fa-js', 'fab fa-docker'].map((icon, i) => (
-                                        <div key={i} className="w-16 h-16 bg-gray-800 rounded-2xl flex items-center justify-center text-3xl hover:bg-blue-600 transition-colors shrink-0">
+                                        <div key={i} className="w-16 h-16 bg-gray-800 rounded-2xl flex items-center justify-center text-3xl hover:bg-[#709CEF] transition-colors shrink-0">
                                             <i className={icon}></i>
                                         </div>
                                     ))}
                                     {/* Duplicate for seamless loop */}
                                     {['fab fa-react', 'fab fa-vuejs', 'fab fa-node', 'fab fa-python', 'fab fa-html5', 'fab fa-css3', 'fab fa-js', 'fab fa-docker'].map((icon, i) => (
-                                        <div key={`dup-${i}`} className="w-16 h-16 bg-gray-800 rounded-2xl flex items-center justify-center text-3xl hover:bg-blue-600 transition-colors shrink-0">
+                                        <div key={`dup-${i}`} className="w-16 h-16 bg-gray-800 rounded-2xl flex items-center justify-center text-3xl hover:bg-[#709CEF] transition-colors shrink-0">
                                             <i className={icon}></i>
                                         </div>
                                     ))}

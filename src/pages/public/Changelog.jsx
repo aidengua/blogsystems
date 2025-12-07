@@ -7,14 +7,28 @@ const Changelog = () => {
     // Mock data for changelog - in a real app this could come from Firebase
     const changelogs = [
         {
-            version: "v1.6.1",
+            version: "v1.6.2",
             date: "2025-12-07",
-            title: "TOC Polish & AI Upgrade",
+            title: "系統優化與視覺升級",
             content: (
                 <ul className="list-disc list-inside space-y-1 text-sm">
-                    <li><strong>TOC Refinement:</strong> Implemented adaptive height, "Smart Blur" reveal logic, and hidden scrollbars for a cleaner reading experience.</li>
-                    <li><strong>Gemini AI 2.0:</strong> Upgraded to `flash-lite` model and redesigned the AI trigger button with a modern "Dark Pill" aesthetic.</li>
-                    <li><strong>System Polish:</strong> Renamed categories and fixed markdown rendering warnings.</li>
+                    <li><strong>後台管理：</strong> 新增更新日誌管理功能，支援新增、編輯與刪除日誌。</li>
+                    <li><strong>視覺優化：</strong> 全站主題色統一為 `#709CEF`，並修復背景主題切換顯示問題。</li>
+                    <li><strong>標籤頁面：</strong> 全新精簡版標題設計與版面優化，提升閱讀體驗。</li>
+                    <li><strong>功能改進：</strong> 文章分類頁新增「清除篩選」按鈕，首頁標題顯示優化。</li>
+                </ul>
+            ),
+            type: "improvement"
+        },
+        {
+            version: "v1.6.1",
+            date: "2025-12-07",
+            title: "TOC 目錄優化與 AI 升級",
+            content: (
+                <ul className="list-disc list-inside space-y-1 text-sm">
+                    <li><strong>目錄優化：</strong> 實作自適應高度、「智慧模糊」揭示邏輯，並隱藏滾動條以提供更乾淨的閱讀體驗。</li>
+                    <li><strong>Gemini AI 2.0：</strong> 升級至 `flash-lite` 模型，並以現代化「深色膠囊」美學重新設計 AI 觸發按鈕。</li>
+                    <li><strong>系統修飾：</strong> 重命名分類並修復 Markdown 渲染警告。</li>
                 </ul>
             ),
             type: "improvement"
@@ -22,13 +36,13 @@ const Changelog = () => {
         {
             version: "v1.6.0",
             date: "2025-12-07",
-            title: "Mobile & Visual Evolution",
+            title: "行動版與視覺進化",
             content: (
                 <ul className="list-disc list-inside space-y-1 text-sm">
-                    <li><strong>Mobile Menu Redesign:</strong> "Dynamic Island" style top-down menu with smooth spring animations.</li>
-                    <li><strong>Profile Card 2.0:</strong> Replaced flip animation with a refined "Breathe & Fade" effect and added signature GIF.</li>
-                    <li><strong>Line Card Polish:</strong> Enhanced visuals with enlarged logo and blurred watermark (removed green background).</li>
-                    <li><strong>Mobile UX:</strong> Implemented scrollable tag bar and optimized spacing for small screens.</li>
+                    <li><strong>行動版選單重設計：</strong> 採用「動態島」風格的頂部展開選單，搭配流暢的彈性動畫。</li>
+                    <li><strong>個人卡片 2.0：</strong> 以精緻的「呼吸與淡入」效果取代翻轉動畫，並新增簽名檔 GIF。</li>
+                    <li><strong>Line 卡片修飾：</strong> 放大 Logo 並加入模糊浮水印效果（移除綠色背景），提升質感。</li>
+                    <li><strong>行動版體驗：</strong> 實作可滾動的標籤列，並優化小螢幕的間距。</li>
                 </ul>
             ),
             type: "major"
@@ -36,12 +50,12 @@ const Changelog = () => {
         {
             version: "v1.5.1",
             date: "2025-12-06",
-            title: "Visual & Performance Polish",
+            title: "視覺與效能修飾",
             content: (
                 <ul className="list-disc list-inside space-y-1 text-sm">
-                    <li><strong>Article Banner:</strong> Redesigned with glassmorphic badges, large typography, and interactive metadata tooltips.</li>
-                    <li><strong>Footer Redesign:</strong> Compact layout with avatar, status indicators, and quick links.</li>
-                    <li><strong>Loading Optimization:</strong> Smart caching to skip loading screens when switching between Tag pages.</li>
+                    <li><strong>文章橫幅：</strong> 重新設計，加入玻璃擬態徽章、大字體排版與互動式元數據提示。</li>
+                    <li><strong>頁尾重設計：</strong> 緊湊佈局，整合頭像、狀態指示器與快速連結。</li>
+                    <li><strong>加載優化：</strong> 智慧快取機制，切換標籤頁時跳過加載畫面。</li>
                 </ul>
             ),
             type: "improvement"
@@ -49,13 +63,13 @@ const Changelog = () => {
         {
             version: "v1.5.0",
             date: "2025-12-04",
-            title: "Mac-style Widgets & Essay Redesign",
+            title: "Mac 風格小工具與短文重設計",
             content: (
                 <ul className="list-disc list-inside space-y-1 text-sm">
-                    <li><strong>Mac-style Widgets:</strong> Added Clock, Battery, Weather, and Photo widgets with liquid glass aesthetics to the Homepage.</li>
-                    <li><strong>Essay Page Redesign:</strong> Unified banner design with Equipment page and refreshed card styling.</li>
-                    <li><strong>Visitor Statistics:</strong> Implemented real-time visitor tracking and a 3D flip card on the About page.</li>
-                    <li><strong>Homepage Layout:</strong> Centered widgets and optimized spacing for a balanced look.</li>
+                    <li><strong>Mac 風格小工具：</strong> 首頁新增時鐘、電池、天氣與相片小工具，採用液態玻璃美學。</li>
+                    <li><strong>短文頁面重設計：</strong> 統一與裝備頁面的橫幅設計，並更新卡片樣式。</li>
+                    <li><strong>訪客統計：</strong> 實作即時訪客追蹤，並在關於頁面加入 3D 翻轉卡片顯示統計。</li>
+                    <li><strong>首頁佈局：</strong> 居中小工具並優化間距，視覺更平衡。</li>
                 </ul>
             ),
             type: "feature"
@@ -63,12 +77,12 @@ const Changelog = () => {
         {
             version: "v1.4.1",
             date: "2025-12-04",
-            title: "UX Refinements",
+            title: "UX 體驗精煉",
             content: (
                 <ul className="list-disc list-inside space-y-1 text-sm">
-                    <li><strong>Navbar Update:</strong> Moved "Short Article" (Essay) button to the main navigation bar for better accessibility.</li>
-                    <li><strong>Layout Fixes:</strong> Resolved layout issues in the Essay notification card on the dashboard.</li>
-                    <li><strong>Visual Polish:</strong> Enhanced spotlight effects across all interactive cards.</li>
+                    <li><strong>導覽列更新：</strong> 將「短文」按鈕移至主導覽列以提升易用性。</li>
+                    <li><strong>佈局修正：</strong> 解決儀表板短文通知卡片的佈局問題。</li>
+                    <li><strong>視覺修飾：</strong> 增強所有互動卡片的聚光燈效果。</li>
                 </ul>
             ),
             type: "improvement"
@@ -76,13 +90,13 @@ const Changelog = () => {
         {
             version: "v1.4.0",
             date: "2025-12-04",
-            title: "Global UI Upgrade & Comments",
+            title: "全站 UI 升級與評論系統",
             content: (
                 <ul className="list-disc list-inside space-y-1 text-sm">
-                    <li><strong>Comment System:</strong> Full comment functionality for Posts and Essays with Admin management.</li>
-                    <li><strong>Global UI Upgrade:</strong> Unified semantic color system and refactored Navbar for consistent theming.</li>
-                    <li><strong>Sidebar Enhancements:</strong> Redesigned Profile Card (3D tilt), Line Social Card (Flip), and optimized charts.</li>
-                    <li><strong>Visual Refinements:</strong> Updated homepage text to "音響設計之家" and refined animations.</li>
+                    <li><strong>評論系統：</strong> 文章與短文皆支援完整評論功能（包含後台管理）。</li>
+                    <li><strong>全站 UI 升級：</strong> 統一語意化色彩系統，並重構導覽列以維持一致的主題。</li>
+                    <li><strong>側邊欄增強：</strong> 重新設計個人卡片（3D 傾斜）、Line 社交卡片（翻轉）並優化圖表。</li>
+                    <li><strong>視覺精煉：</strong> 首頁文字更新為「音響設計之家」並修飾動畫細節。</li>
                 </ul>
             ),
             type: "feature"
@@ -90,13 +104,13 @@ const Changelog = () => {
         {
             version: "v1.3.5",
             date: "2025-12-03",
-            title: "Category & Theme Refinement",
+            title: "分類與主題修飾",
             content: (
                 <ul className="list-disc list-inside space-y-1 text-sm">
-                    <li><strong>Category System:</strong> Added functional category filtering with animations on Home page.</li>
-                    <li><strong>Global Theme:</strong> Unified site-wide blue color to #709CEF.</li>
-                    <li><strong>Dashboard:</strong> Refined trend chart (sequence-based) and connected notification bar to latest essay.</li>
-                    <li><strong>Social Card:</strong> Updated Sidebar to feature Line official account.</li>
+                    <li><strong>分類系統：</strong> 首頁新增功能性分類篩選與動畫。</li>
+                    <li><strong>全站主題：</strong> 全站藍色統一為 #709CEF。</li>
+                    <li><strong>儀表板：</strong> 優化趨勢圖表並將通知列連接至最新短文。</li>
+                    <li><strong>社交卡片：</strong> 側邊欄更新並整合 Line 官方帳號。</li>
                 </ul>
             ),
             type: "feature"
@@ -104,15 +118,14 @@ const Changelog = () => {
         {
             version: "v1.3.0",
             date: "2025-12-03",
-            title: "Essay & Admin Features",
+            title: "短文與後台功能",
             content: (
                 <ul className="list-disc list-inside space-y-1 text-sm">
-                    <li><strong>Essay Page:</strong> New public page for "Short Thoughts" with masonry grid.</li>
-                    <li><strong>Admin Essay Management:</strong> Tab switcher to view, edit, and delete essays.</li>
-                    <li><strong>Admin Quick Publish:</strong> Quickly publish essays from the dashboard header.</li>
-                    <li><strong>Deployment:</strong> Successfully deployed to Firebase Hosting.</li>
-                    <li><strong>Hero Section:</strong> Refined vertical scrolling animation with random speeds.</li>
-                    <li><strong>Navigation:</strong> Added "Essay" link to the main menu.</li>
+                    <li><strong>短文頁面：</strong> 新增「短文心事」公開頁面，採用瀑布流佈局。</li>
+                    <li><strong>後台短文管理：</strong> 新增分頁切換以檢視、編輯與刪除短文。</li>
+                    <li><strong>後台快速發布：</strong> 儀表板頭部新增快速發布短文功能。</li>
+                    <li><strong>部署：</strong> 成功部署至 Firebase Hosting。</li>
+                    <li><strong>Hero 區塊：</strong> 優化垂直滾動動畫，加入隨機速度以增加層次感。</li>
                 </ul>
             ),
             type: "feature"
@@ -120,29 +133,29 @@ const Changelog = () => {
         {
             version: "v1.2.0",
             date: "2025-01-15",
-            title: "LiquidGlass Design Update",
-            content: "Implemented the new global LiquidGlass design engine, bringing a premium glassmorphism aesthetic to the entire site. Updated the sidebar with real-time data visualization.",
+            title: "液態玻璃設計更新",
+            content: "實作全新「液態玻璃」設計引擎，為全站帶來高級玻璃擬態美學。側邊欄更新即時數據視覺化。",
             type: "major"
         },
         {
             version: "v1.1.5",
             date: "2025-01-10",
-            title: "Performance Optimizations",
-            content: "Improved page load speeds by 40% through code splitting and image optimization. Fixed layout shifts on mobile devices.",
+            title: "效能優化",
+            content: "透過代碼拆分與圖片優化提升頁面載入速度 40%。修復行動裝置上的版面位移問題。",
             type: "improvement"
         },
         {
             version: "v1.1.0",
             date: "2025-01-01",
-            title: "New Year, New Features",
-            content: "Added the 'About' page with a Bento Grid layout. Introduced the interactive 'PixelBackground' for the homepage.",
+            title: "新年新功能",
+            content: "新增採用 Bento Grid 佈局的「關於」頁面。首頁導入互動式「像素背景」。",
             type: "feature"
         },
         {
             version: "v1.0.0",
             date: "2024-12-25",
-            title: "Initial Launch",
-            content: "Official release of the blog system. Features include Markdown support, dark mode, and responsive design.",
+            title: "初版發布",
+            content: "部落格系統正式上線。支援 Markdown、深色模式與響應式設計。",
             type: "release"
         }
     ];

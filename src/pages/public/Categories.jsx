@@ -30,14 +30,13 @@ const Categories = () => {
                 // Fetch all published posts
                 const q = query(
                     collection(db, 'posts'),
-                    where('status', '==', 'published'),
-                    orderBy('createdAt', 'desc')
+                    where('status', '==', 'published')
                 );
                 const querySnapshot = await getDocs(q);
                 const allPosts = querySnapshot.docs.map(doc => ({
                     id: doc.id,
                     ...doc.data()
-                }));
+                })).sort((a, b) => b.createdAt?.seconds - a.createdAt?.seconds);
 
                 setPosts(allPosts);
 
@@ -71,7 +70,7 @@ const Categories = () => {
             <div className="min-h-screen pt-24 pb-20 container mx-auto px-4 max-w-7xl">
                 {/* Header */}
                 <div className="text-center mb-12 animate-fade-in">
-                    <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">
+                    <h1 className="text-4xl md:text-5xl font-bold text-white dark:text-white mb-4">
                         文章分類
                     </h1>
                     <p className="text-gray-600 dark:text-gray-400 text-lg">
@@ -134,6 +133,32 @@ const Categories = () => {
                         </motion.div>
 
                         {/* Filtered Posts Grid */}
+                        <div className="flex justify-between items-center mb-6">
+                            <h2 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                                {selectedCategory ? (
+                                    <>
+                                        <i className={`fas ${getMeta(selectedCategory).icon} text-[#709CEF]`}></i>
+                                        {selectedCategory}
+                                    </>
+                                ) : (
+                                    <>
+                                        <i className="fas fa-layer-group text-[#709CEF]"></i>
+                                        全部文章
+                                    </>
+                                )}
+                            </h2>
+
+                            {selectedCategory && (
+                                <button
+                                    onClick={() => setSelectedCategory(null)}
+                                    className="px-4 py-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-red-500 hover:text-white transition-all flex items-center gap-2 text-sm font-medium"
+                                >
+                                    <i className="fas fa-times"></i>
+                                    清除篩選
+                                </button>
+                            )}
+                        </div>
+
                         <motion.div
                             layout
                             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
@@ -151,12 +176,13 @@ const Categories = () => {
                                     >
                                         <Link to={`/posts/${post.slug}`} className="block flex-grow">
                                             <div className="aspect-video overflow-hidden relative">
-                                                <LazyImage
-                                                    src={post.coverImage || 'https://images.unsplash.com/photo-1499750310159-5b9887034297?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'}
-                                                    alt={post.title}
-                                                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                                                    wrapperClassName="w-full h-full"
-                                                />
+                                                <div className="w-full h-full overflow-hidden">
+                                                    <img
+                                                        src={post.coverImage || 'https://images.unsplash.com/photo-1499750310159-5b9887034297?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'}
+                                                        alt={post.title}
+                                                        className="w-full h-full object-cover transition-transform duration-700 ease-[cubic-bezier(0.25,0.1,0.25,1.0)] group-hover:scale-110"
+                                                    />
+                                                </div>
                                                 <div className="absolute inset-0 bg-black/20 group-hover:bg-black/0 transition-colors"></div>
 
                                                 {/* Category Badge */}

@@ -148,7 +148,7 @@ const IntroCard = () => {
             <div className="relative md:absolute inset-0 flex flex-col md:flex-row h-full">
                 {/* Left Content */}
                 <div className="w-full md:w-1/2 p-6 md:p-12 flex flex-col justify-center z-10 relative">
-                    <h2 className="text-3xl md:text-5xl font-bold text-white mb-2 md:mb-4 tracking-tight font-display">
+                    <h2 className="text-3xl md:text-5xl font-bold text-white mb-2 md:mb-4 tracking-tight font-display whitespace-nowrap">
                         夢想家工作室
                     </h2>
                     <p className="text-lg md:text-2xl text-gray-400 font-medium mb-4 md:mb-6">

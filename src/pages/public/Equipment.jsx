@@ -99,7 +99,7 @@ const Equipment = () => {
                     <button className="px-4 py-2 bg-gray-800 hover:bg-gray-700 text-gray-300 text-xs rounded-lg transition-colors flex items-center gap-2">
                         <i className="fas fa-info-circle"></i> 詳情
                     </button>
-                    <button className="w-8 h-8 rounded-full bg-gray-800 hover:bg-blue-600 hover:text-white text-gray-400 flex items-center justify-center transition-all">
+                    <button className="w-8 h-8 rounded-full bg-gray-800 hover:bg-[#709CEF] hover:text-white text-gray-400 flex items-center justify-center transition-all">
                         <i className="fas fa-comment-alt text-xs"></i>
                     </button>
                 </div>

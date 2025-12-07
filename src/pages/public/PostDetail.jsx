@@ -125,7 +125,7 @@ const PostDetail = () => {
             <div className="min-h-[60vh] flex items-center justify-center">
                 <div className="text-center p-8 card-glass max-w-md mx-4">
                     <h3 className="text-2xl font-semibold text-gray-900 dark:text-white mb-2">找不到文章</h3>
-                    <Link to="/" className="inline-block bg-primary text-white px-6 py-2 rounded-full hover:bg-blue-600 transition-colors mt-4">
+                    <Link to="/" className="inline-block bg-primary text-white px-6 py-2 rounded-full hover:bg-[#5B89E5] transition-colors mt-4">
                         返回首頁
                     </Link>
                 </div>
@@ -141,7 +141,7 @@ const PostDetail = () => {
                     className="absolute inset-0 bg-cover bg-center transform scale-105"
                     style={{ backgroundImage: `url(${post.coverImage || 'https://camo.githubusercontent.com/520c5cfb0b63284eeb8c1d869660ffd7ab93b6a1310ffc6da27442f14d37a437/68747470733a2f2f6e706d2e656c656d6563646e2e636f6d2f616e7a686979752d6173736574732f696d6167652f636f6d6d6f6e2f6769746875622d696e666f2f4b6e6f636b2d436f64652e676966'})` }}
                 >
-                    <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/50 to-[#121212] backdrop-blur-[2px]"></div>
+                    <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/50 to-[#f0f9eb] dark:to-[#121212] backdrop-blur-[2px]"></div>
                 </div>
 
                 <div className="relative z-10 h-full container mx-auto px-4 flex flex-col justify-center text-white max-w-7xl pt-12">
@@ -225,7 +225,7 @@ const PostDetail = () => {
             <div className="container mx-auto px-4 py-12 max-w-7xl">
                 <div className="flex flex-col lg:flex-row gap-8">
                     <div className="w-full lg:w-3/4">
-                        <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl shadow-2xl p-6 md:p-12">
+                        <div className="bg-white/80 dark:bg-white/5 backdrop-blur-md border border-gray-200 dark:border-white/10 rounded-2xl shadow-2xl p-6 md:p-12">
                             <article className="prose prose-lg dark:prose-invert max-w-none 
                                 prose-headings:font-display prose-headings:font-bold 
                                 prose-a:text-primary hover:prose-a:text-blue-600 

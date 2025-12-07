@@ -18,14 +18,13 @@ const Tags = () => {
                 // Fetch all published posts
                 const q = query(
                     collection(db, 'posts'),
-                    where('status', '==', 'published'),
-                    orderBy('createdAt', 'desc')
+                    where('status', '==', 'published')
                 );
                 const querySnapshot = await getDocs(q);
                 const allPosts = querySnapshot.docs.map(doc => ({
                     id: doc.id,
                     ...doc.data()
-                }));
+                })).sort((a, b) => b.createdAt?.seconds - a.createdAt?.seconds);
 
                 // Calculate tag counts
                 const tagCounts = {};
@@ -75,7 +74,7 @@ const Tags = () => {
                             className={`
                                 group flex items-center gap-3 px-4 py-2 rounded-lg border transition-all duration-300
                                 ${currentTag === tagName
-                                    ? 'bg-blue-600 border-blue-500 text-white shadow-[0_0_15px_rgba(37,99,235,0.5)]'
+                                    ? 'bg-[#709CEF] border-[#709CEF] text-white shadow-[0_0_15px_rgba(112,156,239,0.5)]'
                                     : 'bg-[#1e1e1e] border-gray-800 text-gray-300 hover:border-blue-500 hover:text-white'
                                 }
                             `}
@@ -104,10 +103,6 @@ const Tags = () => {
                             exit={{ opacity: 0, y: -20 }}
                             transition={{ duration: 0.3 }}
                         >
-                            <div className="flex items-center gap-2 mb-8 text-xl font-bold text-white border-l-4 border-blue-500 pl-4">
-                                包含 <span className="text-blue-400">#{currentTag}</span> 的文章
-                                <span className="text-sm font-normal text-gray-500 ml-2">({posts.length})</span>
-                            </div>
 
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                                 {posts.map((post, index) => (
@@ -154,7 +149,7 @@ const Tags = () => {
                     )}
                 </AnimatePresence>
             </div>
-        </MainLayout>
+        </MainLayout >
     );
 };
 

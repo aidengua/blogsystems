@@ -94,7 +94,7 @@ const Login = () => {
                                     whileHover={{ scale: 1.02 }}
                                     whileTap={{ scale: 0.98 }}
                                     type="submit"
-                                    className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-xl text-white bg-primary hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-all duration-300 shadow-lg hover:shadow-xl"
+                                    className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-xl text-white bg-primary hover:bg-[#5B89E5] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-all duration-300 shadow-lg hover:shadow-xl"
                                 >
                                     <span className="absolute left-0 inset-y-0 flex items-center pl-3">
                                         <i className={`fas ${isRegistering ? 'fa-user-plus' : 'fa-sign-in-alt'} text-blue-200 group-hover:text-blue-100`}></i>
