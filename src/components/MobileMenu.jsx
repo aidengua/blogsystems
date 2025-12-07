@@ -23,10 +23,9 @@ const MobileMenu = ({ isOpen, onClose }) => {
             opacity: 0,
             transformOrigin: "top left",
             transition: {
-                type: "spring",
-                stiffness: 300,
-                damping: 30,
-                mass: 0.8
+                type: "tween",
+                duration: 0.25,
+                ease: "easeOut"
             }
         },
         visible: {
@@ -34,18 +33,17 @@ const MobileMenu = ({ isOpen, onClose }) => {
             scale: 1,
             opacity: 1,
             transition: {
-                type: "spring",
-                stiffness: 80,
-                damping: 15,
-                mass: 1
+                type: "tween",
+                duration: 0.25,
+                ease: [0.25, 0.1, 0.25, 1.0] // Cubic bezier for native-like feel
             }
         },
         exit: {
-            scale: 0.9,
+            scale: 0.95,
             opacity: 0,
             transition: {
-                duration: 0.3,
-                ease: "easeInOut"
+                duration: 0.2,
+                ease: "easeIn"
             }
         }
     };
@@ -59,24 +57,25 @@ const MobileMenu = ({ isOpen, onClose }) => {
         <AnimatePresence>
             {isOpen && (
                 <>
-                    {/* Backdrop */}
+                    {/* Backdrop (No Blur) */}
                     <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         onClick={onClose}
-                        className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 lg:hidden"
+                        className="fixed inset-0 bg-black/80 z-40 lg:hidden"
                     />
 
-                    {/* Dynamic Island Menu */}
+                    {/* Dynamic Island Menu (No Blur, Clean Animation) */}
                     <motion.div
                         variants={menuVariants}
                         initial="hidden"
                         animate="visible"
                         exit="exit"
-                        className="fixed top-2 left-2 right-2 z-50 lg:hidden"
+                        className="fixed top-2 left-2 right-2 z-50 lg:hidden will-change-transform origin-top-left"
                     >
-                        <div className="bg-[#1e1e1e]/90 backdrop-blur-xl border border-white/10 rounded-3xl shadow-2xl overflow-hidden text-white">
+                        {/* Removed backdrop-blur-xl, increased opacity for legibility */}
+                        <div className="bg-[#1e1e1e] border border-white/10 rounded-3xl shadow-2xl overflow-hidden text-white">
 
                             {/* Header: Profile & Close */}
                             <div className="flex items-center justify-between p-4 border-b border-white/10">
@@ -104,9 +103,8 @@ const MobileMenu = ({ isOpen, onClose }) => {
                             {/* Main Navigation (Flex/Grid) */}
                             <motion.div
                                 className="p-4 grid grid-cols-2 gap-3"
-                                initial="hidden"
+                                initial="visible" // Skip stagger, just show
                                 animate="visible"
-                                transition={{ staggerChildren: 0.05, delayChildren: 0.1 }}
                             >
                                 <MenuLink to="/" icon="fa-home" label="首頁" color="bg-blue-500" onClose={onClose} variants={itemVariants} />
                                 <MenuLink to="/archives" icon="fa-archive" label="文章列表" color="bg-purple-500" onClose={onClose} variants={itemVariants} />
@@ -114,10 +112,10 @@ const MobileMenu = ({ isOpen, onClose }) => {
                                 <MenuLink to="/tags" icon="fa-tags" label="標籤" color="bg-orange-500" onClose={onClose} variants={itemVariants} />
                             </motion.div>
 
-                            {/* Secondary Links (Horizontal Scroll) */}
+                            {/* Secondary Links (Grid Layout) */}
                             <div className="px-4 pb-4">
                                 <p className="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-2 px-1">更多內容</p>
-                                <div className="flex gap-3 overflow-x-auto pb-2 no-scrollbar">
+                                <div className="grid grid-cols-2 gap-3">
                                     <SecondaryLink to="/essay" icon="fa-pen-fancy" label="短文" onClose={onClose} />
                                     <SecondaryLink to="/changelog" icon="fa-history" label="日誌" onClose={onClose} />
                                     <SecondaryLink to="/equipment" icon="fa-tools" label="裝備" onClose={onClose} />
@@ -128,7 +126,7 @@ const MobileMenu = ({ isOpen, onClose }) => {
                             {/* Footer Status */}
                             <div className="bg-black/20 p-3 text-center">
                                 <span className="text-xs text-gray-500 font-mono">
-                                    Dreamers Audio Blog v1.5.1
+                                    Dreamers Audio Blog v1.6.0
                                 </span>
                             </div>
 
@@ -159,12 +157,12 @@ const SecondaryLink = ({ to, icon, label, onClose }) => (
     <Link
         to={to}
         onClick={onClose}
-        className="flex-shrink-0 flex flex-col items-center gap-2 p-3 min-w-[70px] rounded-xl bg-white/5 hover:bg-white/10 active:scale-95 transition-all"
+        className="flex items-center gap-3 p-3 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/5 active:scale-95 transition-all group"
     >
-        <div className="text-gray-400 group-hover:text-white">
-            <i className={clsx("fas", icon)}></i>
+        <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center text-gray-400 group-hover:text-white transition-colors">
+            <i className={clsx("fas", icon, "text-sm")}></i>
         </div>
-        <span className="text-xs font-medium text-gray-400">{label}</span>
+        <span className="text-xs font-bold text-gray-400 group-hover:text-white transition-colors">{label}</span>
     </Link>
 );
 

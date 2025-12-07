@@ -23,25 +23,25 @@ const Home = () => {
         const fetchPosts = async () => {
             setLoading(true);
             try {
-                // Query published posts ordered by creation date
-                // Note: This requires a composite index in Firebase (status + createdAt)
+                // Query published posts (Client-side sorting to avoid composite index requirement)
                 let q = query(
                     collection(db, 'posts'),
-                    where('status', '==', 'published'),
-                    orderBy('createdAt', 'desc')
+                    where('status', '==', 'published')
                 );
 
-                // If category is selected, we might need to filter client-side if no composite index exists for (status + category + createdAt)
-                // Or we can add a where clause if index exists.
-                // For simplicity and robustness without index management, let's filter client-side for now
-                // or add the where clause if we are confident.
-                // Let's try client-side filtering first to avoid "index needed" errors blocking the user immediately.
-
                 const querySnapshot = await getDocs(q);
-                let postsData = querySnapshot.docs.map(doc => ({
-                    id: doc.id,
-                    ...doc.data()
-                }));
+                let postsData = querySnapshot.docs.map(doc => {
+                    const data = doc.data();
+                    return {
+                        id: doc.id,
+                        ...data,
+                        // Ensure createdAt is a Date object for sorting
+                        createdAt: data.createdAt?.toDate ? data.createdAt.toDate() : new Date(data.createdAt)
+                    };
+                });
+
+                // Sort by createdAt desc (Newest first)
+                postsData.sort((a, b) => b.createdAt - a.createdAt);
 
                 if (currentCategory) {
                     postsData = postsData.filter(post => post.category === currentCategory);
@@ -93,7 +93,7 @@ const Home = () => {
                                         >
                                             <div className="flex items-center justify-between bg-[#1e1e1e] p-4 rounded-xl border border-gray-800">
                                                 <div className="flex items-center gap-2 text-white">
-                                                    <i className="fas fa-filter text-blue-500"></i>
+                                                    <i className="fas fa-filter text-[#709CEF]"></i>
                                                     <span className="font-bold">目前分類：{currentCategory}</span>
                                                 </div>
                                                 <button

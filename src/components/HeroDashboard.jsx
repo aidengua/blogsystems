@@ -310,16 +310,16 @@ const HeroDashboard = ({ posts = [] }) => {
                             to="/?category=作品紀錄"
                         />
                         <CategoryCard
-                            title="比賽紀錄"
-                            icon="fa-fire"
+                            title="日常生活"
+                            icon="fa-mug-hot"
                             colorClass="bg-[#C982A1]"
-                            to="/?category=比賽紀錄"
+                            to="/?category=日常生活"
                         />
                         <CategoryCard
-                            title="製作教程"
-                            icon="fa-layer-group"
+                            title="時事新聞"
+                            icon="fa-newspaper"
                             colorClass="bg-[#83A17E]"
-                            to="/?category=製作教程"
+                            to="/?category=時事新聞"
                         />
                         <CategoryCard
                             title="課堂筆記"

@@ -1,7 +1,52 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 const ProfileCard = () => {
+    const [status, setStatus] = useState('online');
     const [isHovered, setIsHovered] = useState(false);
+
+    // Time-based status logic (Taipei Time UTC+8)
+    useEffect(() => {
+        const updateStatus = () => {
+            const now = new Date();
+            const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
+            const taipeiTime = new Date(utc + (3600000 * 8));
+            const hour = taipeiTime.getHours();
+
+            if (hour >= 8 && hour < 12) {
+                setStatus('online'); // 8:00 - 12:00: Online (Green)
+            } else if (hour >= 13 && hour < 23) {
+                setStatus('dnd');    // 13:00 - 23:00: Do Not Disturb (Red + Minus)
+            } else {
+                setStatus('idle');   // 23:00 - 08:00 (and 12:00-13:00 gap): Idle/Sleep (Yellow + Moon)
+            }
+        };
+
+        updateStatus();
+        const interval = setInterval(updateStatus, 60000); // Check every minute
+        return () => clearInterval(interval);
+    }, []);
+
+    const getStatusStyle = () => {
+        switch (status) {
+            case 'online':
+                return { color: 'bg-green-500', render: null };
+            case 'dnd':
+                // Use a div for the minus line to ensure perfect centering
+                return {
+                    color: 'bg-red-500',
+                    render: <div className="w-3.5 h-1 bg-[#1e1e1e] rounded-full"></div>
+                };
+            case 'idle':
+                return {
+                    color: 'bg-yellow-500',
+                    render: <i className="fas fa-moon text-[#1e1e1e] text-[12px] -rotate-12 transform translate-y-[-1px]"></i>
+                };
+            default:
+                return { color: 'bg-gray-500', render: null };
+        }
+    };
+
+    const statusStyle = getStatusStyle();
 
     return (
         <div
@@ -27,15 +72,19 @@ const ProfileCard = () => {
                             </div>
                         </div>
 
-                        {/* Avatar */}
-                        <div className="flex justify-center">
-                            <div className="relative w-28 h-28">
-                                <div className="w-full h-full rounded-2xl overflow-hidden border-4 border-[#2a2a2a] shadow-2xl">
+                        {/* Avatar (Discord Style) */}
+                        <div className="flex justify-center relative">
+                            <div className="relative w-32 h-32">
+                                <div className="w-full h-full rounded-full overflow-hidden border-4 border-[#2a2a2a] shadow-2xl">
                                     <img
                                         src="https://cloudflare-imgbed-5re.pages.dev/file/1759506193400_1000004107.jpg"
                                         alt="Avatar"
                                         className="w-full h-full object-cover"
                                     />
+                                </div>
+                                {/* Status Indicator */}
+                                <div className={`absolute bottom-1 right-1 w-8 h-8 rounded-full ${statusStyle.color} border-[4px] border-[#1e1e1e] flex items-center justify-center`}>
+                                    {statusStyle.render}
                                 </div>
                             </div>
                         </div>

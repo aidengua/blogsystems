@@ -16,8 +16,8 @@ const Categories = () => {
     // Category Metadata Mapping (Colors & Icons)
     const categoryMeta = {
         "作品紀錄": { icon: "fa-clipboard-list", color: "bg-[#72B5AD]", gradient: "from-[#72B5AD] to-[#5a968f]" },
-        "比賽紀錄": { icon: "fa-fire", color: "bg-[#C982A1]", gradient: "from-[#C982A1] to-[#a86580]" },
-        "製作教程": { icon: "fa-layer-group", color: "bg-[#83A17E]", gradient: "from-[#83A17E] to-[#6b8567]" },
+        "日常生活": { icon: "fa-mug-hot", color: "bg-[#C982A1]", gradient: "from-[#C982A1] to-[#a86580]" },
+        "時事新聞": { icon: "fa-newspaper", color: "bg-[#83A17E]", gradient: "from-[#83A17E] to-[#6b8567]" },
         "課堂筆記": { icon: "fa-book", color: "bg-[#C3B579]", gradient: "from-[#C3B579] to-[#a3965f]" },
         // Default fallback
         "default": { icon: "fa-folder", color: "bg-blue-500", gradient: "from-blue-500 to-blue-600" }

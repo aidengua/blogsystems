@@ -20,6 +20,7 @@ const Sidebar = ({ mobile, close, toc, activeSection }) => {
     const [loading, setLoading] = useState(true);
     const [chartDims, setChartDims] = useState({ width: 0, height: 0 });
     const chartContainerRef = useRef(null);
+    const [isTocHovered, setIsTocHovered] = useState(false);
 
     useEffect(() => {
         // Robust check: Only render chart when container has dimensions
@@ -44,9 +45,16 @@ const Sidebar = ({ mobile, close, toc, activeSection }) => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const q = query(collection(db, 'posts'), where('status', '==', 'published'), orderBy('createdAt', 'desc'));
+                // Query published posts - Client-side sorting/filtering to avoid composite index
+                const q = query(collection(db, 'posts'), where('status', '==', 'published'));
                 const querySnapshot = await getDocs(q);
-                const posts = querySnapshot.docs.map(doc => ({ ...doc.data(), createdAt: doc.data().createdAt?.toDate() }));
+                let posts = querySnapshot.docs.map(doc => ({
+                    ...doc.data(),
+                    createdAt: doc.data().createdAt?.toDate ? doc.data().createdAt.toDate() : new Date(doc.data().createdAt)
+                }));
+
+                // Sort by date desc (Newest first) for consistent processing
+                posts.sort((a, b) => b.createdAt - a.createdAt);
 
                 // 1. Process Tags
                 const tagCounts = {};
@@ -224,12 +232,12 @@ const Sidebar = ({ mobile, close, toc, activeSection }) => {
                         {/* Tags Cloud (Compact) */}
                         <div className="mb-6">
                             <div className="flex items-center gap-2 mb-3 text-white font-bold">
-                                <i className="fas fa-tags text-blue-500"></i>
+                                <i className="fas fa-tags text-[#709CEF]"></i>
                                 <span>標籤雲</span>
                             </div>
                             <div className="flex flex-wrap gap-2">
                                 {Object.entries(tags).slice(0, 10).map(([tag, count], i) => (
-                                    <Link key={i} to={`/tags/${tag}`} onClick={close} className="text-xs px-2 py-1 rounded-md bg-white/5 hover:bg-blue-500 hover:text-white text-gray-400 transition-colors">
+                                    <Link key={i} to={`/tags/${tag}`} onClick={close} className="text-xs px-2 py-1 rounded-md bg-white/5 hover:bg-[#709CEF] hover:text-white text-gray-400 transition-colors">
                                         {tag}
                                     </Link>
                                 ))}
@@ -247,30 +255,51 @@ const Sidebar = ({ mobile, close, toc, activeSection }) => {
 
             {/* Table of Contents (Post Only) */}
             {toc && (
-                <div className="bg-[#1e1e1e] rounded-xl p-6 mb-6 shadow-xl border border-gray-800 sticky top-24">
-                    <div className="flex items-center gap-2 mb-4 text-white font-bold pb-2">
-                        <i className="fas fa-bars text-white"></i>
-                        <span>目錄</span>
+                <div
+                    className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-6 mb-6 shadow-2xl sticky top-24 relative group group/toc transition-all duration-300"
+                    onMouseEnter={() => setIsTocHovered(true)}
+                    onMouseLeave={() => setIsTocHovered(false)}
+                >
+                    {/* Background Glow Effect */}
+                    <div className="absolute -top-20 -right-20 w-40 h-40 bg-blue-500/20 rounded-full blur-3xl pointer-events-none group-hover:bg-blue-500/30 transition-colors duration-500"></div>
+
+                    <div className="flex items-center gap-2 mb-4 text-white font-bold pb-2 border-b border-white/5 relative z-10">
+                        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center shadow-lg shadow-blue-500/20">
+                            <i className="fas fa-list-ul text-white text-xs"></i>
+                        </div>
+                        <span className="tracking-wide">文章目錄</span>
                     </div>
-                    <div className="space-y-1 max-h-[calc(100vh-400px)] overflow-y-auto pr-2 custom-scrollbar">
+
+                    {/* Height allows auto-sizing based on content up to 85vh */}
+                    <div className="space-y-1 max-h-[85vh] overflow-y-auto pr-2 relative z-10 scrollbar-hide">
                         {toc.length > 0 ? (
-                            toc.map((item) => (
-                                <a
-                                    key={item.id}
-                                    href={`#${item.id}`}
-                                    className={`block text-sm py-2 px-3 rounded-md transition-all duration-300 ${activeSection === item.id
-                                        ? 'bg-orange-500/10 text-orange-400 border-l-4 border-orange-400 pl-2'
-                                        : 'text-gray-400 hover:bg-gray-800 hover:text-gray-200'
-                                        } ${item.level === 1 ? 'font-bold' :
-                                            item.level === 2 ? 'ml-2' :
-                                                'ml-4'
-                                        }`}
-                                >
-                                    {item.text}
-                                </a>
-                            ))
+                            toc.map((item) => {
+                                const isActive = activeSection === item.id;
+                                const isRevealed = isActive || isTocHovered;
+
+                                return (
+                                    <a
+                                        key={item.id}
+                                        href={`#${item.id}`}
+                                        className={`group/item flex items-center py-2 px-3 rounded-lg transition-all duration-300 text-sm ${isActive
+                                            ? 'blur-none opacity-100 font-bold text-[#709CEF] translate-x-2 scale-105'
+                                            : isRevealed
+                                                ? 'blur-none opacity-100 text-gray-400 hover:text-[#709CEF] hover:translate-x-1'
+                                                : 'text-gray-400 blur-[1px] opacity-60'
+                                            } ${item.level === 1 ? '' :
+                                                item.level === 2 ? 'ml-4' :
+                                                    'ml-8'
+                                            }`}
+                                    >
+                                        {item.text}
+                                    </a>
+                                );
+                            })
                         ) : (
-                            <span className="text-sm text-gray-500">No headers found.</span>
+                            <div className="flex flex-col items-center justify-center py-8 text-gray-500 opacity-60">
+                                <i className="far fa-file-alt text-2xl mb-2"></i>
+                                <span className="text-xs">無目錄內容</span>
+                            </div>
                         )}
                     </div>
                 </div>
@@ -286,7 +315,7 @@ const Sidebar = ({ mobile, close, toc, activeSection }) => {
             {!toc && (
                 <div className="liquid-glass p-6 mb-6">
                     <div className="flex items-center gap-2 mb-4 text-gray-900 dark:text-white font-bold border-b border-gray-100 dark:border-gray-700 pb-2">
-                        <i className="fas fa-tags text-blue-500"></i>
+                        <i className="fas fa-tags text-[#709CEF]"></i>
                         <span>標籤雲</span>
                     </div>
                     <div className="flex flex-wrap gap-2">
@@ -309,7 +338,7 @@ const Sidebar = ({ mobile, close, toc, activeSection }) => {
             {!toc && (
                 <div className="liquid-glass p-6 mb-6">
                     <div className="flex items-center gap-2 mb-4 text-gray-900 dark:text-white font-bold border-b border-gray-100 dark:border-gray-700 pb-2">
-                        <i className="fas fa-archive text-blue-500"></i>
+                        <i className="fas fa-archive text-[#709CEF]"></i>
                         <span>歸檔</span>
                     </div>
                     <div className="grid grid-cols-2 gap-2">

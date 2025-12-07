@@ -1,5 +1,17 @@
 # Changelog
 
+## [v1.6.1] - 2025-12-07
+### Added
+- **TOC Interaction Polish**:
+  - **Blur Focus**: Implemented smart blur logic where hovering the card reveals all items, while keeping the active section distinct.
+  - **Adaptive Layout**: Removed scrollbars and implemented dynamic height sizing based on content quantity.
+- **Gemini AI Upgrade**:
+  - Updated API model to `gemini-2.0-flash-lite`.
+  - Redesigned activation button with "Dark Pill" aesthetic and spinning glow animation.
+- **System Refinements**:
+  - Renamed categories to better reflect content structure.
+  - Fixed empty image source console warnings in Markdown renderer.
+
 ## [v1.6.0] - 2025-12-07
 ### Added
 - **Mobile Menu Redesign**:

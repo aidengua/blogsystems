@@ -12,7 +12,7 @@ import { formatContentWithGemini } from '../../services/gemini';
 
 // --- Constants & Helpers ---
 
-const CATEGORIES = ["作品紀錄", "比賽紀錄", "製作教程", "課堂筆記"];
+const CATEGORIES = ["作品紀錄", "日常生活", "時事新聞", "課堂筆記"];
 
 const getCaretCoordinates = (element, position) => {
     if (!element) return { top: 0, left: 0, height: 0 };
@@ -257,10 +257,30 @@ const EditorSection = ({
                             >
                                 <button
                                     onClick={handleGeminiFormat}
-                                    className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-xl shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50 transition-all transform hover:scale-105 whitespace-nowrap"
+                                    className="group relative rounded-full p-[1px] hover:p-[2px] transition-all duration-300 shadow-[0_0_20px_rgba(0,0,0,0.5)] hover:shadow-none active:scale-95 overflow-hidden"
                                 >
-                                    <i className="fas fa-magic"></i>
-                                    <span>使用 Gemini 排版</span>
+                                    {/* Animated Gradient Border (Spinning Conic Gradient) */}
+                                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300%] h-[500%] bg-[conic-gradient(from_0deg,#3b82f6,#a855f7,#ef4444,#eab308,#3b82f6)] group-hover:animate-[spin_4s_linear_infinite] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+
+                                    {/* Content Container (Masks the center) */}
+                                    <div className="relative bg-[#1a1a1a] rounded-full flex items-center gap-3 pl-2 pr-2.5 py-1.5 z-10 w-full h-full">
+
+                                        {/* Left Icon: Google Colors Ring with Animation */}
+                                        <div className="relative w-8 h-8 rounded-full overflow-hidden flex-shrink-0">
+                                            <div className="absolute inset-0 bg-gradient-to-tr from-blue-500 via-red-500 to-yellow-500 animate-[spin_3s_linear_infinite]"></div>
+                                            <div className="absolute inset-[2px] rounded-full bg-[#1a1a1a] flex items-center justify-center">
+                                                <i className="fab fa-google text-[10px] text-gray-300"></i>
+                                            </div>
+                                        </div>
+
+                                        {/* Text with Gradient */}
+                                        <span className="font-medium text-sm bg-gradient-to-r from-blue-200 to-purple-200 bg-clip-text text-transparent whitespace-nowrap">
+                                            Gemini 排版
+                                        </span>
+
+                                        {/* Right Icon: Sparkle */}
+                                        <i className="fas fa-sparkles text-sm text-[#709CEF] group-hover:rotate-12 transition-transform"></i>
+                                    </div>
                                 </button>
                             </motion.div>
                         )}
@@ -420,9 +440,11 @@ const PostEditor = () => {
         setContent(newContent);
 
         // Check for '@' trigger
-        if (newContent.endsWith('@')) {
+        // Check for '@' trigger at cursor position
+        const cursorPosition = e.target.selectionEnd;
+        if (newContent[cursorPosition - 1] === '@') {
             const textarea = e.target;
-            const { top, left, height } = getCaretCoordinates(textarea, textarea.selectionEnd);
+            const { top, left, height } = getCaretCoordinates(textarea, cursorPosition);
 
             setGeminiButtonPosition({
                 top: top + height + 10,

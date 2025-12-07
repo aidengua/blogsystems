@@ -418,11 +418,11 @@ const About = () => {
 
                         <div className="space-y-2 mb-6">
                             <div className="flex items-center gap-2">
-                                <i className="fas fa-check-square text-blue-500"></i>
+                                <i className="fas fa-check-square text-[#709CEF]"></i>
                                 <span>成為音響設計帶著自己的作品參賽 🔊</span>
                             </div>
                             <div className="flex items-center gap-2">
-                                <i className="fas fa-check-square text-blue-500"></i>
+                                <i className="fas fa-check-square text-[#709CEF]"></i>
                                 <span>超級Skidder <code className="bg-gray-800 px-1 rounded">Ctrl</code> + <code className="bg-gray-800 px-1 rounded">C</code>、<code className="bg-gray-800 px-1 rounded">Ctrl</code> + <code className="bg-gray-800 px-1 rounded">V</code> 高級java工程師</span>
                             </div>
                             <div className="flex items-center gap-2">
@@ -438,15 +438,15 @@ const About = () => {
                         <h4 className="text-xl font-bold text-gray-400 mb-4">TodoList</h4>
                         <div className="space-y-2">
                             <div className="flex items-center gap-2">
-                                <i className="fas fa-check-square text-blue-500"></i>
+                                <i className="fas fa-check-square text-[#709CEF]"></i>
                                 <span>設計與不同文化結合的音響</span>
                             </div>
                             <div className="flex items-center gap-2">
-                                <i className="fas fa-check-square text-blue-500"></i>
+                                <i className="fas fa-check-square text-[#709CEF]"></i>
                                 <span>完成Hexo部落格搭建</span>
                             </div>
                             <div className="flex items-center gap-2">
-                                <i className="fas fa-check-square text-blue-500"></i>
+                                <i className="fas fa-check-square text-[#709CEF]"></i>
                                 <span>高中養成撰寫部落格和筆記好習慣</span>
                             </div>
                             <div className="flex items-center gap-2">

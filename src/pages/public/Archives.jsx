@@ -97,7 +97,7 @@ const Archives = () => {
 
                                                 {/* Content */}
                                                 <div className="flex-grow w-full md:w-auto">
-                                                    <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2 group-hover:text-blue-500 transition-colors line-clamp-1">
+                                                    <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2 group-hover:text-[#709CEF] transition-colors line-clamp-1">
                                                         {post.title}
                                                     </h3>
                                                     <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500 dark:text-gray-400">

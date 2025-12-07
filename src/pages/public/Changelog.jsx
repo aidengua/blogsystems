@@ -7,6 +7,19 @@ const Changelog = () => {
     // Mock data for changelog - in a real app this could come from Firebase
     const changelogs = [
         {
+            version: "v1.6.1",
+            date: "2025-12-07",
+            title: "TOC Polish & AI Upgrade",
+            content: (
+                <ul className="list-disc list-inside space-y-1 text-sm">
+                    <li><strong>TOC Refinement:</strong> Implemented adaptive height, "Smart Blur" reveal logic, and hidden scrollbars for a cleaner reading experience.</li>
+                    <li><strong>Gemini AI 2.0:</strong> Upgraded to `flash-lite` model and redesigned the AI trigger button with a modern "Dark Pill" aesthetic.</li>
+                    <li><strong>System Polish:</strong> Renamed categories and fixed markdown rendering warnings.</li>
+                </ul>
+            ),
+            type: "improvement"
+        },
+        {
             version: "v1.6.0",
             date: "2025-12-07",
             title: "Mobile & Visual Evolution",
@@ -179,7 +192,7 @@ const Changelog = () => {
                                         <div className="relative z-10">
                                             <div className="flex items-center gap-3 mb-3">
                                                 <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider
-                                                    ${log.type === 'major' ? 'bg-blue-500/20 text-blue-500' :
+                                                    ${log.type === 'major' ? 'bg-blue-500/20 text-[#709CEF]' :
                                                         log.type === 'feature' ? 'bg-green-500/20 text-green-500' :
                                                             log.type === 'improvement' ? 'bg-orange-500/20 text-orange-500' : 'bg-gray-500/20 text-gray-400'}`}
                                                 >

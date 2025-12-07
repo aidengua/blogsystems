@@ -10,7 +10,9 @@ if (API_KEY) {
 
 const MODELS_TO_TRY = [
     "gemini-2.0-flash-lite",
-    "gemini-pro"
+    "gemini-2.0-flash",
+    "gemini-2.5-flash",
+    "gemini-flash-latest"
 ];
 
 export const formatContentWithGemini = async (content) => {

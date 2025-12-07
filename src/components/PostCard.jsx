@@ -62,7 +62,7 @@ const PostCard = ({ post }) => {
 
                             {/* Date */}
                             <time className="font-mono opacity-60">
-                                {post.createdAt?.toDate().toLocaleDateString('zh-TW')}
+                                {(post.createdAt?.toDate ? post.createdAt.toDate() : new Date(post.createdAt || Date.now())).toLocaleDateString('zh-TW')}
                             </time>
                         </div>
                     </div>

@@ -63,22 +63,36 @@ const PostDetail = () => {
         }
     }, [slug]);
 
+    // Generate TOC from rendered DOM elements to ensure ID consistency
     useEffect(() => {
         if (post?.content) {
-            const headers = post.content.match(/^#{1,3} .+/gm);
-            if (headers) {
-                const newToc = headers.map(header => {
-                    const level = header.match(/^#+/)[0].length;
-                    const text = header.replace(/^#+ /, '');
-                    const id = text.toLowerCase().replace(/[^\w\u4e00-\u9fa5]+/g, '-').replace(/^-+|-+$/g, '');
-                    return { id, text, level };
-                });
-                setToc(newToc);
-            }
+            // Wait for render cycle to complete
+            setTimeout(() => {
+                const article = document.querySelector('.prose');
+                if (article) {
+                    const headings = Array.from(article.querySelectorAll('h1, h2, h3'));
+                    const newToc = headings.map(heading => {
+                        // Ensure heading has an ID (rehype-slug should have added it, but fallback if missing)
+                        if (!heading.id) {
+                            heading.id = heading.innerText.toLowerCase().replace(/[^\w\u4e00-\u9fa5]+/g, '-').replace(/^-+|-+$/g, '');
+                        }
+
+                        return {
+                            id: heading.id,
+                            text: heading.innerText,
+                            level: parseInt(heading.tagName.substring(1))
+                        };
+                    });
+                    setToc(newToc);
+                }
+            }, 100);
         }
     }, [post]);
 
+    // Intersection Observer for Active Section
     useEffect(() => {
+        if (toc.length === 0) return;
+
         const observer = new IntersectionObserver(
             (entries) => {
                 entries.forEach((entry) => {
@@ -90,7 +104,7 @@ const PostDetail = () => {
             { rootMargin: '-100px 0px -66% 0px' }
         );
 
-        const headings = document.querySelectorAll('h1, h2, h3');
+        const headings = document.querySelectorAll('.prose h1, .prose h2, .prose h3');
         headings.forEach((heading) => observer.observe(heading));
 
         return () => {
@@ -211,14 +225,23 @@ const PostDetail = () => {
             <div className="container mx-auto px-4 py-12 max-w-7xl">
                 <div className="flex flex-col lg:flex-row gap-8">
                     <div className="w-full lg:w-3/4">
-                        <div className="card-glass p-6 md:p-12">
+                        <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl shadow-2xl p-6 md:p-12">
                             <article className="prose prose-lg dark:prose-invert max-w-none 
                                 prose-headings:font-display prose-headings:font-bold 
                                 prose-a:text-primary hover:prose-a:text-blue-600 
                                 prose-img:rounded-xl prose-img:shadow-lg
                                 prose-blockquote:border-l-4 prose-blockquote:border-primary prose-blockquote:bg-gray-50 dark:prose-blockquote:bg-gray-800/50 prose-blockquote:py-2 prose-blockquote:px-4 prose-blockquote:not-italic
                             ">
-                                <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeSlug]}>
+                                <ReactMarkdown
+                                    remarkPlugins={[remarkGfm]}
+                                    rehypePlugins={[rehypeSlug]}
+                                    components={{
+                                        img: (props) => {
+                                            if (!props.src) return null;
+                                            return <img {...props} />;
+                                        }
+                                    }}
+                                >
                                     {post.content}
                                 </ReactMarkdown>
                             </article>
