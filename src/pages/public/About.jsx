@@ -306,22 +306,26 @@ const About = () => {
                                             <i className="fas fa-times"></i>
                                         </button>
                                     </div>
-                                    <div className="h-[160px] w-full">
-                                        <ResponsiveContainer width="100%" height="100%">
-                                            <BarChart data={weeklyStats}>
-                                                <XAxis dataKey="date" tick={{ fontSize: 10, fill: '#9ca3af' }} axisLine={false} tickLine={false} />
-                                                <Tooltip
-                                                    contentStyle={{ backgroundColor: '#1f2937', border: 'none', borderRadius: '8px', fontSize: '12px' }}
-                                                    itemStyle={{ color: '#fff' }}
-                                                    cursor={{ fill: 'rgba(255,255,255,0.1)' }}
-                                                />
-                                                <Bar dataKey="visits" radius={[4, 4, 0, 0]}>
-                                                    {weeklyStats.map((entry, index) => (
-                                                        <Cell key={`cell-${index}`} fill={index === weeklyStats.length - 1 ? '#3b82f6' : '#4b5563'} />
-                                                    ))}
-                                                </Bar>
-                                            </BarChart>
-                                        </ResponsiveContainer>
+                                    <div className="h-[160px] w-full flex items-center justify-center">
+                                        {isFlipped ? (
+                                            <ResponsiveContainer width="100%" height="100%">
+                                                <BarChart data={weeklyStats}>
+                                                    <XAxis dataKey="date" tick={{ fontSize: 10, fill: '#9ca3af' }} axisLine={false} tickLine={false} />
+                                                    <Tooltip
+                                                        contentStyle={{ backgroundColor: '#1f2937', border: 'none', borderRadius: '8px', fontSize: '12px' }}
+                                                        itemStyle={{ color: '#fff' }}
+                                                        cursor={{ fill: 'rgba(255,255,255,0.1)' }}
+                                                    />
+                                                    <Bar dataKey="visits" radius={[4, 4, 0, 0]}>
+                                                        {weeklyStats.map((entry, index) => (
+                                                            <Cell key={`cell-${index}`} fill={index === weeklyStats.length - 1 ? '#3b82f6' : '#4b5563'} />
+                                                        ))}
+                                                    </Bar>
+                                                </BarChart>
+                                            </ResponsiveContainer>
+                                        ) : (
+                                            <div className="text-gray-500 text-sm">Loading Chart...</div>
+                                        )}
                                     </div>
                                 </div>
                                 <div className="text-center text-xs text-gray-500 mt-2">

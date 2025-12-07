@@ -7,6 +7,20 @@ const Changelog = () => {
     // Mock data for changelog - in a real app this could come from Firebase
     const changelogs = [
         {
+            version: "v1.6.0",
+            date: "2025-12-07",
+            title: "Mobile & Visual Evolution",
+            content: (
+                <ul className="list-disc list-inside space-y-1 text-sm">
+                    <li><strong>Mobile Menu Redesign:</strong> "Dynamic Island" style top-down menu with smooth spring animations.</li>
+                    <li><strong>Profile Card 2.0:</strong> Replaced flip animation with a refined "Breathe & Fade" effect and added signature GIF.</li>
+                    <li><strong>Line Card Polish:</strong> Enhanced visuals with enlarged logo and blurred watermark (removed green background).</li>
+                    <li><strong>Mobile UX:</strong> Implemented scrollable tag bar and optimized spacing for small screens.</li>
+                </ul>
+            ),
+            type: "major"
+        },
+        {
             version: "v1.5.1",
             date: "2025-12-06",
             title: "Visual & Performance Polish",

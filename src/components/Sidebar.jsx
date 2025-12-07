@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom';
 import { collection, getDocs, query, where, orderBy } from 'firebase/firestore';
 import { db } from '../firebase';
 import { AreaChart, Area, XAxis, Tooltip, ResponsiveContainer } from 'recharts';
+import ProfileCard from './ProfileCard';
+import LineCard from './LineCard';
 
 const Sidebar = ({ mobile, close, toc, activeSection }) => {
     const [tags, setTags] = useState({});
@@ -106,31 +108,6 @@ const Sidebar = ({ mobile, close, toc, activeSection }) => {
 
         fetchData();
     }, []);
-
-    const [lineCardRotate, setLineCardRotate] = useState({ x: 0, y: 0 });
-    const [isHovered, setIsHovered] = useState(false);
-    const lineCardRef = useRef(null);
-
-    const handleLineCardMouseMove = (e) => {
-        if (!lineCardRef.current) return;
-        const rect = lineCardRef.current.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-        const centerX = rect.width / 2;
-        const centerY = rect.height / 2;
-
-        // Subtle tilt: max +/- 10 degrees
-        const rotateX = ((y - centerY) / centerY) * -10;
-        const rotateY = ((x - centerX) / centerX) * 10;
-
-        setLineCardRotate({ x: rotateX, y: rotateY });
-        setIsHovered(true);
-    };
-
-    const handleLineCardMouseLeave = () => {
-        setLineCardRotate({ x: 0, y: 0 });
-        setIsHovered(false);
-    };
 
     // Mobile Layout
     if (mobile) {
@@ -299,56 +276,11 @@ const Sidebar = ({ mobile, close, toc, activeSection }) => {
                 </div>
             )}
 
+            {/* Profile Card (Desktop Only) */}
+            {!toc && <ProfileCard />}
+
             {/* Announcement Card (Line 3D Flip) */}
-            {!toc && (
-                <div
-                    ref={lineCardRef}
-                    onMouseMove={handleLineCardMouseMove}
-                    onMouseLeave={handleLineCardMouseLeave}
-                    className="group perspective-[1000px] h-28 mb-6 cursor-pointer"
-                >
-                    <div
-                        className="relative w-full h-full transition-transform duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] transform-style-3d"
-                        style={{
-                            transform: `rotateX(${lineCardRotate.x}deg) rotateY(${lineCardRotate.y + (isHovered ? 180 : 0)}deg)`
-                        }}
-                    >
-                        {/* Front Face (Line Info) */}
-                        <div className="absolute inset-0 backface-hidden liquid-glass p-4 overflow-hidden">
-                            <div className="absolute inset-0 bg-gradient-to-r from-[#06C755] to-[#00B900] opacity-90 dark:opacity-80"></div>
-                            <div className="relative z-10 flex items-center justify-between text-white h-full">
-                                <div className="flex flex-col">
-                                    <span className="text-xs opacity-80 mb-1">官方帳號 Line</span>
-                                    <span className="font-bold text-lg">加入好友獲取最新資訊</span>
-                                </div>
-                                <i className="fab fa-line text-3xl opacity-80"></i>
-                            </div>
-                            <i className="fas fa-comment-dots absolute right-2 bottom-2 text-white/10 text-4xl"></i>
-                        </div>
-
-                        {/* Back Face (QR Code) */}
-                        <div className="absolute inset-0 h-full w-full rotate-y-180 backface-hidden bg-[#111] rounded-xl overflow-hidden flex items-center justify-between px-6 border border-white/10 shadow-2xl">
-                            {/* Left Text */}
-                            <div className="flex flex-col items-start z-10">
-                                <h3 className="text-2xl font-bold text-white tracking-wider mb-1">掃一掃</h3>
-                                <div className="flex items-center gap-1 text-xs text-gray-400">
-                                    <span>不錯過精彩文章</span>
-                                    <i className="fas fa-caret-right text-white"></i>
-                                </div>
-                            </div>
-
-                            {/* Right QR Code */}
-                            <div className="relative z-10 bg-white p-1.5 rounded-lg">
-                                <img
-                                    src="https://cloudflare-imgbed-5re.pages.dev/file/1764755896344_1000037754.jpg"
-                                    alt="Line QR Code"
-                                    className="w-16 h-16 object-contain"
-                                />
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            )}
+            {!toc && <LineCard />}
 
             {/* Tags Card */}
             {!toc && (

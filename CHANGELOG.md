@@ -1,5 +1,16 @@
 # Changelog
 
+## [v1.6.0] - 2025-12-07
+### Added
+- **Mobile Menu Redesign**:
+  - Implemented "Dynamic Island" style top-down expanding menu.
+  - Optimized animations with smooth spring physics (`stiffness: 80`, `damping: 15`).
+  - Redesigned menu layout with categorized sections and flex-grid buttons.
+- **Visual Refinements**:
+  - **Profile Card 2.0**: Replaced 3D flip with a sophisticated "Breathe & Fade" opacity transition. Added decorative GIF signature.
+  - **Line Card Polish**: Enhanced visuals by removing green background, enlarging Line logo, and adding a blurred watermark effect.
+  - **Tag Bar**: Implemented horizontally scrollable tag list for mobile devices.
+
 ## [v1.5.1] - 2025-12-06
 ### Added
 - **Article Banner Redesign**: Implemented a new premium banner design with glassmorphic badges, large typography, and interactive metadata tooltips.

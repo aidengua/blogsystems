@@ -166,9 +166,9 @@ const IntroCard = () => {
                         <MarqueeColumn images={[...images.slice(4), ...images.slice(0, 4)]} duration={25} />
                     </div>
                     {/* Top Fade Overlay */}
-                    <div className="absolute top-0 left-0 right-0 h-16 bg-gradient-to-b from-[#1a1a1a] via-[#1a1a1a]/60 to-transparent z-10 pointer-events-none"></div>
+                    <div className="absolute top-0 left-0 right-0 h-16 bg-gradient-to-b from-[#1a1a1a] via-[#1a1a1a]/60 to-transparent z-10 pointer-events-none md:hidden"></div>
                     {/* Bottom Fade Overlay */}
-                    <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-[#1a1a1a] via-[#1a1a1a]/60 to-transparent z-10 pointer-events-none"></div>
+                    <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-[#1a1a1a] via-[#1a1a1a]/60 to-transparent z-10 pointer-events-none md:hidden"></div>
                 </div>
             </div>
             {/* Decorative Elements */}

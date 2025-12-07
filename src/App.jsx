@@ -22,11 +22,14 @@ import { NotificationProvider } from './context/NotificationContext';
 import NotificationToast from './components/NotificationToast';
 import ContextMenu from './components/ContextMenu';
 
+import DotMatrixBackground from './components/DotMatrixBackground';
+
 function App() {
   const location = useLocation();
 
   return (
     <LoadingProvider>
+      <DotMatrixBackground />
       <LoadingScreen />
       <NotificationProvider>
         <ContextMenu />
