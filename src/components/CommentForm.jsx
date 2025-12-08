@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '../firebase';
@@ -284,25 +285,28 @@ const CommentForm = ({ postId, postTitle, onCommentAdded }) => {
                         </div>
                     )}
 
-                    {/* Emoji Preview Tooltip (Fixed Position) */}
-                    <AnimatePresence>
-                        {previewEmoji && (
-                            <motion.div
-                                initial={{ opacity: 0, scale: 0.5, y: 10 }}
-                                animate={{ opacity: 1, scale: 1, y: 0 }}
-                                exit={{ opacity: 0, scale: 0.5 }}
-                                transition={{ type: "spring", stiffness: 400, damping: 25 }}
-                                className="fixed z-[9999] pointer-events-none transform -translate-x-1/2"
-                                style={{ top: previewPos.top, left: previewPos.left }}
-                            >
-                                <div className="bg-[#1a1a1a] border border-white/10 p-3 rounded-xl shadow-[0_8px_30px_rgba(0,0,0,0.5)] flex items-center justify-center min-w-[80px] min-h-[80px]">
-                                    <img src={previewEmoji} alt="preview" className="w-12 h-12 object-contain filter drop-shadow-lg" />
-                                    {/* Arrow pointing down */}
-                                    <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 rotate-45 w-4 h-4 bg-[#1a1a1a] border-r border-b border-white/10"></div>
-                                </div>
-                            </motion.div>
-                        )}
-                    </AnimatePresence>
+                    {/* Emoji Preview Tooltip (Fixed Position - Portaled to Body) */}
+                    {createPortal(
+                        <AnimatePresence>
+                            {previewEmoji && (
+                                <motion.div
+                                    initial={{ opacity: 0, scale: 0.5, y: 10 }}
+                                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                                    exit={{ opacity: 0, scale: 0.5 }}
+                                    transition={{ type: "spring", stiffness: 400, damping: 25 }}
+                                    className="fixed z-[9999] pointer-events-none transform -translate-x-1/2"
+                                    style={{ top: previewPos.top, left: previewPos.left }}
+                                >
+                                    <div className="bg-[#1a1a1a] border border-white/10 p-3 rounded-xl shadow-[0_8px_30px_rgba(0,0,0,0.5)] flex items-center justify-center min-w-[80px] min-h-[80px]">
+                                        <img src={previewEmoji} alt="preview" className="w-12 h-12 object-contain filter drop-shadow-lg" />
+                                        {/* Arrow pointing down */}
+                                        <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 rotate-45 w-4 h-4 bg-[#1a1a1a] border-r border-b border-white/10"></div>
+                                    </div>
+                                </motion.div>
+                            )}
+                        </AnimatePresence>,
+                        document.body
+                    )}
                 </div>
 
                 {/* Input Row */}
