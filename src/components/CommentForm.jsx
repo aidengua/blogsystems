@@ -137,6 +137,7 @@ const CommentForm = ({ postId, postTitle, onCommentAdded }) => {
         // Trigger input update
         handleInput();
         setShowEmoji(false);
+        setPreviewEmoji(null);
     };
 
     const handleKeyDown = (e) => {
