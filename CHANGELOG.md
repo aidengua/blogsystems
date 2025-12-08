@@ -1,106 +1,145 @@
 # Changelog
 
+## [v1.8.0] - 2025-12-08
+### 新增 (Added)
+- **畫廊系統**：
+  - **自定義語法**：支援 `{% gallery true %}` 語法，可將多張圖片自動排列為響應式網格。
+  - **PostGallery 元件**：實作具備縮放動畫與燈箱功能的圖片畫廊。
+  - **AI 自動排版**：Gemini AI 現在能識別連續圖片並自動應用畫廊語法。
+- **編輯器優化**：
+  - **即時預覽**：編輯器現在支援畫廊功能的即時預覽。
+  - **AI 按鈕**：新增常駐的「AI 排版」按鈕取代舊版彈出觸發。
+
+### 優化 (Changed)
+- **圖片載入**：優化 `LazyImage` 佈局邏輯，解決圖片上方留白問題。
+- **視覺修飾**：移除畫廊圖片的預設背景框，呈現更乾淨的視覺效果。
+
+## [v1.7.0] - 2025-12-08
+### 新增 (Added)
+- **音樂廳升級**：
+  - **黑膠唱機介面**：實作具備旋轉動畫與機械臂的擬真黑膠唱機。
+  - **沉浸式側邊欄**：全新的玻璃擬態播放清單，支援動態「現正播放」指示與專輯封面顯示。
+  - **快捷控制**：新增空白鍵 (Space) 播放/暫停快捷鍵支援。
+- **音樂膠囊 2.0**：
+  - **智慧待機**：未播放時自動縮小為黑膠圖示，懸停可預覽播放。
+  - **流暢變形**：實作由待機至播放狀態的無縫寬度與外觀變形動畫 (`Framer Motion`)。
+  - **視覺拋光**：優化背景模糊與旋轉唱片細節。
+
+## [v1.6.2] - 2025-12-07
+### 新增 (Added)
+- **後台管理**：
+  - 新增更新日誌管理功能（CRUD），可於儀表板新增、編輯與刪除日誌。
+  - 將日誌數據來源遷移至 Firestore。
+- **功能改進**：
+  - 文章分類頁新增「清除篩選」按鈕。
+  - 優化首頁標題顯示邏輯。
+
+### 優化 (Changed)
+- **視覺升級**：
+  - 全站主題色統一為 `#709CEF`。
+  - 標籤頁面（Tags）標題區塊重設計，採用更精簡的現代化風格。
+  - 優化文章卡片圖片懸停動畫。
+- **系統修復**：
+  - 修復背景主題切換顯示問題（DotMatrixBackground）。
+  - 優化 Firestore 查詢邏輯（移除需索引的排序字段，改為客戶端排序）。
+
 ## [v1.6.1] - 2025-12-07
-### Added
-- **TOC Interaction Polish**:
-  - **Blur Focus**: Implemented smart blur logic where hovering the card reveals all items, while keeping the active section distinct.
-  - **Adaptive Layout**: Removed scrollbars and implemented dynamic height sizing based on content quantity.
-- **Gemini AI Upgrade**:
-  - Updated API model to `gemini-2.0-flash-lite`.
-  - Redesigned activation button with "Dark Pill" aesthetic and spinning glow animation.
-- **System Refinements**:
-  - Renamed categories to better reflect content structure.
-  - Fixed empty image source console warnings in Markdown renderer.
+### 新增 (Added)
+- **目錄 (TOC) 互動優化**：
+  - **智慧模糊**：實作懸停時揭示所有項目，平時僅凸顯當前章節的邏輯。
+  - **自適應佈局**：隱藏滾動條並根據內容動態調整高度。
+- **Gemini AI 升級**：
+  - API 模型更新至 `gemini-2.0-flash-lite`。
+  - 觸發按鈕重新設計為具備旋轉光暈動畫的「深色膠囊」風格。
+- **系統修飾**：
+  - 重命名分類以更好地反映內容結構。
+  - 修復 Markdown 渲染器中的空圖片來源警告。
 
 ## [v1.6.0] - 2025-12-07
-### Added
-- **Mobile Menu Redesign**:
-  - Implemented "Dynamic Island" style top-down expanding menu.
-  - Optimized animations with smooth spring physics (`stiffness: 80`, `damping: 15`).
-  - Redesigned menu layout with categorized sections and flex-grid buttons.
-- **Visual Refinements**:
-  - **Profile Card 2.0**: Replaced 3D flip with a sophisticated "Breathe & Fade" opacity transition. Added decorative GIF signature.
-  - **Line Card Polish**: Enhanced visuals by removing green background, enlarging Line logo, and adding a blurred watermark effect.
-  - **Tag Bar**: Implemented horizontally scrollable tag list for mobile devices.
+### 新增 (Added)
+- **行動版選單重設計**：
+  - 實作「動態島」風格的頂部展開選單。
+  - 優化動畫物理效果 (`stiffness: 80`, `damping: 15`)。
+  - 重新設計選單佈局，包含分類區塊與彈性網格按鈕。
+- **視覺修飾**：
+  - **個人卡片 2.0**：以優雅的「呼吸與淡入」效果取代翻轉動畫，並加入裝飾性 GIF 簽名。
+  - **Line 卡片優化**：移除綠色背景，放大 Logo 並加入模糊浮水印效果。
+  - **標籤列**：實作行動裝置可橫向滾動的標籤列。
 
 ## [v1.5.1] - 2025-12-06
-### Added
-- **Article Banner Redesign**: Implemented a new premium banner design with glassmorphic badges, large typography, and interactive metadata tooltips.
-- **Footer Redesign**: Overhauled the footer with a compact layout, avatar integration, and status indicators.
-- **Loading Optimization**: Implemented smart caching to skip loading screens when switching between Tag pages.
-
-
-All notable changes to this project will be documented in this file.
+### 新增 (Added)
+- **文章橫幅重設計**：全新的高級橫幅設計，包含玻璃擬態徽章、大字體排版與互動式元數據提示。
+- **頁尾重設計**：緊湊式佈局，整合頭像、狀態指示器與快速連結。
+- **加載優化**：實作智慧快取機制，切換標籤頁時跳過加載畫面。
 
 ## [v1.5.0] - 2025-12-04
-### Added
-- **Mac-style Widgets**:
-  - Integrated Clock, Battery, Weather, and Photo widgets into the "Audio Design Home" card on the homepage.
-  - **Clock**: Analog clock with precise styling and liquid glass effect.
-  - **Battery**: Real-time battery status with unified glassmorphism style.
-  - **Weather**: Real-time Taipei weather data with dark glass aesthetic.
-  - **Photo**: "Golden Selection" photo slideshow with "More Recommend" button.
-- **Visitor Statistics**:
-  - Added real-time visitor tracking using Firebase Firestore.
-  - Implemented a 3D flip card on the About page showing weekly visitor stats.
+### 新增 (Added)
+- **Mac 風格小工具**：
+  - 於首頁「音響設計之家」卡片整合時鐘、電池、天氣與相片小工具。
+  - **時鐘**：指針式時鐘搭配液態玻璃效果。
+  - **電池**：即時電量狀態（統一玻璃擬態風格）。
+  - **天氣**：即時台北天氣數據（深色玻璃美學）。
+  - **相片**：「精選相片」幻燈片秀搭配「更多推薦」按鈕。
+- **訪客統計**：
+  - 使用 Firebase Firestore 實作即時訪客追蹤。
+  - 於關於頁面加入顯示週訪客數據的 3D 翻轉卡片。
 
-### Changed
-- **Essay Page Redesign**:
-  - Unified banner height and design with the Equipment page.
-  - Redesigned essay cards with bold text, dashed separators, and pill-shaped date badges.
-  - Updated banner image to a dynamic GIF with blur effect.
-- **Homepage Layout**:
-  - Centered widgets in the "Audio Design Home" card.
-  - Optimized widget sizes and spacing for better visual balance.
-  - Unified blur background effects across all widgets (`bg-black/20 backdrop-blur-xl`).
+### 優化 (Changed)
+- **短文頁面重設計**：
+  - 統一橫幅高度與設計風格（與裝備頁面一致）。
+  - 重新設計短文卡片，採用粗體文字、虛線分隔線與膠囊型日期徽章。
+  - 更新橫幅圖片為具模糊效果的動態 GIF。
+- **首頁佈局**：
+  - 小工具居中顯示。
+  - 優化小工具尺寸與間距以達成視覺平衡。
+  - 統一所有小工具的背景模糊效果 (`bg-black/20 backdrop-blur-xl`).
 
 ## [v1.4.0] - 2025-12-04
-### Added
-- **Comment System**:
-  - Implemented a comprehensive comment system for both Blog Posts and Essays.
-  - **Public**: Visitors can leave comments (Name + Content).
-  - **Admin**: Added "留言管理" (Comments) tab in Dashboard for managing and deleting comments.
-  - **Essays**: Added expandable comment section to each essay card.
-  - **Notifications**: Integrated toast notifications for comment actions (submission, deletion).
-- **Sidebar Enhancements**:
-  - **Line Social Card**: Added 3D flip effect with QR code on the back.
-  - **Profile Card**: Redesigned with a "Status Pill", 3D tilt avatar animation, and glassmorphic GitHub button.
-  - **Activity Chart**: Optimized visuals with glassmorphic tooltip and theme-consistent colors.
+### 新增 (Added)
+- **評論系統**：
+  - 實作完整的文章與短文評論功能。
+  - **公開**：訪客可留言（名稱 + 內容）。
+  - **後台**：儀表板新增「留言管理」分頁，可管理與刪除留言。
+  - **短文**：每張短文卡片皆新增可展開的評論區塊。
+  - **通知**：整合評論動作（提交、刪除）的 Toast 通知。
+- **側邊欄增強**：
+  - **Line 社交卡片**：新增背面帶有 QR Code 的 3D 翻轉效果。
+  - **個人卡片**：重新設計，包含「狀態膠囊」、頭像 3D 傾斜動畫與玻璃擬態 GitHub 按鈕。
+  - **活動圖表**：優化視覺，包含玻璃擬態 Tooltip 與主題一致的配色。
 
-### Changed
-- **Global UI Upgrade**:
-  - Implemented a **Semantic Color System** (`bg-surface`, `text-main`, etc.) for consistent Light/Dark mode theming.
-  - Refactored **Navbar** to use semantic colors and unified dropdown styles.
-  - Updated **Homepage Text** from "Theme-AnZhiYu" to "音響設計之家".
-- **Visual Refinements**:
-  - Updated global avatar and author name to "呂宥德".
-  - Refined Line card animation to follow mouse movement.
-  - Removed image badge from Profile Card.
+### 優化 (Changed)
+- **全站 UI 升級**：
+  - 實作 **語意化色彩系統** (`bg-surface`, `text-main` 等) 以統一深淺色主題。
+  - 重構 **導覽列** 使用語意化色彩並統一選單樣式。
+  - 更新 **首頁文字** 由 "Theme-AnZhiYu" 改為 "音響設計之家"。
+- **視覺修飾**：
+  - 更新全站頭像與作者名稱為 "呂宥德"。
+  - 優化 Line 卡片動畫以跟隨滑鼠移動。
+  - 移除個人卡片中的圖片徽章。
 
 ## [v1.3.0] - 2025-12-03
+### 新增 (Added)
+- **短文頁面**：新增公開頁面 (`/essay`)「短文心事」，特色為暗色系 Hero 區塊與瀑布流佈局。
+- **後台短文管理**：
+  - 新增分頁切換器以在「文章」與「短文」間切換。
+  - 實作短文列表，可檢視、編輯與刪除。
+  - 重用「快速發布」模態框以編輯短文。
+- **後台快速發布**：儀表板新增「快速發布短文」功能。
+  - 可透過儀表板頭部的「新增短文」按鈕開啟。
+  - 開啟模態框以快速輸入文字並發布。
+- **導覽**：主導覽列新增「短文」連結。
+- **Firestore 規則**：更新安全性規則以允許公開讀取與驗證後寫入 `essays` 集合。
+- **部署**：成功部署至 Firebase Hosting。
 
-### Added
-- **Essay Page**: Added a new public page (`/essay`) for "Short Thoughts" (短文心事), featuring a dark-themed hero section and a masonry-style grid for displaying essays.
-- **Admin Essay Management**:
-  - Added a Tab Switcher to toggle between "Posts" and "Essays".
-  - Implemented an Essay Table to view, edit, and delete essays.
-  - Reused the "Quick Publish" modal for editing essays.
-- **Admin Quick Publish**: Added a "Quick Publish Essay" feature to the Admin Dashboard.
-  - Accessible via a new "新增短文" (New Essay) button in the dashboard header.
-  - Opens a modal for quick text entry and publishing.
-- **Navigation**: Added a "短文" (Essay) link to the main navigation bar.
-- **Firestore Rules**: Updated security rules to allow public read access and authenticated write access for the `essays` collection.
-- **Deployment**: Successfully deployed to Firebase Hosting.
+### 優化 (Changed)
+- **Hero 區塊**：
+  - 優化圖片網格動畫，由原本的傾斜佈局改為垂直滾動跑馬燈。
+  - 實作三列隨機滾動速度 (15s, 20s, 25s) 以增加視覺層次。
+  - 修復動畫卡頓與循環銜接問題。
+  - 使用 `will-change-transform` 優化效能。
+- **推薦卡片**：改進懸停動畫，使用更滑順的縮放與貝茲曲線過渡。
+- **後台儀表板 UI**：重構儀表板頭部，將「新增短文」按鈕與「新增文章」按鈕並列。
 
-### Changed
-- **Hero Section**:
-  - Refined the image grid animation to use a vertical scrolling marquee instead of a tilted layout.
-  - Implemented random scrolling speeds (15s, 20s, 25s) for the three columns to create visual depth.
-  - Fixed animation glitches to ensure seamless looping.
-  - Optimized performance with `will-change-transform`.
-- **Recommendation Cards**: Improved hover animations with smoother scaling and cubic-bezier transitions.
-- **Admin Dashboard UI**: Refactored the dashboard header to include the "New Essay" button alongside the "New Post" button.
-
-### Fixed
-- Fixed an issue where the image grid animation would stutter or jump at the loop point.
-- Fixed sticky positioning issues in the Sidebar by adjusting `MainLayout` overflow properties.
+### 修復 (Fixed)
+- 修復圖片網格動畫在循環點跳動的問題。
+- 修復側邊欄因 `MainLayout` 溢出屬性導致的固定定位 (Sticky) 失效問題。

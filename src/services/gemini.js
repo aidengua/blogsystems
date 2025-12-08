@@ -32,8 +32,13 @@ export const formatContentWithGemini = async (content) => {
        - Use **bold** or *italic* for emphasis on key terms.
        - Use headings (#, ##) only if the text clearly implies a section structure.
     5. **Images**: Detect image URLs (starting with http/https and ending in image extensions) and convert them to Markdown image syntax: ![Image](URL).
-    6. **Code**: Format code blocks with triple backticks and language identifiers.
-    7. **Output**: Return ONLY the formatted Markdown. Do not add any conversational filler.
+    6. **Galleries**: If you find 2 or more consecutive images (either raw URLs or markdown images), YOU MUST group them into a gallery block using this EXACT syntax:
+       {% gallery true %}
+       ![Alt Text 1](URL1)
+       ![Alt Text 2](URL2)
+       {% endgallery %}
+    7. **Code**: Format code blocks with triple backticks and language identifiers.
+    8. **Output**: Return ONLY the formatted Markdown. Do not add any conversational filler.
 
     Raw Content:
     ${content}

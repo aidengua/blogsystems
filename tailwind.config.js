@@ -51,6 +51,7 @@ export default {
         'slide-up': 'slideUp 0.5s ease-out',
         'zoom-in': 'zoomIn 0.3s ease-in-out',
         'marquee': 'marquee 25s linear infinite',
+        'spin-slow': 'spin 10s linear infinite',
       },
       keyframes: {
         fadeIn: {

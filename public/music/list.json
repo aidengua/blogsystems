@@ -1,0 +1,23 @@
+[
+    {
+        "name": "頑固",
+        "artist": "五月天",
+        "url": "/music/song/頑固.mp3",
+        "cover": "https://cloudflare-imgbed-5re.pages.dev/file/1765163365400_image.png",
+        "lrc": "/music/song/頑固.lrc"
+    },
+    {
+        "name": "真的愛你",
+        "artist": "Beyond",
+        "url": "/music/song/真的愛你.mp3",
+        "cover": "https://cloudflare-imgbed-5re.pages.dev/file/1765163908989_image.png",
+        "lrc": "/music/song/真的愛你.lrc"
+    },
+    {
+        "name": "光輝歲月",
+        "artist": "Beyond",
+        "url": "/music/song/光輝歲月.mp3",
+        "cover": "https://cloudflare-imgbed-5re.pages.dev/file/1765164383602_image.png",
+        "lrc": "/music/song/光輝歲月.lrc"
+    }
+]

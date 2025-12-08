@@ -19,7 +19,7 @@ const LazyImage = ({ src, alt, className, wrapperClassName }) => {
                     isLoaded ? "opacity-100" : "opacity-0",
                     className
                 )}
-                wrapperClassName="w-full h-full"
+                wrapperClassName="w-full h-full !block"
                 effect="blur"
                 onLoad={() => setIsLoaded(true)}
                 onError={() => setIsLoaded(true)} // Handle error by showing image (alt text) or placeholder

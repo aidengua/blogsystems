@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { collection, query, where, orderBy, onSnapshot } from 'firebase/firestore';
 import { motion, AnimatePresence } from 'framer-motion';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import { db } from '../firebase';
 import CommentForm from './CommentForm';
 
@@ -81,9 +83,23 @@ const CommentSection = ({ postId, postTitle }) => {
                                             </div>
                                         </div>
                                     </div>
-                                    <p className="text-gray-700 dark:text-gray-300 whitespace-pre-wrap leading-relaxed">
-                                        {comment.content}
-                                    </p>
+                                    <div className="text-gray-700 dark:text-gray-300 leading-relaxed text-[15px]">
+                                        <ReactMarkdown
+                                            remarkPlugins={[remarkGfm]}
+                                            components={{
+                                                img: ({ node, ...props }) => (
+                                                    <img
+                                                        {...props}
+                                                        className="inline-block w-6 h-6 align-text-bottom mx-0.5"
+                                                        loading="lazy"
+                                                    />
+                                                ),
+                                                p: ({ node, ...props }) => <div {...props} className="mb-1 last:mb-0" />
+                                            }}
+                                        >
+                                            {comment.content}
+                                        </ReactMarkdown>
+                                    </div>
                                 </motion.div>
                             ))}
                         </AnimatePresence>

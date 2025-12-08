@@ -215,10 +215,9 @@ const Navbar = ({ toggleSidebar }) => {
                                 'relative px-4 py-2 rounded-full transition-all duration-300 flex items-center justify-center gap-2 text-white hover:bg-[#60a5fa] hover:text-white hover:shadow-lg hover:shadow-blue-500/20'
                             )}>
                                 <span className="font-bold text-sm">文庫</span>
+                                <i className="fas fa-chevron-down text-[10px] opacity-70 group-hover:rotate-180 transition-transform"></i>
                             </button>
-
-                            {/* Horizontal Dropdown Menu */}
-                            <div className="absolute top-full left-1/2 -translate-x-1/2 pt-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform group-hover:translate-y-0 translate-y-2">
+                            <div className="absolute top-full left-1/2 -translate-x-1/2 pt-4 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform group-hover:translate-y-0 translate-y-2">
                                 <FluidDropdown items={[
                                     { to: "/archives", label: "全部文章" },
                                     { to: "/categories", label: "分類列表" },
@@ -227,21 +226,34 @@ const Navbar = ({ toggleSidebar }) => {
                             </div>
                         </div>
 
-                        <NavItem to="/changelog" label="日誌" />
-                        <NavItem to="/essay" label="短文" />
-
-                        {/* My Dropdown */}
+                        {/* Creation Dropdown (Grouped Changelog & Essay) */}
                         <div className="relative group flex items-center">
                             <button className={clsx(
-                                'relative px-6 py-1.5 rounded-full transition-all duration-300 flex items-center justify-center gap-2 text-white hover:bg-[#60a5fa] hover:text-white hover:shadow-lg hover:shadow-blue-500/20'
+                                'relative px-4 py-2 rounded-full transition-all duration-300 flex items-center justify-center gap-2 text-white hover:bg-[#60a5fa] hover:text-white hover:shadow-lg hover:shadow-blue-500/20'
+                            )}>
+                                <span className="font-bold text-sm">創作</span>
+                                <i className="fas fa-chevron-down text-[10px] opacity-70 group-hover:rotate-180 transition-transform"></i>
+                            </button>
+                            <div className="absolute top-full left-1/2 -translate-x-1/2 pt-4 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform group-hover:translate-y-0 translate-y-2">
+                                <FluidDropdown items={[
+                                    { to: "/changelog", label: "更新日誌" },
+                                    { to: "/essay", label: "隨筆短文" }
+                                ]} />
+                            </div>
+                        </div>
+
+                        {/* Author Dropdown */}
+                        <div className="relative group flex items-center">
+                            <button className={clsx(
+                                'relative px-4 py-2 rounded-full transition-all duration-300 flex items-center justify-center gap-2 text-white hover:bg-[#60a5fa] hover:text-white hover:shadow-lg hover:shadow-blue-500/20'
                             )}>
                                 <span className="font-bold text-sm">作者</span>
+                                <i className="fas fa-chevron-down text-[10px] opacity-70 group-hover:rotate-180 transition-transform"></i>
                             </button>
-
-                            {/* Horizontal Dropdown Menu */}
-                            <div className="absolute top-full left-1/2 -translate-x-1/2 pt-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform group-hover:translate-y-0 translate-y-2">
+                            <div className="absolute top-full left-1/2 -translate-x-1/2 pt-4 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform group-hover:translate-y-0 translate-y-2">
                                 <FluidDropdown items={[
                                     { onClick: handleRandomPost, label: "隨便逛逛" },
+                                    { to: "/music", label: "音樂館" },
                                     { to: "/about", label: "關於本站" },
                                     { to: "/equipment", label: "我的裝備" }
                                 ]} />

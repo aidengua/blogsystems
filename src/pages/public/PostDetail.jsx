@@ -8,6 +8,18 @@ import { db } from '../../firebase';
 import MainLayout from '../../layouts/MainLayout';
 import Sidebar from '../../components/Sidebar';
 import CommentSection from '../../components/CommentSection';
+import PostGallery from '../../components/PostGallery';
+
+// Helper to preprocess gallery tags
+const preprocessContent = (content) => {
+    if (!content) return '';
+    return content.replace(
+        /\{% gallery true %\}([\s\S]*?)\{% endgallery %\}/g,
+        (match, galleryContent) => {
+            return `\`\`\`gallery\n${galleryContent.trim()}\n\`\`\``;
+        }
+    );
+};
 
 const MetaItem = ({ icon, value, label }) => (
     <div className="group relative flex items-center gap-2 cursor-help transition-opacity hover:opacity-100 opacity-80">
@@ -239,10 +251,50 @@ const PostDetail = () => {
                                         img: (props) => {
                                             if (!props.src) return null;
                                             return <img {...props} />;
+                                        },
+                                        pre: ({ children, ...props }) => {
+                                            // Check if child is a gallery code block
+                                            const childProps = children?.props || {};
+                                            const className = childProps.className || '';
+                                            const isGallery = /language-gallery/.test(className);
+
+                                            if (isGallery) {
+                                                return <>{children}</>;
+                                            }
+                                            return <pre {...props}>{children}</pre>;
+                                        },
+                                        code({ node, inline, className, children, ...props }) {
+                                            const match = /language-(\w+)/.exec(className || '');
+                                            const isGallery = match && match[1] === 'gallery';
+
+                                            if (!inline && isGallery) {
+                                                const images = [];
+                                                // Parse image markdown: ![alt](src) within the code block content
+                                                const lines = String(children).split('\n');
+                                                const imgRegex = /!\[(.*?)\]\((.*?)\)/;
+
+                                                lines.forEach(line => {
+                                                    const imgMatch = line.match(imgRegex);
+                                                    if (imgMatch) {
+                                                        images.push({
+                                                            alt: imgMatch[1],
+                                                            src: imgMatch[2]
+                                                        });
+                                                    }
+                                                });
+
+                                                return <PostGallery images={images} />;
+                                            }
+
+                                            return (
+                                                <code className={className} {...props}>
+                                                    {children}
+                                                </code>
+                                            );
                                         }
                                     }}
                                 >
-                                    {post.content}
+                                    {preprocessContent(post.content)}
                                 </ReactMarkdown>
                             </article>
 

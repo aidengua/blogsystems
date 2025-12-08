@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react';
 import MainLayout from '../../layouts/MainLayout';
+import { useMusic } from '../../context/MusicContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import { incrementVisits, subscribeToStats, subscribeToWeeklyStats } from '../../services/stats';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
+
 
 const About = () => {
     const [currentTime, setCurrentTime] = useState(new Date());
@@ -148,29 +150,21 @@ const About = () => {
                         </div>
                     </motion.div>
 
-                    {/* 2. Pursuit Card */}
+                    {/* 2. Philosophy Card (Restored) */}
                     <motion.div
                         initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
                         className="col-span-1 md:col-span-2 lg:col-span-2 row-span-1"
                     >
-                        <div className="h-full bg-gray-900 dark:bg-black rounded-3xl p-8 text-white shadow-xl border border-gray-800 relative overflow-hidden flex flex-col justify-center">
+                        <div className="h-full bg-gray-900 dark:bg-black rounded-3xl p-8 text-white shadow-xl border border-gray-800 flex flex-col justify-center relative overflow-hidden group">
                             <div className="relative z-10">
-                                <div className="text-gray-400 text-sm mb-2">追求</div>
-                                <div className="text-3xl font-bold leading-tight">
-                                    源于<br />熱愛而去<br />
-                                    <AnimatePresence mode="wait">
-                                        <motion.span
-                                            key={words[wordIndex]}
-                                            initial={{ opacity: 0, y: 10 }}
-                                            animate={{ opacity: 1, y: 0 }}
-                                            exit={{ opacity: 0, y: -10 }}
-                                            transition={{ duration: 0.2 }}
-                                            className="text-purple-400 inline-block mt-1"
-                                        >
-                                            {words[wordIndex]}
-                                        </motion.span>
-                                    </AnimatePresence>
-                                </div>
+                                <div className="text-gray-400 text-sm mb-2">設計理念</div>
+                                <h3 className="text-2xl font-bold mb-4">Less is More</h3>
+                                <p className="text-gray-300 text-sm leading-relaxed">
+                                    我相信好的設計應該是直觀且純粹的。在繁雜的世界中，我致力於透過極簡的視覺語言與直覺的交互體驗，將複雜的功能轉化為優雅的解決方案。無論是音響還是網頁，"簡單" 永遠是最終極的 "複雜"。
+                                </p>
+                            </div>
+                            <div className="absolute right-[-20px] bottom-[-20px] opacity-5 group-hover:opacity-10 transition-opacity duration-500">
+                                <i className="fas fa-drafting-compass text-9xl"></i>
                             </div>
                         </div>
                     </motion.div>

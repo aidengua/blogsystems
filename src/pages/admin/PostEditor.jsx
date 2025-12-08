@@ -9,46 +9,22 @@ import MainLayout from '../../layouts/MainLayout';
 import { motion, AnimatePresence } from 'framer-motion';
 import SpotlightCard from '../../components/SpotlightCard';
 import { formatContentWithGemini } from '../../services/gemini';
+import PostGallery from '../../components/PostGallery';
+
+// Helper to preprocess gallery tags
+const preprocessContent = (content) => {
+    if (!content) return '';
+    return content.replace(
+        /\{% gallery true %\}([\s\S]*?)\{% endgallery %\}/g,
+        (match, galleryContent) => {
+            return `\`\`\`gallery\n${galleryContent.trim()}\n\`\`\``;
+        }
+    );
+};
 
 // --- Constants & Helpers ---
 
 const CATEGORIES = ["作品紀錄", "日常生活", "時事新聞", "課堂筆記"];
-
-const getCaretCoordinates = (element, position) => {
-    if (!element) return { top: 0, left: 0, height: 0 };
-
-    const div = document.createElement('div');
-    const style = window.getComputedStyle(element);
-
-    Array.from(style).forEach(prop => {
-        div.style[prop] = style.getPropertyValue(prop);
-    });
-
-    div.style.position = 'absolute';
-    div.style.top = '0';
-    div.style.left = '-9999px';
-    div.style.visibility = 'hidden';
-    div.style.whiteSpace = 'pre-wrap';
-    div.style.height = 'auto';
-    div.style.overflow = 'hidden';
-
-    div.textContent = element.value.substring(0, position);
-
-    const span = document.createElement('span');
-    span.textContent = element.value.substring(position) || '.';
-    div.appendChild(span);
-
-    document.body.appendChild(div);
-
-    const coordinates = {
-        top: span.offsetTop + parseInt(style.borderTopWidth || '0'),
-        left: span.offsetLeft + parseInt(style.borderLeftWidth || '0'),
-        height: parseInt(style.lineHeight || '20')
-    };
-
-    document.body.removeChild(div);
-    return coordinates;
-};
 
 // --- Sub-Components ---
 
@@ -217,7 +193,7 @@ const EditorSection = ({
                 )}
             </AnimatePresence>
 
-            {/* Content Editor with Gemini Trigger */}
+            {/* Content Editor */}
             <div className="relative flex-grow">
                 <div className="flex justify-between items-center mb-2">
                     <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider">
@@ -236,55 +212,10 @@ const EditorSection = ({
                         className="w-full p-4 bg-black/20 border border-white/10 rounded-xl focus:ring-2 focus:ring-[#709CEF] focus:border-transparent text-gray-300 font-mono min-h-[400px] h-full transition-all resize-none text-sm leading-relaxed placeholder-gray-700 custom-scrollbar"
                         value={isAnimating ? displayedContent : content}
                         onChange={handleContentChange}
-                        placeholder="在此輸入內容，支援 Markdown。輸入 '@' 呼叫 Gemini AI 協助排版..."
+                        placeholder="在此輸入內容，支援 Markdown..."
                         required
                         readOnly={isFormatting || isAnimating}
                     />
-
-                    {/* Gemini Prompt Popup */}
-                    <AnimatePresence>
-                        {showGeminiPrompt && (
-                            <motion.div
-                                initial={{ opacity: 0, y: 10, scale: 0.9 }}
-                                animate={{ opacity: 1, y: 0, scale: 1 }}
-                                exit={{ opacity: 0, y: 10, scale: 0.9 }}
-                                style={{
-                                    position: 'absolute',
-                                    top: geminiButtonPosition.top,
-                                    left: geminiButtonPosition.left,
-                                    zIndex: 50
-                                }}
-                            >
-                                <button
-                                    onClick={handleGeminiFormat}
-                                    className="group relative rounded-full p-[1px] hover:p-[2px] transition-all duration-300 shadow-[0_0_20px_rgba(0,0,0,0.5)] hover:shadow-none active:scale-95 overflow-hidden"
-                                >
-                                    {/* Animated Gradient Border (Spinning Conic Gradient) */}
-                                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300%] h-[500%] bg-[conic-gradient(from_0deg,#3b82f6,#a855f7,#ef4444,#eab308,#3b82f6)] group-hover:animate-[spin_4s_linear_infinite] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-
-                                    {/* Content Container (Masks the center) */}
-                                    <div className="relative bg-[#1a1a1a] rounded-full flex items-center gap-3 pl-2 pr-2.5 py-1.5 z-10 w-full h-full">
-
-                                        {/* Left Icon: Google Colors Ring with Animation */}
-                                        <div className="relative w-8 h-8 rounded-full overflow-hidden flex-shrink-0">
-                                            <div className="absolute inset-0 bg-gradient-to-tr from-blue-500 via-red-500 to-yellow-500 animate-[spin_3s_linear_infinite]"></div>
-                                            <div className="absolute inset-[2px] rounded-full bg-[#1a1a1a] flex items-center justify-center">
-                                                <i className="fab fa-google text-[10px] text-gray-300"></i>
-                                            </div>
-                                        </div>
-
-                                        {/* Text with Gradient */}
-                                        <span className="font-medium text-sm bg-gradient-to-r from-blue-200 to-purple-200 bg-clip-text text-transparent whitespace-nowrap">
-                                            Gemini 排版
-                                        </span>
-
-                                        {/* Right Icon: Sparkle */}
-                                        <i className="fas fa-sparkles text-sm text-[#709CEF] group-hover:rotate-12 transition-transform"></i>
-                                    </div>
-                                </button>
-                            </motion.div>
-                        )}
-                    </AnimatePresence>
                 </div>
                 {/* Helper Text */}
                 <div className="absolute bottom-4 left-4 text-xs text-gray-600 pointer-events-none">
@@ -293,7 +224,21 @@ const EditorSection = ({
             </div>
 
             {/* Action Buttons */}
-            <div className="flex items-center justify-end gap-4 pt-4 border-t border-white/10 mt-auto">
+            <div className="flex items-center justify-end gap-3 pt-4 border-t border-white/10 mt-auto">
+                {/* Gemini AI Button (Fixed Position) */}
+                <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    type="button"
+                    onClick={handleGeminiFormat}
+                    disabled={isFormatting || isAnimating || !content}
+                    className="group relative rounded-xl bg-gradient-to-r from-indigo-500/20 to-purple-500/20 border border-indigo-500/30 text-indigo-300 hover:text-white hover:border-indigo-400 px-4 py-2 flex items-center gap-2 text-sm overflow-hidden disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                    <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <i className="fas fa-sparkles text-xs group-hover:animate-pulse"></i>
+                    <span>AI 排版</span>
+                </motion.button>
+
                 <motion.button
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
@@ -366,8 +311,45 @@ const PreviewSection = ({ title, imageUrl, isAnimating, displayedContent, conten
                     </div>
                 )}
                 <h1 className="mb-4 text-4xl md:text-5xl font-display">{title || '文章標題'}</h1>
-                <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                    {(isAnimating ? displayedContent : content) || '內容預覽區域...'}
+                <ReactMarkdown
+                    remarkPlugins={[remarkGfm]}
+                    components={{
+                        img: (props) => {
+                            if (!props.src) return null;
+                            return <img {...props} />;
+                        },
+                        code({ node, inline, className, children, ...props }) {
+                            const match = /language-(\w+)/.exec(className || '');
+                            const isGallery = match && match[1] === 'gallery';
+
+                            if (!inline && isGallery) {
+                                const images = [];
+                                // Parse image markdown: ![alt](src) within the code block content
+                                const lines = String(children).split('\n');
+                                const imgRegex = /!\[(.*?)\]\((.*?)\)/;
+
+                                lines.forEach(line => {
+                                    const imgMatch = line.match(imgRegex);
+                                    if (imgMatch) {
+                                        images.push({
+                                            alt: imgMatch[1],
+                                            src: imgMatch[2]
+                                        });
+                                    }
+                                });
+
+                                return <PostGallery images={images} />;
+                            }
+
+                            return (
+                                <code className={className} {...props}>
+                                    {children}
+                                </code>
+                            );
+                        }
+                    }}
+                >
+                    {preprocessContent((isAnimating ? displayedContent : content) || '內容預覽區域...')}
                 </ReactMarkdown>
             </article>
         </div>
@@ -389,8 +371,6 @@ const PostEditor = () => {
     const [loading, setLoading] = useState(false);
     const [previewMode, setPreviewMode] = useState(false);
     const [isFormatting, setIsFormatting] = useState(false);
-    const [geminiButtonPosition, setGeminiButtonPosition] = useState({ top: 0, left: 0 });
-    const [showGeminiPrompt, setShowGeminiPrompt] = useState(false);
     const [isMobile, setIsMobile] = useState(false);
 
     // Animation states
@@ -438,22 +418,6 @@ const PostEditor = () => {
     const handleContentChange = (e) => {
         const newContent = e.target.value;
         setContent(newContent);
-
-        // Check for '@' trigger
-        // Check for '@' trigger at cursor position
-        const cursorPosition = e.target.selectionEnd;
-        if (newContent[cursorPosition - 1] === '@') {
-            const textarea = e.target;
-            const { top, left, height } = getCaretCoordinates(textarea, cursorPosition);
-
-            setGeminiButtonPosition({
-                top: top + height + 10,
-                left: left
-            });
-            setShowGeminiPrompt(true);
-        } else {
-            setShowGeminiPrompt(false);
-        }
     };
 
     const animateText = async (targetText) => {
@@ -479,13 +443,11 @@ const PostEditor = () => {
 
     const handleGeminiFormat = async () => {
         if (!content.trim()) return;
-        const cleanContent = content.endsWith('@') ? content.slice(0, -1) : content;
 
         setIsFormatting(true);
-        setShowGeminiPrompt(false);
 
         try {
-            const formatted = await formatContentWithGemini(cleanContent);
+            const formatted = await formatContentWithGemini(content);
             await animateText(formatted);
         } catch (error) {
             alert("Gemini API Error: " + error.message);
@@ -614,8 +576,6 @@ const PostEditor = () => {
                                     displayedContent={displayedContent}
                                     isAnimating={isAnimating} isFormatting={isFormatting}
                                     handleContentChange={handleContentChange}
-                                    showGeminiPrompt={showGeminiPrompt}
-                                    geminiButtonPosition={geminiButtonPosition}
                                     handleGeminiFormat={handleGeminiFormat}
                                     previewMode={previewMode} setPreviewMode={setPreviewMode}
                                     handleSubmit={handleSubmit} loading={loading}
@@ -661,8 +621,6 @@ const PostEditor = () => {
                                 displayedContent={displayedContent}
                                 isAnimating={isAnimating} isFormatting={isFormatting}
                                 handleContentChange={handleContentChange}
-                                showGeminiPrompt={showGeminiPrompt}
-                                geminiButtonPosition={geminiButtonPosition}
                                 handleGeminiFormat={handleGeminiFormat}
                                 previewMode={previewMode} setPreviewMode={setPreviewMode}
                                 handleSubmit={handleSubmit} loading={loading}
