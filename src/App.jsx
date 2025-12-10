@@ -25,6 +25,7 @@ import NotificationToast from './components/NotificationToast';
 import ContextMenu from './components/ContextMenu';
 
 import DotMatrixBackground from './components/DotMatrixBackground';
+import FaviconManager from './components/FaviconManager';
 import { MusicProvider } from './context/MusicContext';
 import MusicPlayerCapsule from './components/MusicPlayerCapsule';
 
@@ -34,6 +35,7 @@ function App() {
   return (
     <LoadingProvider>
       <MusicProvider>
+        <FaviconManager />
         <DotMatrixBackground />
         <LoadingScreen />
 
