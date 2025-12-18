@@ -91,14 +91,14 @@ const Home = () => {
                                             transition={{ duration: 0.3, ease: "easeInOut" }}
                                             className="overflow-hidden"
                                         >
-                                            <div className="flex items-center justify-between bg-[#1e1e1e] p-4 rounded-xl border border-gray-800">
-                                                <div className="flex items-center gap-2 text-white">
+                                            <div className="flex items-center justify-between bg-white dark:bg-[#1e1e1e] p-4 rounded-xl border border-gray-200 dark:border-gray-800">
+                                                <div className="flex items-center gap-2 text-gray-900 dark:text-white">
                                                     <i className="fas fa-filter text-[#709CEF]"></i>
                                                     <span className="font-bold">目前分類：{currentCategory}</span>
                                                 </div>
                                                 <button
                                                     onClick={() => setSearchParams({})}
-                                                    className="text-sm text-gray-400 hover:text-white transition-colors flex items-center gap-1"
+                                                    className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors flex items-center gap-1"
                                                 >
                                                     <i className="fas fa-times"></i> 清除篩選
                                                 </button>
@@ -158,7 +158,7 @@ const Home = () => {
                             {/* Sidebar (Desktop) */}
                             <div className="hidden lg:block w-1/4">
                                 <div>
-                                    <Sidebar />
+                                    <Sidebar posts={posts} />
                                 </div>
                             </div>
                         </div>

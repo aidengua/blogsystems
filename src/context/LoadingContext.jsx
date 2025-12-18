@@ -1,5 +1,4 @@
-import { createContext, useContext, useState, useEffect, useRef } from 'react';
-import { useLocation } from 'react-router-dom';
+import { createContext, useContext, useState, useEffect } from 'react';
 
 const LoadingContext = createContext();
 
@@ -9,9 +8,6 @@ export const LoadingProvider = ({ children }) => {
     const [isLoading, setIsLoading] = useState(true);
     const [progress, setProgress] = useState(0);
     const [loadingText, setLoadingText] = useState('Initializing...');
-    const [visitedRoutes, setVisitedRoutes] = useState(new Set());
-    const location = useLocation();
-    const prevPathRef = useRef(null);
 
     // Simulated loading assets
     const loadingAssets = [
@@ -25,18 +21,7 @@ export const LoadingProvider = ({ children }) => {
     ];
 
     useEffect(() => {
-        const isTagSwitch = location.pathname.startsWith('/tags/') && prevPathRef.current?.startsWith('/tags/');
-
-        // Update prevPath
-        prevPathRef.current = location.pathname;
-
-        // If route has been visited OR it's a tag switch, don't show loading screen
-        if (visitedRoutes.has(location.pathname) || isTagSwitch) {
-            setIsLoading(false);
-            return;
-        }
-
-        // Trigger loading on route change
+        // Trigger loading ONLY on initial mount (first time entering website)
         setIsLoading(true);
         setProgress(0);
         setLoadingText('Preparing...');
@@ -55,13 +40,6 @@ export const LoadingProvider = ({ children }) => {
                 currentProgress = 100;
                 clearInterval(interval);
 
-                // Mark route as visited
-                setVisitedRoutes(prev => {
-                    const newSet = new Set(prev);
-                    newSet.add(location.pathname);
-                    return newSet;
-                });
-
                 setTimeout(() => {
                     setIsLoading(false);
                     setLoadingText('Ready');
@@ -71,7 +49,7 @@ export const LoadingProvider = ({ children }) => {
         }, 100); // Update every 100ms
 
         return () => clearInterval(interval);
-    }, [location.pathname]); // Re-run on path change
+    }, []); // Empty dependency array ensures this runs only once on mount
 
     return (
         <LoadingContext.Provider value={{ isLoading, progress, loadingText }}>

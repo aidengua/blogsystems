@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth';
+import { signInWithEmailAndPassword } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
 import { auth } from '../../firebase';
 import MainLayout from '../../layouts/MainLayout';
@@ -9,21 +9,16 @@ const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
-    const [isRegistering, setIsRegistering] = useState(false);
     const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
         try {
-            if (isRegistering) {
-                await createUserWithEmailAndPassword(auth, email, password);
-            } else {
-                await signInWithEmailAndPassword(auth, email, password);
-            }
+            await signInWithEmailAndPassword(auth, email, password);
             navigate('/admin');
         } catch (err) {
-            setError('Failed to ' + (isRegistering ? 'register' : 'login') + ': ' + err.message);
+            setError('Failed to login: ' + err.message);
         }
     };
 
@@ -40,7 +35,7 @@ const Login = () => {
                     <div className="card-glass p-10 animate-slide-up">
                         <div className="text-center mb-8">
                             <h2 className="text-3xl font-display font-bold text-gray-900 dark:text-white">
-                                {isRegistering ? '管理員註冊' : '管理員登入'}
+                                管理員登入
                             </h2>
                             <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
                                 歡迎回來，請輸入您的憑證以繼續
@@ -97,23 +92,12 @@ const Login = () => {
                                     className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-xl text-white bg-primary hover:bg-[#5B89E5] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-all duration-300 shadow-lg hover:shadow-xl"
                                 >
                                     <span className="absolute left-0 inset-y-0 flex items-center pl-3">
-                                        <i className={`fas ${isRegistering ? 'fa-user-plus' : 'fa-sign-in-alt'} text-blue-200 group-hover:text-blue-100`}></i>
+                                        <i className="fas fa-sign-in-alt text-blue-200 group-hover:text-blue-100"></i>
                                     </span>
-                                    {isRegistering ? '註冊帳號' : '登入系統'}
+                                    登入系統
                                 </motion.button>
                             </div>
                         </form>
-
-                        <div className="mt-6 text-center">
-                            <button
-                                onClick={() => setIsRegistering(!isRegistering)}
-                                className="text-sm font-medium text-primary hover:text-blue-600 transition-colors"
-                            >
-                                {isRegistering
-                                    ? '已有帳號？點此登入'
-                                    : '需要帳號？點此註冊'}
-                            </button>
-                        </div>
                     </div>
                 </div>
             </div>

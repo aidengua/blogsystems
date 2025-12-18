@@ -55,7 +55,7 @@ const ProfileCard = () => {
             onMouseLeave={() => setIsHovered(false)}
         >
             {/* Static Background Container */}
-            <div className="relative w-full h-full bg-[#1e1e1e] rounded-3xl shadow-xl border border-gray-800 overflow-hidden">
+            <div className="relative w-full h-full bg-white dark:bg-[#1e1e1e] rounded-3xl shadow-xl border border-gray-200 dark:border-gray-800 overflow-hidden text-gray-900 dark:text-white">
 
                 {/* Content Wrapper */}
                 <div className="relative w-full h-full">
@@ -67,7 +67,7 @@ const ProfileCard = () => {
                     >
                         {/* Status Pill */}
                         <div className="flex justify-center">
-                            <div className="px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs text-gray-300 font-medium backdrop-blur-md">
+                            <div className="px-4 py-1.5 rounded-full bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 text-xs text-gray-600 dark:text-gray-300 font-medium backdrop-blur-md">
                                 晚上就是拿來敲代碼的
                             </div>
                         </div>
@@ -75,7 +75,7 @@ const ProfileCard = () => {
                         {/* Avatar (Discord Style) */}
                         <div className="flex justify-center relative">
                             <div className="relative w-32 h-32">
-                                <div className="w-full h-full rounded-full overflow-hidden border-4 border-[#2a2a2a] shadow-2xl">
+                                <div className="w-full h-full rounded-full overflow-hidden border-4 border-gray-100 dark:border-[#2a2a2a] shadow-2xl">
                                     <img
                                         src="https://cloudflare-imgbed-5re.pages.dev/file/1759506193400_1000004107.jpg"
                                         alt="Avatar"
@@ -83,7 +83,7 @@ const ProfileCard = () => {
                                     />
                                 </div>
                                 {/* Status Indicator */}
-                                <div className={`absolute bottom-1 right-1 w-8 h-8 rounded-full ${statusStyle.color} border-[4px] border-[#1e1e1e] flex items-center justify-center`}>
+                                <div className={`absolute bottom-1 right-1 w-8 h-8 rounded-full ${statusStyle.color} border-[4px] border-white dark:border-[#1e1e1e] flex items-center justify-center`}>
                                     {statusStyle.render}
                                 </div>
                             </div>
@@ -92,16 +92,16 @@ const ProfileCard = () => {
                         {/* Info & Action */}
                         <div className="flex items-end justify-between">
                             <div>
-                                <h3 className="text-2xl font-bold text-white mb-1">呂宥德</h3>
-                                <p className="text-sm text-gray-400">夢想家音響工作室</p>
+                                <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-1">呂宥德</h3>
+                                <p className="text-sm text-gray-500 dark:text-gray-400">夢想家音響工作室</p>
                             </div>
                             <a
                                 href="https://github.com/yourusername"
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="w-10 h-10 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center transition-all hover:scale-110"
+                                className="w-10 h-10 rounded-full bg-gray-100 dark:bg-white/5 hover:bg-gray-200 dark:hover:bg-white/10 flex items-center justify-center transition-all hover:scale-110"
                             >
-                                <i className="fab fa-github text-xl text-white"></i>
+                                <i className="fab fa-github text-xl text-gray-700 dark:text-white"></i>
                             </a>
                         </div>
                     </div>
@@ -113,7 +113,7 @@ const ProfileCard = () => {
                     >
                         {/* Top Pill / Search Bar Style */}
                         <div className="flex justify-center mb-6">
-                            <div className="px-4 py-1.5 rounded-full bg-yellow-500/20 text-yellow-500 border border-yellow-500/30 text-xs font-bold flex items-center gap-2">
+                            <div className="px-4 py-1.5 rounded-full bg-yellow-500/10 text-yellow-600 dark:text-yellow-500 border border-yellow-500/20 text-xs font-bold flex items-center gap-2">
                                 <i className="fas fa-search"></i>
                                 <span>分享與熱心幫助</span>
                             </div>
@@ -121,11 +121,11 @@ const ProfileCard = () => {
 
                         {/* Description Text */}
                         <div className="flex-grow space-y-4">
-                            <p className="text-sm text-gray-300 leading-relaxed font-medium">
-                                這有關於<span className="text-white font-bold">產品</span>、<span className="text-white font-bold">設計</span>、<span className="text-white font-bold">開發</span>相關的問題和看法，還有<span className="text-white font-bold">文章翻譯</span>和<span className="text-white font-bold">分享</span>。
+                            <p className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed font-medium">
+                                這有關於<span className="text-gray-900 dark:text-white font-bold">產品</span>、<span className="text-gray-900 dark:text-white font-bold">設計</span>、<span className="text-gray-900 dark:text-white font-bold">開發</span>相關的問題和看法，還有<span className="text-gray-900 dark:text-white font-bold">文章翻譯</span>和<span className="text-gray-900 dark:text-white font-bold">分享</span>。
                             </p>
-                            <p className="text-sm text-gray-300 leading-relaxed font-medium">
-                                相信你可以在這裡找到對你有用的<span className="text-white font-bold">知識</span>和<span className="text-white font-bold">教程</span>。
+                            <p className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed font-medium">
+                                相信你可以在這裡找到對你有用的<span className="text-gray-900 dark:text-white font-bold">知識</span>和<span className="text-gray-900 dark:text-white font-bold">教程</span>。
                             </p>
                         </div>
 
@@ -135,15 +135,15 @@ const ProfileCard = () => {
                                 <img
                                     src="https://cloudflare-imgbed-5re.pages.dev/file/1765098308498_web.gif"
                                     alt="Decoration"
-                                    className="h-full object-contain"
+                                    className="h-full object-contain filter dark:brightness-100"
                                 />
                             </div>
                             <div className="flex gap-2">
-                                <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center transition-colors hover:bg-white/20 cursor-pointer">
-                                    <i className="fab fa-github text-white text-sm"></i>
+                                <div className="w-8 h-8 rounded-full bg-gray-100 dark:bg-white/10 flex items-center justify-center transition-colors hover:bg-gray-200 dark:hover:bg-white/20 cursor-pointer">
+                                    <i className="fab fa-github text-gray-700 dark:text-white text-sm"></i>
                                 </div>
-                                <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center transition-colors hover:bg-white/20 cursor-pointer">
-                                    <i className="fas fa-envelope text-white text-sm"></i>
+                                <div className="w-8 h-8 rounded-full bg-gray-100 dark:bg-white/10 flex items-center justify-center transition-colors hover:bg-gray-200 dark:hover:bg-white/20 cursor-pointer">
+                                    <i className="fas fa-envelope text-gray-700 dark:text-white text-sm"></i>
                                 </div>
                             </div>
                         </div>

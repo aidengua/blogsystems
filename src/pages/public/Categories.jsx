@@ -70,10 +70,10 @@ const Categories = () => {
             <div className="min-h-screen pt-24 pb-20 container mx-auto px-4 max-w-7xl">
                 {/* Header */}
                 <div className="text-center mb-12 animate-fade-in">
-                    <h1 className="text-4xl md:text-5xl font-bold text-white dark:text-white mb-4">
+                    <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">
                         文章分類
                     </h1>
-                    <p className="text-gray-600 dark:text-gray-400 text-lg">
+                    <p className="text-gray-500 dark:text-gray-400 text-lg">
                         探索 {Object.keys(categories).length} 個不同的主題領域
                     </p>
                 </div>
@@ -100,7 +100,7 @@ const Categories = () => {
                                         onClick={() => setSelectedCategory(isSelected ? null : catName)}
                                         className={clsx(
                                             "relative h-32 rounded-2xl overflow-hidden cursor-pointer transition-all duration-500",
-                                            isSelected ? "ring-4 ring-offset-4 ring-offset-[#121212] ring-[#709CEF] scale-105 z-10 shadow-2xl" : "hover:scale-[1.02] opacity-80 hover:opacity-100"
+                                            isSelected ? "ring-4 ring-offset-4 ring-offset-white dark:ring-offset-[#121212] ring-[#709CEF] scale-105 z-10 shadow-2xl" : "hover:scale-[1.02] opacity-90 hover:opacity-100"
                                         )}
                                     >
                                         {/* Background Gradient */}
@@ -151,7 +151,7 @@ const Categories = () => {
                             {selectedCategory && (
                                 <button
                                     onClick={() => setSelectedCategory(null)}
-                                    className="px-4 py-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-red-500 hover:text-white transition-all flex items-center gap-2 text-sm font-medium"
+                                    className="px-4 py-2 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-red-500 hover:text-white transition-all flex items-center gap-2 text-sm font-medium"
                                 >
                                     <i className="fas fa-times"></i>
                                     清除篩選
@@ -172,7 +172,7 @@ const Categories = () => {
                                         animate={{ opacity: 1, scale: 1 }}
                                         exit={{ opacity: 0, scale: 0.9 }}
                                         transition={{ duration: 0.3 }}
-                                        className="group relative bg-[#1e1e1e] border border-gray-800 rounded-xl overflow-hidden hover:border-[#709CEF]/50 transition-all duration-300 hover:shadow-lg flex flex-col"
+                                        className="group relative bg-white dark:bg-[#1e1e1e] border border-gray-200 dark:border-gray-800 rounded-xl overflow-hidden hover:border-[#709CEF]/50 transition-all duration-300 hover:shadow-lg flex flex-col"
                                     >
                                         <Link to={`/posts/${post.slug}`} className="block flex-grow">
                                             <div className="aspect-video overflow-hidden relative">
@@ -200,10 +200,10 @@ const Categories = () => {
                                                     <i className="far fa-calendar"></i>
                                                     {new Date(post.createdAt?.seconds * 1000).toLocaleDateString()}
                                                 </div>
-                                                <h3 className="text-lg font-bold text-white mb-2 line-clamp-2 group-hover:text-[#709CEF] transition-colors">
+                                                <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2 line-clamp-2 group-hover:text-[#709CEF] transition-colors">
                                                     {post.title}
                                                 </h3>
-                                                <p className="text-gray-400 text-sm line-clamp-2 mb-4">
+                                                <p className="text-gray-600 dark:text-gray-400 text-sm line-clamp-2 mb-4">
                                                     {post.excerpt}
                                                 </p>
                                             </div>

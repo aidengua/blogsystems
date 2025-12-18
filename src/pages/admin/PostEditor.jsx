@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import LazyImage from '../../components/LazyImage';
 import { useParams, useNavigate } from 'react-router-dom';
-import { doc, getDoc, setDoc, addDoc, collection, serverTimestamp } from 'firebase/firestore';
+import { doc, getDoc, setDoc, addDoc, collection, serverTimestamp, Timestamp } from 'firebase/firestore';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { db } from '../../firebase';
@@ -85,8 +85,16 @@ const CustomDropdown = ({ value, onChange, options }) => {
     );
 };
 
+const formatDateForInput = (date) => {
+    if (!date) return '';
+    const d = new Date(date);
+    const pad = (n) => n.toString().padStart(2, '0');
+    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+};
+
 const EditorSection = ({
     title, setTitle, category, setCategory, slug, setSlug, tags, setTags, imageUrl, setImageUrl,
+    publishDate, setPublishDate,
     content, contentRef, displayedContent, isAnimating, isFormatting, handleContentChange,
     showGeminiPrompt, geminiButtonPosition, handleGeminiFormat,
     previewMode, setPreviewMode, handleSubmit, loading
@@ -119,6 +127,26 @@ const EditorSection = ({
                         onChange={setCategory}
                         options={CATEGORIES}
                     />
+                </div>
+            </div>
+
+            {/* Date & URL Slug */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">
+                        發布時間 (選填)
+                    </label>
+                    <div className="relative group">
+                        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-[#709CEF] transition-colors pointer-events-none">
+                            <i className="far fa-calendar-alt"></i>
+                        </span>
+                        <input
+                            type="datetime-local"
+                            className="w-full pl-10 p-3 bg-black/20 border border-white/10 rounded-xl focus:ring-2 focus:ring-[#709CEF] focus:border-transparent text-gray-300 transition-all text-sm placeholder-gray-700 disabled:opacity-50"
+                            value={publishDate}
+                            onChange={(e) => setPublishDate(e.target.value)}
+                        />
+                    </div>
                 </div>
                 <div>
                     <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">
@@ -368,6 +396,7 @@ const PostEditor = () => {
     const [imageUrl, setImageUrl] = useState('');
     const [tags, setTags] = useState('');
     const [category, setCategory] = useState('');
+    const [publishDate, setPublishDate] = useState('');
     const [loading, setLoading] = useState(false);
     const [previewMode, setPreviewMode] = useState(false);
     const [isFormatting, setIsFormatting] = useState(false);
@@ -402,6 +431,9 @@ const PostEditor = () => {
                     setImageUrl(data.coverImage);
                     setTags(data.tags ? data.tags.join(', ') : '');
                     setCategory(data.category || '');
+                    if (data.createdAt) {
+                        setPublishDate(formatDateForInput(data.createdAt.toDate()));
+                    }
                 }
             };
             fetchPost();
@@ -467,35 +499,38 @@ const PostEditor = () => {
 
         const tagsArray = tags.split(',').map(tag => tag.trim()).filter(tag => tag !== '');
 
-        let finalSlug = slug;
-        if (!finalSlug) {
-            finalSlug = title.toLowerCase()
+        try {
+            const finalSlug = slug || (title.toLowerCase()
                 .replace(/[^\w\s-]/g, '')
                 .replace(/\s+/g, '-')
                 .replace(/--+/g, '-')
-                .trim();
-            if (!finalSlug) {
-                finalSlug = `post-${Date.now()}`;
+                .trim() || `post-${Date.now()}`);
+
+            const commonData = {
+                title,
+                content,
+                slug: finalSlug,
+                coverImage: imageUrl,
+                tags: tagsArray,
+                category,
+                updatedAt: serverTimestamp(),
+            };
+
+            // If user explicitly set a date, we update createdAt. 
+            // Note: usually 'createdAt' is immutable, but user wants "Custom Publish Date". 
+            // So we treat 'createdAt' as 'publishDate'.
+            if (publishDate) {
+                commonData.createdAt = Timestamp.fromDate(new Date(publishDate));
+            } else if (!id) {
+                // New post and no date -> Now
+                commonData.createdAt = serverTimestamp();
             }
-        }
 
-        const postData = {
-            title,
-            content,
-            slug: finalSlug,
-            coverImage: imageUrl,
-            tags: tagsArray,
-            category,
-            updatedAt: serverTimestamp(),
-        };
-
-        try {
             if (id) {
-                await setDoc(doc(db, 'posts', id), postData, { merge: true });
+                await setDoc(doc(db, 'posts', id), commonData, { merge: true });
             } else {
                 await addDoc(collection(db, 'posts'), {
-                    ...postData,
-                    createdAt: serverTimestamp(),
+                    ...commonData,
                     status: 'published',
                     views: 0
                 });
@@ -572,6 +607,7 @@ const PostEditor = () => {
                                     slug={slug} setSlug={setSlug}
                                     tags={tags} setTags={setTags}
                                     imageUrl={imageUrl} setImageUrl={setImageUrl}
+                                    publishDate={publishDate} setPublishDate={setPublishDate}
                                     content={content} contentRef={contentRef}
                                     displayedContent={displayedContent}
                                     isAnimating={isAnimating} isFormatting={isFormatting}
@@ -617,6 +653,7 @@ const PostEditor = () => {
                                 slug={slug} setSlug={setSlug}
                                 tags={tags} setTags={setTags}
                                 imageUrl={imageUrl} setImageUrl={setImageUrl}
+                                publishDate={publishDate} setPublishDate={setPublishDate}
                                 content={content} contentRef={contentRef}
                                 displayedContent={displayedContent}
                                 isAnimating={isAnimating} isFormatting={isFormatting}

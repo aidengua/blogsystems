@@ -26,8 +26,18 @@ export const NotificationProvider = ({ children }) => {
         setNotifications(prev => prev.filter(n => n.id !== id));
     }, []);
 
+    const [confirmation, setConfirmation] = useState(null);
+
+    const showConfirmation = useCallback(({ message, onConfirm, onCancel, type = 'warning' }) => {
+        setConfirmation({ message, onConfirm, onCancel, type });
+    }, []);
+
+    const closeConfirmation = useCallback(() => {
+        setConfirmation(null);
+    }, []);
+
     return (
-        <NotificationContext.Provider value={{ notifications, showNotification, removeNotification }}>
+        <NotificationContext.Provider value={{ notifications, showNotification, removeNotification, confirmation, showConfirmation, closeConfirmation }}>
             {children}
         </NotificationContext.Provider>
     );

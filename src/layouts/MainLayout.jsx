@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
-import PixelBackground from '../components/PixelBackground';
 import MobileMenu from '../components/MobileMenu';
 
 const MainLayout = ({ children }) => {
@@ -14,7 +13,7 @@ const MainLayout = ({ children }) => {
         <div className="min-h-screen flex flex-col relative">
             {/* Background Decoration */}
             <div className="fixed inset-0 pointer-events-none z-0">
-                <PixelBackground />
+
             </div>
 
             <div className="relative z-10 flex flex-col min-h-screen">

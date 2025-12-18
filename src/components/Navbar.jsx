@@ -6,6 +6,8 @@ import { db } from '../firebase';
 import clsx from 'clsx';
 import { motion, AnimatePresence } from 'framer-motion';
 import SearchModal from './SearchModal';
+import ControlCenterModal from './ControlCenterModal';
+import { libraryLinks, creationLinks, authorLinks } from '../config/navigation';
 
 const ScrollIndicator = ({ progress }) => {
     const [isHovered, setIsHovered] = useState(false);
@@ -20,7 +22,7 @@ const ScrollIndicator = ({ progress }) => {
             onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
-            className="w-8 h-8 rounded-full bg-white/20 hover:bg-[#60a5fa] text-gray-300 hover:text-white flex items-center justify-center transition-all duration-300 !shrink-0 !grow-0 !w-8 !max-w-[2rem]"
+            className="w-8 h-8 rounded-full bg-gray-100 dark:bg-white/20 hover:bg-[#60a5fa] text-gray-600 dark:text-gray-300 hover:text-white flex items-center justify-center transition-all duration-300 !shrink-0 !grow-0 !w-8 !max-w-[2rem]"
         >
             {isHovered ? (
                 <i className="fas fa-arrow-up text-xs"></i>
@@ -58,6 +60,7 @@ const Navbar = ({ toggleSidebar }) => {
 
     // Search State
     const [isSearchOpen, setIsSearchOpen] = useState(false);
+    const [isControlCenterOpen, setIsControlCenterOpen] = useState(false);
 
     // Handle Ctrl+K to open search
     useEffect(() => {
@@ -93,14 +96,14 @@ const Navbar = ({ toggleSidebar }) => {
         'fixed top-0 w-full z-50 transition-all duration-500 ease-in-out px-4 lg:px-8 py-3 border-b',
         {
             'bg-transparent border-transparent': scrolled,
-            'bg-black/80 backdrop-blur-md border-white/10': !scrolled
+            'bg-white/80 dark:bg-black/80 backdrop-blur-md border-gray-200 dark:border-white/10': !scrolled
         }
     );
 
     const capsuleClass = clsx(
         'transition-all duration-500 ease-in-out flex items-center border',
         {
-            'bg-black/80 backdrop-blur-md rounded-full shadow-lg border-white/20 px-4 py-1': scrolled,
+            'bg-white/80 dark:bg-black/80 backdrop-blur-md rounded-full shadow-lg border-gray-200 dark:border-white/20 px-4 py-1': scrolled,
             'bg-transparent border-transparent': !scrolled
         }
     );
@@ -115,8 +118,8 @@ const Navbar = ({ toggleSidebar }) => {
             className={clsx(
                 'relative px-4 py-2 rounded-full transition-all duration-300 flex items-center justify-center gap-2 group',
                 {
-                    'text-white': isActive(to),
-                    'text-white hover:bg-[#60a5fa] hover:text-white hover:shadow-lg hover:shadow-blue-500/20': !isActive(to),
+                    'text-gray-900 dark:text-white': isActive(to),
+                    'text-gray-900 dark:text-white hover:bg-[#60a5fa] hover:text-white hover:shadow-lg hover:shadow-blue-500/20': !isActive(to),
                 }
             )}
         >
@@ -130,7 +133,7 @@ const Navbar = ({ toggleSidebar }) => {
 
         return (
             <div
-                className="bg-black/80 backdrop-blur-md border border-white/20 rounded-full p-2 flex items-center gap-2 shadow-2xl whitespace-nowrap"
+                className="bg-white/90 dark:bg-black/80 backdrop-blur-md border border-gray-200 dark:border-white/20 rounded-full p-2 flex items-center gap-2 shadow-2xl whitespace-nowrap"
                 onMouseLeave={() => setHoveredIndex(null)}
             >
                 {items.map((item, index) => {
@@ -152,14 +155,14 @@ const Navbar = ({ toggleSidebar }) => {
                             {item.onClick ? (
                                 <button
                                     onClick={item.onClick}
-                                    className="flex items-center gap-2 px-4 py-2 rounded-full text-white hover:text-white transition-colors"
+                                    className="flex items-center gap-2 px-4 py-2 rounded-full text-gray-900 dark:text-white hover:text-white transition-colors"
                                 >
                                     <span className="text-sm font-bold">{item.label}</span>
                                 </button>
                             ) : (
                                 <Link
                                     to={item.to}
-                                    className="flex items-center gap-2 px-4 py-2 rounded-full text-white hover:text-white transition-colors"
+                                    className="flex items-center gap-2 px-4 py-2 rounded-full text-gray-900 dark:text-white hover:text-white transition-colors"
                                 >
                                     <span className="text-sm font-bold">{item.label}</span>
                                 </Link>
@@ -190,11 +193,11 @@ const Navbar = ({ toggleSidebar }) => {
                     <div className={clsx(capsuleClass, "gap-2 !p-1")}>
                         <button
                             onClick={toggleSidebar}
-                            className="lg:hidden w-8 h-8 flex items-center justify-center text-white hover:scale-110 transition-transform"
+                            className="lg:hidden w-8 h-8 flex items-center justify-center text-gray-900 dark:text-white hover:scale-110 transition-transform"
                         >
                             <i className="fas fa-bars text-sm"></i>
                         </button>
-                        <Link to="/" className="hidden sm:flex h-8 text-xl font-bold tracking-wider hover:opacity-80 transition-opacity font-display items-center gap-2 text-white px-2 leading-none">
+                        <Link to="/" className="hidden sm:flex h-8 text-xl font-bold tracking-wider hover:opacity-80 transition-opacity font-display items-center gap-2 text-gray-900 dark:text-white px-2 leading-none">
                             <span>DreamersAudio博客</span>
                         </Link>
                     </div>
@@ -203,7 +206,7 @@ const Navbar = ({ toggleSidebar }) => {
                     <div className={clsx(
                         "hidden lg:flex items-center justify-center gap-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transition-all duration-500 ease-in-out border",
                         {
-                            'bg-black/80 backdrop-blur-md rounded-full shadow-lg border-white/20 px-2 py-1': scrolled,
+                            'bg-white/80 dark:bg-black/80 backdrop-blur-md rounded-full shadow-lg border-gray-200 dark:border-white/20 px-2 py-1': scrolled,
                             'bg-transparent border-transparent': !scrolled
                         }
                     )}>
@@ -212,40 +215,33 @@ const Navbar = ({ toggleSidebar }) => {
                         {/* Library Dropdown */}
                         <div className="relative group flex items-center">
                             <button className={clsx(
-                                'relative px-4 py-2 rounded-full transition-all duration-300 flex items-center justify-center gap-2 text-white hover:bg-[#60a5fa] hover:text-white hover:shadow-lg hover:shadow-blue-500/20'
+                                'relative px-4 py-2 rounded-full transition-all duration-300 flex items-center justify-center gap-2 text-gray-900 dark:text-white hover:bg-[#60a5fa] hover:text-white hover:shadow-lg hover:shadow-blue-500/20'
                             )}>
                                 <span className="font-bold text-sm">文庫</span>
                                 <i className="fas fa-chevron-down text-[10px] opacity-70 group-hover:rotate-180 transition-transform"></i>
                             </button>
                             <div className="absolute top-full left-1/2 -translate-x-1/2 pt-4 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform group-hover:translate-y-0 translate-y-2">
-                                <FluidDropdown items={[
-                                    { to: "/archives", label: "全部文章" },
-                                    { to: "/categories", label: "分類列表" },
-                                    { to: "/tags", label: "標籤列表" }
-                                ]} />
+                                <FluidDropdown items={libraryLinks} />
                             </div>
                         </div>
 
                         {/* Creation Dropdown (Grouped Changelog & Essay) */}
                         <div className="relative group flex items-center">
                             <button className={clsx(
-                                'relative px-4 py-2 rounded-full transition-all duration-300 flex items-center justify-center gap-2 text-white hover:bg-[#60a5fa] hover:text-white hover:shadow-lg hover:shadow-blue-500/20'
+                                'relative px-4 py-2 rounded-full transition-all duration-300 flex items-center justify-center gap-2 text-gray-900 dark:text-white hover:bg-[#60a5fa] hover:text-white hover:shadow-lg hover:shadow-blue-500/20'
                             )}>
                                 <span className="font-bold text-sm">創作</span>
                                 <i className="fas fa-chevron-down text-[10px] opacity-70 group-hover:rotate-180 transition-transform"></i>
                             </button>
                             <div className="absolute top-full left-1/2 -translate-x-1/2 pt-4 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform group-hover:translate-y-0 translate-y-2">
-                                <FluidDropdown items={[
-                                    { to: "/changelog", label: "更新日誌" },
-                                    { to: "/essay", label: "隨筆短文" }
-                                ]} />
+                                <FluidDropdown items={creationLinks} />
                             </div>
                         </div>
 
                         {/* Author Dropdown */}
                         <div className="relative group flex items-center">
                             <button className={clsx(
-                                'relative px-4 py-2 rounded-full transition-all duration-300 flex items-center justify-center gap-2 text-white hover:bg-[#60a5fa] hover:text-white hover:shadow-lg hover:shadow-blue-500/20'
+                                'relative px-4 py-2 rounded-full transition-all duration-300 flex items-center justify-center gap-2 text-gray-900 dark:text-white hover:bg-[#60a5fa] hover:text-white hover:shadow-lg hover:shadow-blue-500/20'
                             )}>
                                 <span className="font-bold text-sm">作者</span>
                                 <i className="fas fa-chevron-down text-[10px] opacity-70 group-hover:rotate-180 transition-transform"></i>
@@ -253,9 +249,7 @@ const Navbar = ({ toggleSidebar }) => {
                             <div className="absolute top-full left-1/2 -translate-x-1/2 pt-4 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform group-hover:translate-y-0 translate-y-2">
                                 <FluidDropdown items={[
                                     { onClick: handleRandomPost, label: "隨便逛逛" },
-                                    { to: "/music", label: "音樂館" },
-                                    { to: "/about", label: "關於本站" },
-                                    { to: "/equipment", label: "我的裝備" }
+                                    ...authorLinks
                                 ]} />
                             </div>
                         </div>
@@ -265,10 +259,18 @@ const Navbar = ({ toggleSidebar }) => {
                     <div
                         className={clsx(capsuleClass, "gap-3 !p-1 !gap-1 !transition-none")}
                     >
+                        {/* Control Center Button */}
+                        <button
+                            onClick={() => setIsControlCenterOpen(true)}
+                            className="w-8 h-8 rounded-full bg-gray-100 dark:bg-white/20 hover:bg-[#60a5fa] text-gray-600 dark:text-gray-300 hover:text-white flex items-center justify-center transition-colors duration-300"
+                        >
+                            <i className="fas fa-th-large text-sm"></i>
+                        </button>
+
                         {/* Search Button */}
                         <button
                             onClick={() => setIsSearchOpen(true)}
-                            className="w-8 h-8 rounded-full bg-white/20 hover:bg-[#60a5fa] text-gray-300 hover:text-white flex items-center justify-center transition-colors duration-300"
+                            className="w-8 h-8 rounded-full bg-gray-100 dark:bg-white/20 hover:bg-[#60a5fa] text-gray-600 dark:text-gray-300 hover:text-white flex items-center justify-center transition-colors duration-300"
                         >
                             <i className="fas fa-search text-sm"></i>
                         </button>
@@ -276,7 +278,7 @@ const Navbar = ({ toggleSidebar }) => {
                         {/* Dark Mode Toggle */}
                         <button
                             onClick={toggleTheme}
-                            className="w-8 h-8 rounded-full bg-white/20 hover:bg-[#60a5fa] text-gray-300 hover:text-white flex items-center justify-center transition-colors duration-300 hover:rotate-12"
+                            className="w-8 h-8 rounded-full bg-gray-100 dark:bg-white/20 hover:bg-[#60a5fa] text-gray-600 dark:text-gray-300 hover:text-white flex items-center justify-center transition-colors duration-300 hover:rotate-12"
                         >
                             <i className={clsx("fas", isDark ? "fa-sun" : "fa-moon", "text-sm")}></i>
                         </button>
@@ -300,7 +302,7 @@ const Navbar = ({ toggleSidebar }) => {
                                                 exit={{ opacity: 0 }}
                                                 transition={{ duration: 0.3 }}
                                                 onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-                                                className="h-8 px-4 rounded-full bg-white/20 hover:bg-white/30 text-white text-xs font-medium flex items-center gap-2 whitespace-nowrap"
+                                                className="h-8 px-4 rounded-full bg-gray-100 dark:bg-white/20 hover:bg-[#60a5fa] text-gray-600 dark:text-gray-300 hover:text-white text-xs font-medium flex items-center gap-2 whitespace-nowrap transition-colors duration-300"
                                             >
                                                 <i className="fas fa-arrow-up"></i>
                                                 <span>返回頂部</span>
@@ -317,6 +319,7 @@ const Navbar = ({ toggleSidebar }) => {
             </nav >
 
             <SearchModal isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
+            <ControlCenterModal isOpen={isControlCenterOpen} onClose={() => setIsControlCenterOpen(false)} />
         </>
     );
 };

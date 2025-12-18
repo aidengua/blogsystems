@@ -33,7 +33,7 @@ const MusicPlayerCapsule = () => {
             style={{ willChange: "width, transform" }}
             onHoverStart={() => setIsHovered(true)}
             onHoverEnd={() => setIsHovered(false)}
-            onClick={() => !isPlaying && (currentSong ? togglePlay() : playSong(effectiveSong))}
+            onClick={() => currentSong ? togglePlay() : playSong(effectiveSong)}
         >
             {/* BACKGROUND LAYER */}
             <AnimatePresence>

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { collection, getDocs, query, orderBy } from 'firebase/firestore';
 import { db } from '../../firebase';
@@ -11,7 +11,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 const Essay = () => {
     const [essays, setEssays] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [expandedEssayId, setExpandedEssayId] = useState(null);
+    const [activeEssay, setActiveEssay] = useState(null);
+    const commentSectionRef = useRef(null);
 
     useEffect(() => {
         const fetchEssays = async () => {
@@ -34,8 +35,12 @@ const Essay = () => {
         fetchEssays();
     }, []);
 
-    const toggleComments = (id) => {
-        setExpandedEssayId(prevId => prevId === id ? null : id);
+    const handleOpenComments = (essay) => {
+        setActiveEssay(essay);
+        // Small timeout to allow render if needed, or just immediate scroll
+        setTimeout(() => {
+            commentSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 100);
     };
 
     return (
@@ -57,10 +62,7 @@ const Essay = () => {
 
                     <div className="relative z-10 h-full flex flex-col justify-center px-8 md:px-16">
                         <div className="max-w-2xl animate-slide-right">
-                            <div className="text-yellow-500 font-bold mb-4 tracking-wider text-sm flex items-center gap-2">
-                                <span className="w-8 h-[2px] bg-yellow-500"></span>
-                                短文心事
-                            </div>
+
                             <h1 className="text-4xl md:text-6xl font-bold text-white mb-6 leading-tight">
                                 日常生活
                             </h1>
@@ -85,17 +87,17 @@ const Essay = () => {
                                     initial={{ opacity: 0, y: 20 }}
                                     whileInView={{ opacity: 1, y: 0 }}
                                     viewport={{ once: true }}
-                                    className="group relative bg-gray-900 border border-gray-800 rounded-2xl overflow-hidden hover:border-blue-500/50 transition-all duration-300 hover:shadow-[0_0_20px_rgba(59,130,246,0.15)] flex flex-col"
+                                    className="group relative bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl overflow-hidden hover:border-blue-500/50 transition-all duration-300 hover:shadow-[0_0_20px_rgba(59,130,246,0.15)] flex flex-col"
                                 >
                                     <div className="p-6 flex flex-col flex-grow">
-                                        <div className="text-white text-lg font-bold mb-4 leading-relaxed flex-grow">
+                                        <div className="text-gray-900 dark:text-white text-lg font-bold mb-4 leading-relaxed flex-grow">
                                             {essay.content}
                                         </div>
 
-                                        <div className="w-full border-b-2 border-dashed border-gray-800 mb-4"></div>
+                                        <div className="w-full border-b-2 border-dashed border-gray-200 dark:border-gray-800 mb-4"></div>
 
                                         <div className="mt-auto flex justify-between items-center">
-                                            <div className="flex items-center gap-2 bg-gray-800 rounded-full px-3 py-1.5 text-gray-300 text-xs font-mono">
+                                            <div className="flex items-center gap-2 bg-gray-100 dark:bg-gray-800 rounded-full px-3 py-1.5 text-gray-500 dark:text-gray-300 text-xs font-mono">
                                                 <i className="fas fa-clock"></i>
                                                 <span>
                                                     {essay.createdAt?.toLocaleDateString('zh-TW', {
@@ -106,40 +108,59 @@ const Essay = () => {
                                                 </span>
                                             </div>
                                             <button
-                                                onClick={() => toggleComments(essay.id)}
-                                                className={`text-lg transition-colors ${expandedEssayId === essay.id ? 'text-blue-400' : 'text-gray-400 hover:text-white'}`}
+                                                onClick={() => handleOpenComments(essay)}
+                                                className={`text-lg transition-colors ${activeEssay?.id === essay.id ? 'text-blue-400' : 'text-gray-400 hover:text-blue-500 dark:hover:text-white'}`}
                                             >
                                                 <i className="fas fa-comment-alt"></i>
                                             </button>
                                         </div>
 
-                                        {/* Expandable Comment Section */}
-                                        <AnimatePresence>
-                                            {expandedEssayId === essay.id && (
-                                                <motion.div
-                                                    initial={{ height: 0, opacity: 0 }}
-                                                    animate={{ height: 'auto', opacity: 1 }}
-                                                    exit={{ height: 0, opacity: 0 }}
-                                                    transition={{ duration: 0.3 }}
-                                                    className="overflow-hidden"
-                                                >
-                                                    <div className="pt-6 mt-4 border-t border-gray-800">
-                                                        <CommentSection
-                                                            postId={essay.id}
-                                                            postTitle={essay.content ? (essay.content.length > 20 ? essay.content.substring(0, 20) + '...' : essay.content) : 'Short Essay'}
-                                                        />
-                                                    </div>
-                                                </motion.div>
-                                            )}
-                                        </AnimatePresence>
+
                                     </div>
                                 </motion.div>
                             ))}
                         </div>
                     )}
                 </div>
+
+
+                {/* Shared Comment Section at Bottom */}
+                <div ref={commentSectionRef} className="mt-16 pt-8 border-t border-gray-200 dark:border-gray-800">
+                    <AnimatePresence mode="wait">
+                        {activeEssay ? (
+                            <motion.div
+                                key={activeEssay.id}
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: -20 }}
+                                transition={{ duration: 0.3 }}
+                                className="max-w-4xl mx-auto"
+                            >
+                                <div className="mb-8 p-6 bg-white dark:bg-gray-900/50 border border-gray-200 dark:border-gray-800 rounded-2xl">
+                                    <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2 flex items-center gap-2">
+                                        <i className="fas fa-quote-left text-blue-500"></i>
+                                        留言對象
+                                    </h2>
+                                    <p className="text-gray-600 dark:text-gray-300 italic">
+                                        "{activeEssay.content?.length > 100 ? activeEssay.content.substring(0, 100) + '...' : activeEssay.content}"
+                                    </p>
+                                </div>
+
+                                <CommentSection
+                                    postId={activeEssay.id}
+                                    postTitle={activeEssay.content ? (activeEssay.content.length > 20 ? activeEssay.content.substring(0, 20) + '...' : activeEssay.content) : 'Short Essay'}
+                                />
+                            </motion.div>
+                        ) : (
+                            <div className="text-center py-12 text-gray-500">
+                                <i className="fas fa-comment-dots text-4xl mb-4 opacity-50"></i>
+                                <p>點擊上方任一則隨筆的留言按鈕，即可在此處展開討論</p>
+                            </div>
+                        )}
+                    </AnimatePresence>
+                </div>
             </div>
-        </MainLayout>
+        </MainLayout >
     );
 };
 

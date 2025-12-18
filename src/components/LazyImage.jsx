@@ -1,28 +1,51 @@
-import { useState } from 'react';
-import { LazyLoadImage } from 'react-lazy-load-image-component';
-import 'react-lazy-load-image-component/src/effects/blur.css';
+import { useState, useEffect, useRef } from 'react';
 import clsx from 'clsx';
 
-const LazyImage = ({ src, alt, className, wrapperClassName }) => {
+const LazyImage = ({ src, alt, className, wrapperClassName, placeholderSrc }) => {
     const [isLoaded, setIsLoaded] = useState(false);
+    const imgRef = useRef(null);
+
+    useEffect(() => {
+        if (imgRef.current && imgRef.current.complete) {
+            setIsLoaded(true);
+        }
+    }, []);
 
     return (
-        <div className={clsx("relative overflow-hidden", wrapperClassName)}>
-            {!isLoaded && (
-                <div className="absolute inset-0 bg-gray-200 dark:bg-gray-800 animate-pulse" />
+        <div className={clsx("relative overflow-hidden bg-gray-200 dark:bg-gray-800", wrapperClassName)}>
+            {/* Skeleton / Placeholder Layer */}
+            <div
+                className={clsx(
+                    "absolute inset-0 w-full h-full transition-opacity duration-700",
+                    isLoaded ? "opacity-0" : "opacity-100 animate-pulse"
+                )}
+            />
+
+            {/* Optional Specific Low-Res Placeholder */}
+            {placeholderSrc && (
+                <img
+                    src={placeholderSrc}
+                    alt=""
+                    className={clsx(
+                        "absolute inset-0 w-full h-full object-cover blur-xl scale-110",
+                        isLoaded ? "opacity-0" : "opacity-100"
+                    )}
+                />
             )}
-            <LazyLoadImage
+
+            {/* Main Image */}
+            <img
+                ref={imgRef}
                 src={src}
                 alt={alt}
+                loading="lazy"
                 className={clsx(
-                    "transition-all duration-500 ease-in-out",
-                    isLoaded ? "opacity-100" : "opacity-0",
+                    "w-full h-full object-cover transition-all duration-700 ease-out transform",
+                    isLoaded ? "opacity-100 blur-0 scale-100" : "opacity-0 blur-xl scale-110",
                     className
                 )}
-                wrapperClassName="w-full h-full !block"
-                effect="blur"
                 onLoad={() => setIsLoaded(true)}
-                onError={() => setIsLoaded(true)} // Handle error by showing image (alt text) or placeholder
+                onError={() => setIsLoaded(true)}
             />
         </div>
     );

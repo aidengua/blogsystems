@@ -61,8 +61,8 @@ const Tags = () => {
             <div className="min-h-screen pt-24 pb-20 container mx-auto px-4 max-w-5xl">
                 {/* Header */}
                 <div className="text-center mb-12">
-                    <h1 className="text-4xl font-bold text-white mb-4">標籤</h1>
-                    <p className="text-gray-400">目前共計 {Object.keys(tags).length} 個標籤</p>
+                    <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">標籤</h1>
+                    <p className="text-gray-500 dark:text-gray-400">目前共計 {Object.keys(tags).length} 個標籤</p>
                 </div>
 
                 {/* Tags Grid */}
@@ -75,17 +75,17 @@ const Tags = () => {
                                 group flex items-center gap-3 px-4 py-2 rounded-lg border transition-all duration-300
                                 ${currentTag === tagName
                                     ? 'bg-[#709CEF] border-[#709CEF] text-white shadow-[0_0_15px_rgba(112,156,239,0.5)]'
-                                    : 'bg-[#1e1e1e] border-gray-800 text-gray-300 hover:border-blue-500 hover:text-white'
+                                    : 'bg-white dark:bg-[#1e1e1e] border-gray-200 dark:border-gray-800 text-gray-700 dark:text-gray-300 hover:border-blue-500 hover:text-blue-500 dark:hover:text-white'
                                 }
                             `}
                         >
-                            <span className="text-gray-500 group-hover:text-blue-400 transition-colors">#</span>
+                            <span className="text-gray-400 dark:text-gray-500 group-hover:text-blue-400 transition-colors">#</span>
                             <span className="font-medium">{tagName}</span>
                             <span className={`
                                 text-xs px-2 py-0.5 rounded-md transition-colors
                                 ${currentTag === tagName
                                     ? 'bg-blue-500 text-white'
-                                    : 'bg-gray-800 text-gray-500 group-hover:bg-gray-700 group-hover:text-gray-300'
+                                    : 'bg-gray-100 dark:bg-gray-800 text-gray-500 group-hover:bg-gray-200 dark:group-hover:bg-gray-700 group-hover:text-gray-700 dark:group-hover:text-gray-300'
                                 }
                             `}>
                                 {count}
@@ -111,7 +111,7 @@ const Tags = () => {
                                         initial={{ opacity: 0, y: 20 }}
                                         animate={{ opacity: 1, y: 0 }}
                                         transition={{ delay: index * 0.1 }}
-                                        className="group relative bg-[#1e1e1e] border border-gray-800 rounded-xl overflow-hidden hover:border-blue-500/50 transition-all duration-300 hover:shadow-lg"
+                                        className="group relative bg-white dark:bg-[#1e1e1e] border border-gray-200 dark:border-gray-800 rounded-xl overflow-hidden hover:border-blue-500/50 transition-all duration-300 hover:shadow-lg"
                                     >
                                         <Link to={`/posts/${post.slug}`} className="block">
                                             <div className="aspect-video overflow-hidden relative">
@@ -127,15 +127,15 @@ const Tags = () => {
                                                     <i className="far fa-calendar"></i>
                                                     {new Date(post.createdAt?.seconds * 1000).toLocaleDateString()}
                                                 </div>
-                                                <h3 className="text-lg font-bold text-white mb-2 line-clamp-2 group-hover:text-blue-400 transition-colors">
+                                                <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2 line-clamp-2 group-hover:text-blue-400 transition-colors">
                                                     {post.title}
                                                 </h3>
-                                                <p className="text-gray-400 text-sm line-clamp-2 mb-4">
+                                                <p className="text-gray-600 dark:text-gray-400 text-sm line-clamp-2 mb-4">
                                                     {post.excerpt}
                                                 </p>
                                                 <div className="flex flex-wrap gap-2">
                                                     {post.tags?.slice(0, 3).map(t => (
-                                                        <span key={t} className="text-xs text-blue-400 bg-blue-500/10 px-2 py-1 rounded">
+                                                        <span key={t} className="text-xs text-blue-500 dark:text-blue-400 bg-blue-50 dark:bg-blue-500/10 px-2 py-1 rounded">
                                                             #{t}
                                                         </span>
                                                     ))}

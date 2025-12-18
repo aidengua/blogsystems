@@ -7,7 +7,7 @@ import { useNotification } from '../context/NotificationContext';
 const AdminCommentTable = () => {
     const [comments, setComments] = useState([]);
     const [loading, setLoading] = useState(true);
-    const { showNotification } = useNotification();
+    const { showNotification, showConfirmation } = useNotification();
 
     useEffect(() => {
         const q = query(collection(db, 'comments'), orderBy('createdAt', 'desc'));
@@ -28,13 +28,18 @@ const AdminCommentTable = () => {
     }, []);
 
     const handleDelete = async (id) => {
-        try {
-            await deleteDoc(doc(db, 'comments', id));
-            showNotification('留言已刪除', 'success');
-        } catch (error) {
-            console.error("Error deleting comment:", error);
-            showNotification('刪除失敗', 'error');
-        }
+        showConfirmation({
+            message: '確定要刪除這則留言嗎？此操作無法復原。',
+            onConfirm: async () => {
+                try {
+                    await deleteDoc(doc(db, 'comments', id));
+                    showNotification('留言已刪除', 'success');
+                } catch (error) {
+                    console.error("Error deleting comment:", error);
+                    showNotification('刪除失敗', 'error');
+                }
+            }
+        });
     };
 
     if (loading) {

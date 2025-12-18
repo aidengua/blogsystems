@@ -61,10 +61,10 @@ const Music = () => {
         return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
     };
 
-    if (!currentSong) return <div className="min-h-screen bg-[#0e0e0e]" />;
+    if (!currentSong) return <div className="min-h-screen bg-gray-50 dark:bg-[#0e0e0e]" />;
 
     return (
-        <div className="relative min-h-screen w-full bg-[#0e0e0e] text-white font-sans overflow-hidden flex flex-col">
+        <div className="relative min-h-screen w-full bg-gray-50 dark:bg-[#0e0e0e] text-gray-900 dark:text-white font-sans overflow-hidden flex flex-col">
 
             {/* 1. Global Navbar */}
             <div className="relative z-50">
@@ -82,7 +82,7 @@ const Music = () => {
                 >
                     <img src={currentSong.cover} className="w-full h-full object-cover blur-[100px] scale-125 saturate-200 opacity-60" />
                 </motion.div>
-                <div className="absolute inset-0 bg-black/30"></div>
+                <div className="absolute inset-0 bg-white/80 dark:bg-black/30"></div>
             </div>
 
             {/* Main Content Area - Compacted for Single Screen View */}
@@ -94,7 +94,7 @@ const Music = () => {
                     <div className="flex flex-col items-center gap-6 shrink-0 relative group">
 
                         {/* The Vinyl Card Container - Reduced Size */}
-                        <div className="relative w-[280px] h-[280px] lg:w-[380px] lg:h-[380px] bg-white/10 backdrop-blur-xl rounded-[40px] shadow-2xl flex items-center justify-center border border-white/10 overflow-hidden">
+                        <div className="relative w-[280px] h-[280px] lg:w-[380px] lg:h-[380px] bg-white/40 dark:bg-white/10 backdrop-blur-xl rounded-[40px] shadow-2xl flex items-center justify-center border border-gray-200 dark:border-white/10 overflow-hidden">
 
                             {/* Tone Arm (Stylized SVG/CSS) */}
                             <motion.div
@@ -135,13 +135,13 @@ const Music = () => {
                         <div className="text-center space-y-2">
                             <motion.h1
                                 layoutId="title"
-                                className="text-2xl lg:text-3xl font-bold text-white tracking-wide drop-shadow-lg"
+                                className="text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white tracking-wide drop-shadow-lg"
                             >
                                 {currentSong.title}
                             </motion.h1>
                             <motion.p
                                 layoutId="artist"
-                                className="text-base lg:text-lg text-white/70 font-medium tracking-widest drop-shadow-md"
+                                className="text-base lg:text-lg text-gray-600 dark:text-white/70 font-medium tracking-widest drop-shadow-md"
                             >
                                 {currentSong.artist}
                             </motion.p>
@@ -170,7 +170,7 @@ const Music = () => {
                                     transition={{ duration: 0.5 }}
                                     className={`
                                          text-xl lg:text-3xl font-bold tracking-wider cursor-pointer transition-all drop-shadow-md
-                                         ${currentLyricIndex === i ? 'text-white' : 'text-gray-200'}
+                                         ${currentLyricIndex === i ? 'text-gray-900 dark:text-white' : 'text-gray-400 dark:text-gray-200'}
                                      `}
                                     onClick={() => seek(line.time)}
                                 >
@@ -191,11 +191,11 @@ const Music = () => {
 
                     {/* Progress Bar (Full Width, Thin) */}
                     <div
-                        className="w-full h-1 bg-white/20 rounded-full cursor-pointer group relative hover:h-1.5 transition-all"
+                        className="w-full h-1 bg-gray-300 dark:bg-white/20 rounded-full cursor-pointer group relative hover:h-1.5 transition-all"
                         onClick={(e) => seek(((e.clientX - e.currentTarget.getBoundingClientRect().left) / e.currentTarget.getBoundingClientRect().width) * duration)}
                     >
                         <div
-                            className="h-full bg-white rounded-full relative group-hover:bg-green-400 transition-colors"
+                            className="h-full bg-blue-500 dark:bg-white rounded-full relative group-hover:bg-blue-600 dark:group-hover:bg-green-400 transition-colors"
                             style={{ width: `${(currentTime / duration) * 100}%` }}
                         >
                             <div className="absolute right-0 top-1/2 -translate-y-1/2 w-3 h-3 bg-white rounded-full shadow opacity-0 group-hover:opacity-100 transition-opacity"></div>
@@ -203,14 +203,14 @@ const Music = () => {
                     </div>
 
                     {/* Controls Row */}
-                    <div className="flex items-center justify-between text-xs font-mono text-white/70 tracking-widest">
+                    <div className="flex items-center justify-between text-xs font-mono text-gray-600 dark:text-white/70 tracking-widest">
                         <span>{formatTime(currentTime)}</span>
 
                         <div className="flex items-center gap-10">
-                            <button onClick={prevSong} className="hover:text-white transition-colors hover:scale-110 active:scale-95"><i className="fas fa-backward text-xl"></i></button>
+                            <button onClick={prevSong} className="hover:text-gray-900 dark:hover:text-white transition-colors hover:scale-110 active:scale-95"><i className="fas fa-backward text-xl"></i></button>
                             <button
                                 onClick={togglePlay}
-                                className="w-12 h-12 flex items-center justify-center rounded-full bg-white text-black hover:scale-105 transition-transform shadow-lg hover:shadow-white/20"
+                                className="w-12 h-12 flex items-center justify-center rounded-full bg-gray-900 dark:bg-white text-white dark:text-black hover:scale-105 transition-transform shadow-lg hover:shadow-gray-400 dark:hover:shadow-white/20"
                             >
                                 <i className={`fas ${isPlaying ? 'fa-pause' : 'fa-play'} text-lg ml-0.5`}></i>
                             </button>

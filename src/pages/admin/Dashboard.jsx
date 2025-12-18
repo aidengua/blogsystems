@@ -26,8 +26,15 @@ const Dashboard = () => {
     const [isEssayModalOpen, setIsEssayModalOpen] = useState(false);
     const [essays, setEssays] = useState([]);
     const [activeTab, setActiveTab] = useState('posts');
-    const { showNotification } = useNotification();
+    const { showNotification, showConfirmation } = useNotification();
     const [editingEssay, setEditingEssay] = useState(null);
+
+    // Album State
+    const [albums, setAlbums] = useState([]);
+    const [isPhotoModalOpen, setIsPhotoModalOpen] = useState(false);
+    const [photoData, setPhotoData] = useState({ title: '', src: '', description: '', tags: '' });
+    const [publishingPhoto, setPublishingPhoto] = useState(false);
+    const [editingPhoto, setEditingPhoto] = useState(null);
 
     const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8', '#82ca9d'];
 
@@ -95,16 +102,31 @@ const Dashboard = () => {
         return () => unsubscribe();
     }, []);
 
+    useEffect(() => {
+        const q = query(collection(db, 'albums'), orderBy('createdAt', 'desc'));
+        const unsubscribe = onSnapshot(q, (snapshot) => {
+            const albumsData = snapshot.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data()
+            }));
+            setAlbums(albumsData);
+        });
+        return () => unsubscribe();
+    }, []);
+
     const handleDelete = async (id) => {
-        if (window.confirm('確定要刪除這篇文章嗎？')) {
-            try {
-                await deleteDoc(doc(db, 'posts', id));
-                showNotification('文章已刪除', 'success');
-            } catch (error) {
-                console.error("Error deleting post:", error);
-                showNotification('刪除失敗', 'error');
+        showConfirmation({
+            message: '確定要刪除這篇文章嗎？此操作無法復原。',
+            onConfirm: async () => {
+                try {
+                    await deleteDoc(doc(db, 'posts', id));
+                    showNotification('文章已刪除', 'success');
+                } catch (error) {
+                    console.error("Error deleting post:", error);
+                    showNotification('刪除失敗', 'error');
+                }
             }
-        }
+        });
     };
 
     const handleLogout = async () => {
@@ -113,15 +135,18 @@ const Dashboard = () => {
     };
 
     const handleDeleteEssay = async (id) => {
-        if (window.confirm('確定要刪除這則短文嗎？')) {
-            try {
-                await deleteDoc(doc(db, 'essays', id));
-                showNotification('短文已刪除', 'success');
-            } catch (error) {
-                console.error("Error deleting essay:", error);
-                showNotification('刪除失敗', 'error');
+        showConfirmation({
+            message: '確定要刪除這則短文嗎？',
+            onConfirm: async () => {
+                try {
+                    await deleteDoc(doc(db, 'essays', id));
+                    showNotification('短文已刪除', 'success');
+                } catch (error) {
+                    console.error("Error deleting essay:", error);
+                    showNotification('刪除失敗', 'error');
+                }
             }
-        }
+        });
     };
 
     const handleEditEssay = (essay) => {
@@ -129,6 +154,30 @@ const Dashboard = () => {
         setEssayContent(essay.content);
         setIsEssayModalOpen(true);
     };
+
+    const handleEssayModalClose = (e) => {
+        if (e.target === e.currentTarget) {
+            if (essayContent.trim()) {
+                showConfirmation({
+                    message: '您有未儲存的內容，確定要關閉嗎？',
+                    onConfirm: () => setIsEssayModalOpen(false)
+                });
+            } else {
+                setIsEssayModalOpen(false);
+            }
+        }
+    };
+
+    const handleEssayModalCloseButton = () => {
+        if (essayContent.trim()) {
+            showConfirmation({
+                message: '您有未儲存的內容，確定要關閉嗎？',
+                onConfirm: () => setIsEssayModalOpen(false)
+            });
+        } else {
+            setIsEssayModalOpen(false);
+        }
+    }
 
     const handleSaveEssay = async (e) => {
         e.preventDefault();
@@ -158,6 +207,94 @@ const Dashboard = () => {
             showNotification('儲存失敗', 'error');
         } finally {
             setPublishingEssay(false);
+        }
+    };
+
+    const handleDeletePhoto = async (id) => {
+        showConfirmation({
+            message: '確定要刪除這張照片嗎？',
+            onConfirm: async () => {
+                try {
+                    await deleteDoc(doc(db, 'albums', id));
+                    showNotification('照片已刪除', 'success');
+                } catch (error) {
+                    console.error("Error deleting photo:", error);
+                    showNotification('刪除失敗', 'error');
+                }
+            }
+        });
+    };
+
+    const handleEditPhoto = (photo) => {
+        setEditingPhoto(photo);
+        setPhotoData({
+            title: photo.title,
+            src: photo.src,
+            description: photo.description || '',
+            tags: photo.tags ? photo.tags.join(', ') : ''
+        });
+        setIsPhotoModalOpen(true);
+    };
+
+    const handlePhotoModalClose = (e) => {
+        if (e.target === e.currentTarget) {
+            const hasContent = photoData.title || photoData.src || photoData.description || photoData.tags;
+            if (hasContent) {
+                showConfirmation({
+                    message: '您有未儲存的內容，確定要關閉嗎？',
+                    onConfirm: () => setIsPhotoModalOpen(false)
+                });
+            } else {
+                setIsPhotoModalOpen(false);
+            }
+        }
+    };
+
+    const handlePhotoModalCloseButton = () => {
+        const hasContent = photoData.title || photoData.src || photoData.description || photoData.tags;
+        if (hasContent) {
+            showConfirmation({
+                message: '您有未儲存的內容，確定要關閉嗎？',
+                onConfirm: () => setIsPhotoModalOpen(false)
+            });
+        } else {
+            setIsPhotoModalOpen(false);
+        }
+    };
+
+    const handleSavePhoto = async (e) => {
+        e.preventDefault();
+        if (!photoData.src.trim() || !photoData.title.trim()) {
+            showNotification('請填寫標題與圖片連結', 'error');
+            return;
+        }
+
+        setPublishingPhoto(true);
+        try {
+            if (editingPhoto) {
+                await updateDoc(doc(db, 'albums', editingPhoto.id), {
+                    ...photoData,
+                    tags: photoData.tags.split(',').map(tag => tag.trim()).filter(tag => tag),
+                    updatedAt: new Date()
+                });
+                showNotification('照片已更新', 'success');
+                setEditingPhoto(null);
+            } else {
+                await addDoc(collection(db, 'albums'), {
+                    ...photoData,
+                    tags: photoData.tags.split(',').map(tag => tag.trim()).filter(tag => tag),
+                    createdAt: new Date(),
+                    authorId: auth.currentUser.uid
+                });
+                showNotification('照片已發布', 'success');
+            }
+            setPhotoData({ title: '', src: '', description: '', tags: '' });
+            setIsPhotoModalOpen(false);
+        } catch (error) {
+            console.error("Error saving photo:", error);
+            showNotification('儲存失敗', 'error');
+        } finally {
+            setPublishingPhoto(false);
         }
     };
 
@@ -215,6 +352,17 @@ const Dashboard = () => {
                         >
                             <i className="fas fa-pen-fancy mr-2 group-hover:-rotate-12 transition-transform"></i>
                             新增短文
+                        </button>
+                        <button
+                            onClick={() => {
+                                setEditingPhoto(null);
+                                setPhotoData({ title: '', src: '', description: '', tags: '' });
+                                setIsPhotoModalOpen(true);
+                            }}
+                            className="flex-1 md:flex-none inline-flex justify-center items-center px-5 py-2.5 bg-pink-600 hover:bg-pink-500 text-white rounded-xl transition-all shadow-lg shadow-pink-500/20 font-medium text-sm group"
+                        >
+                            <i className="fas fa-camera mr-2"></i>
+                            新增照片
                         </button>
                         <Link
                             to="/admin/posts/new"
@@ -343,6 +491,7 @@ const Dashboard = () => {
                     {[
                         { id: 'posts', label: '文章列表', color: 'bg-[#709CEF]' },
                         { id: 'essays', label: '短文列表', color: 'bg-purple-600' },
+                        { id: 'albums', label: '相簿列表', color: 'bg-pink-600' },
                         { id: 'comments', label: '留言管理', color: 'bg-green-600' }
                     ].map((tab) => (
                         <button
@@ -371,10 +520,10 @@ const Dashboard = () => {
                         <SpotlightCard className="overflow-hidden" spotlightColor="rgba(112, 156, 239, 0.05)">
                             <div className="p-6 border-b border-white/10 flex justify-between items-center bg-black/20">
                                 <h2 className="text-lg font-bold text-white">
-                                    {activeTab === 'posts' ? '文章列表' : '短文列表'}
+                                    {activeTab === 'posts' ? '文章列表' : activeTab === 'essays' ? '短文列表' : '相簿列表'}
                                 </h2>
                                 <div className="text-xs text-gray-400 bg-white/5 px-3 py-1 rounded-full border border-white/5">
-                                    共 {activeTab === 'posts' ? posts.length : essays.length} 篇
+                                    共 {activeTab === 'posts' ? posts.length : activeTab === 'essays' ? essays.length : albums.length} 篇
                                 </div>
                             </div>
                             <div className="overflow-x-auto">
@@ -463,7 +612,7 @@ const Dashboard = () => {
                                             )}
                                         </tbody>
                                     </table>
-                                ) : (
+                                ) : activeTab === 'essays' ? (
                                     <table className="w-full text-left border-collapse">
                                         <thead>
                                             <tr className="border-b border-white/10 text-gray-500 text-xs uppercase tracking-wider">
@@ -516,6 +665,64 @@ const Dashboard = () => {
                                             )}
                                         </tbody>
                                     </table>
+                                ) : (
+                                    <table className="w-full text-left border-collapse">
+                                        <thead>
+                                            <tr className="border-b border-white/10 text-gray-500 text-xs uppercase tracking-wider">
+                                                <th className="px-6 py-4 font-semibold">照片</th>
+                                                <th className="px-6 py-4 font-semibold">標題</th>
+                                                <th className="px-6 py-4 font-semibold">上傳日期</th>
+                                                <th className="px-6 py-4 font-semibold text-right">操作</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody className="divide-y divide-white/5">
+                                            {albums.map((photo) => (
+                                                <tr key={photo.id} className="hover:bg-white/5 transition-colors group">
+                                                    <td className="px-6 py-4">
+                                                        <div className="w-16 h-16 rounded-lg overflow-hidden border border-white/10">
+                                                            <img src={photo.src} alt="" className="w-full h-full object-cover" />
+                                                        </div>
+                                                    </td>
+                                                    <td className="px-6 py-4">
+                                                        <p className="font-bold text-gray-200">{photo.title}</p>
+                                                        <p className="text-xs text-gray-500 mt-1 line-clamp-1">{photo.description}</p>
+                                                    </td>
+                                                    <td className="px-6 py-4 text-sm text-gray-500 font-mono">
+                                                        {photo.createdAt?.toDate().toLocaleDateString('zh-TW')}
+                                                    </td>
+                                                    <td className="px-6 py-4 text-right">
+                                                        <button
+                                                            onClick={() => handleEditPhoto(photo)}
+                                                            className="p-2 text-gray-400 hover:text-pink-400 hover:bg-pink-500/10 rounded-lg transition-all"
+                                                            title="編輯"
+                                                        >
+                                                            <i className="fas fa-edit"></i>
+                                                        </button>
+                                                        <button
+                                                            onClick={() => handleDeletePhoto(photo.id)}
+                                                            className="p-2 text-gray-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-all"
+                                                            title="刪除"
+                                                        >
+                                                            <i className="fas fa-trash-alt"></i>
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                            {albums.length === 0 && (
+                                                <tr>
+                                                    <td colSpan="4" className="px-6 py-24 text-center text-gray-500">
+                                                        <div className="flex flex-col items-center">
+                                                            <div className="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center mb-4">
+                                                                <i className="fas fa-images text-2xl text-gray-600"></i>
+                                                            </div>
+                                                            <p className="text-lg font-medium text-gray-400">尚無照片</p>
+                                                            <p className="text-sm mt-1 text-gray-600">點擊上方按鈕上傳您的第一張照片</p>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            )}
+                                        </tbody>
+                                    </table>
                                 )}
                             </div>
                         </SpotlightCard>
@@ -530,6 +737,7 @@ const Dashboard = () => {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
+                        onClick={handleEssayModalClose}
                         className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
                     >
                         <motion.div
@@ -543,7 +751,7 @@ const Dashboard = () => {
                                     {editingEssay ? '編輯短文' : '快速發布短文'}
                                 </h2>
                                 <button
-                                    onClick={() => setIsEssayModalOpen(false)}
+                                    onClick={handleEssayModalCloseButton}
                                     className="text-gray-400 hover:text-white transition-colors"
                                 >
                                     <i className="fas fa-times"></i>
@@ -559,7 +767,7 @@ const Dashboard = () => {
                                 />
                                 <div className="flex justify-end gap-3">
                                     <button
-                                        onClick={() => setIsEssayModalOpen(false)}
+                                        onClick={handleEssayModalCloseButton}
                                         className="px-4 py-2 text-gray-400 hover:text-white transition-colors"
                                     >
                                         取消
@@ -578,6 +786,90 @@ const Dashboard = () => {
                                             <>
                                                 <i className="fas fa-paper-plane"></i>
                                                 {editingEssay ? '更新' : '發布'}
+                                            </>
+                                        )}
+                                    </button>
+                                </div>
+                            </div>
+                        </motion.div>
+                    </motion.div>
+                )}
+
+                {/* Photo Modal */}
+                {isPhotoModalOpen && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        onClick={handlePhotoModalClose}
+                        className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
+                    >
+                        <motion.div
+                            initial={{ scale: 0.9, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            exit={{ scale: 0.9, opacity: 0 }}
+                            className="bg-[#1e1e1e] border border-white/10 rounded-2xl p-6 w-full max-w-lg shadow-2xl"
+                        >
+                            <div className="flex justify-between items-center mb-4">
+                                <h2 className="text-xl font-bold text-white">
+                                    {editingPhoto ? '編輯照片' : '新增照片'}
+                                </h2>
+                                <button
+                                    onClick={handlePhotoModalCloseButton}
+                                    className="text-gray-400 hover:text-white transition-colors"
+                                >
+                                    <i className="fas fa-times"></i>
+                                </button>
+                            </div>
+                            <div className="flex flex-col gap-4">
+                                <input
+                                    type="text"
+                                    value={photoData.title}
+                                    onChange={(e) => setPhotoData({ ...photoData, title: e.target.value })}
+                                    placeholder="照片標題"
+                                    className="w-full bg-black/30 border border-white/10 rounded-xl p-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-pink-500 transition-all"
+                                />
+                                <input
+                                    type="text"
+                                    value={photoData.src}
+                                    onChange={(e) => setPhotoData({ ...photoData, src: e.target.value })}
+                                    placeholder="圖片連結 (URL)"
+                                    className="w-full bg-black/30 border border-white/10 rounded-xl p-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-pink-500 transition-all font-mono text-sm"
+                                />
+                                <input
+                                    type="text"
+                                    value={photoData.tags}
+                                    onChange={(e) => setPhotoData({ ...photoData, tags: e.target.value })}
+                                    placeholder="標籤 (用逗號分隔)"
+                                    className="w-full bg-black/30 border border-white/10 rounded-xl p-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-pink-500 transition-all"
+                                />
+                                <textarea
+                                    value={photoData.description}
+                                    onChange={(e) => setPhotoData({ ...photoData, description: e.target.value })}
+                                    placeholder="照片描述..."
+                                    className="w-full h-32 bg-black/30 border border-white/10 rounded-xl p-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-pink-500 transition-all resize-none"
+                                />
+                                <div className="flex justify-end gap-3 mt-2">
+                                    <button
+                                        onClick={handlePhotoModalCloseButton}
+                                        className="px-4 py-2 text-gray-400 hover:text-white transition-colors"
+                                    >
+                                        取消
+                                    </button>
+                                    <button
+                                        onClick={handleSavePhoto}
+                                        disabled={publishingPhoto || !photoData.title}
+                                        className="px-6 py-2 bg-pink-600 hover:bg-pink-500 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                                    >
+                                        {publishingPhoto ? (
+                                            <>
+                                                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                                                {editingPhoto ? '更新中...' : '發布中...'}
+                                            </>
+                                        ) : (
+                                            <>
+                                                <i className="fas fa-cloud-upload-alt"></i>
+                                                {editingPhoto ? '更新' : '發布'}
                                             </>
                                         )}
                                     </button>
