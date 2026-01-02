@@ -472,8 +472,8 @@ const ControlCenterModal = ({ isOpen, onClose }) => {
                             <div className="flex items-center gap-2">
                                 {/* Theme Toggle */}
                                 <button
-                                    onClick={toggleTheme}
-                                    className="flex items-center gap-3 px-4 py-2 rounded-full bg-gray-100 dark:bg-white/5 hover:bg-gray-200 dark:hover:bg-white/10 transition-colors group"
+                                    onClick={(e) => toggleTheme(e)}
+                                    className="flex items-center gap-3 px-4 py-2 rounded-full bg-gray-100 dark:bg-white/5 hover:bg-gray-200 dark:hover:bg-white/10 transition-colors"
                                 >
                                     <div className={clsx(
                                         "w-6 h-6 rounded-full flex items-center justify-center transition-colors",

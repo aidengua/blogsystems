@@ -25,7 +25,7 @@ import { NotificationProvider } from './context/NotificationContext';
 import NotificationToast from './components/NotificationToast';
 import ContextMenu from './components/ContextMenu';
 
-import DotMatrixBackground from './components/DotMatrixBackground';
+import PremiumGridBackground from './components/PremiumGridBackground';
 import FaviconManager from './components/FaviconManager';
 import SmoothScroll from './components/SmoothScroll';
 import GLSLBackground from './components/GLSLBackground';
@@ -43,7 +43,7 @@ function App() {
         <GLSLBackground />
         <MusicProvider>
           <FaviconManager />
-          <DotMatrixBackground />
+          <PremiumGridBackground />
           <LoadingScreen />
 
           {/* Hide Music Player Capsule on Music Page */}

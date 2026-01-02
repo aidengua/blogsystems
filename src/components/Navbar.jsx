@@ -96,14 +96,14 @@ const Navbar = ({ toggleSidebar }) => {
         'fixed top-0 w-full z-50 transition-all duration-500 ease-in-out px-4 lg:px-8 py-3 border-b',
         {
             'bg-transparent border-transparent': scrolled,
-            'bg-white/80 dark:bg-black/80 backdrop-blur-md border-gray-200 dark:border-white/10': !scrolled
+            'bg-white/80 dark:bg-black/80 border-gray-200 dark:border-white/10': !scrolled
         }
     );
 
     const capsuleClass = clsx(
         'transition-all duration-500 ease-in-out flex items-center border',
         {
-            'bg-white/80 dark:bg-black/80 backdrop-blur-md rounded-full shadow-lg border-gray-200 dark:border-white/20 px-4 py-1': scrolled,
+            'bg-white/80 dark:bg-black/80 rounded-full shadow-lg border-gray-200 dark:border-white/20 px-4 py-1': scrolled,
             'bg-transparent border-transparent': !scrolled
         }
     );
@@ -133,7 +133,7 @@ const Navbar = ({ toggleSidebar }) => {
 
         return (
             <div
-                className="bg-white/90 dark:bg-black/80 backdrop-blur-md border border-gray-200 dark:border-white/20 rounded-full p-2 flex items-center gap-2 shadow-2xl whitespace-nowrap"
+                className="bg-white/90 dark:bg-black/80 border border-gray-200 dark:border-white/20 rounded-full p-2 flex items-center gap-2 shadow-2xl whitespace-nowrap"
                 onMouseLeave={() => setHoveredIndex(null)}
             >
                 {items.map((item, index) => {
@@ -206,7 +206,7 @@ const Navbar = ({ toggleSidebar }) => {
                     <div className={clsx(
                         "hidden lg:flex items-center justify-center gap-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transition-all duration-500 ease-in-out border",
                         {
-                            'bg-white/80 dark:bg-black/80 backdrop-blur-md rounded-full shadow-lg border-gray-200 dark:border-white/20 px-2 py-1': scrolled,
+                            'bg-white/80 dark:bg-black/80 rounded-full shadow-lg border-gray-200 dark:border-white/20 px-2 py-1': scrolled,
                             'bg-transparent border-transparent': !scrolled
                         }
                     )}>
@@ -277,8 +277,8 @@ const Navbar = ({ toggleSidebar }) => {
 
                         {/* Dark Mode Toggle */}
                         <button
-                            onClick={toggleTheme}
-                            className="w-8 h-8 rounded-full bg-gray-100 dark:bg-white/20 hover:bg-[#60a5fa] text-gray-600 dark:text-gray-300 hover:text-white flex items-center justify-center transition-colors duration-300 hover:rotate-12"
+                            onClick={(e) => toggleTheme(e)}
+                            className="w-8 h-8 rounded-full bg-gray-100 dark:bg-white/20 hover:bg-[#60a5fa] text-gray-600 dark:text-gray-300 hover:text-white flex items-center justify-center transition-colors duration-300"
                         >
                             <i className={clsx("fas", isDark ? "fa-sun" : "fa-moon", "text-sm")}></i>
                         </button>

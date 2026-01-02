@@ -597,25 +597,9 @@ const About = () => {
                                 <i className="far fa-square text-gray-500 dark:text-gray-500"></i>
                                 <span>量產自己的藍芽音響</span>
                             </div>
-                            <div className="flex items-center gap-2">
-                                <i className="far fa-square text-gray-500 dark:text-gray-500"></i>
-                                <span>交到女朋友</span>
-                            </div>
                         </div>
                     </motion.div>
 
-                    {/* Love Story Card */}
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1.1 }}
-                        className="col-span-1 bg-white dark:bg-black rounded-3xl p-8 text-gray-900 dark:text-white shadow-xl border border-gray-200 dark:border-gray-800 flex flex-col"
-                    >
-                        <div className="text-gray-500 dark:text-gray-400 text-sm mb-4">愛笑的人很幸運!</div>
-                        <div className="prose prose-gray dark:prose-invert max-w-none text-gray-600 dark:text-gray-300 mb-6 leading-relaxed flex-grow">
-                            <p>來自2025/01/06的我，不知道下一次回顧這篇短文會是什麼時候！之所以沒放在短文區，是因為這篇文章真的寫得有點長啦也更因為更重要只有真正關注這個部落格的人會看到。想記錄一下去年12/30那天遇見的人和這段特別的經歷。高中的我一向專注在音響創作上，幾乎沒有把心思放在其他人身上。不知不覺到了高二年底，卻意外認識了妳。一開始我們的聊天還有點尷尬，我還記得是妳主動加了我的Discord。起初我沒有多想，但隨著我們越聊越多，發現彼此的相似點也越來越多，心裡漸漸對妳產生了好感。認識一周後，我們居然像認識多年的老朋友，有聊不完的話題。最瘋狂的事，莫過於在認識五天後，因為台中和一場比賽有機會見面。</p>
-                            <p>那是我第一次面對面和一個人說話時這麼尷尬，或許是因為喜歡妳，又或許是因為我一向不擅長面對面的交流，那一刻的我，彷彿不認識自己了。尷尬地聊完後，我便跟著一起來比賽的同學離開。沒想到妳在訊息中告訴我，妳並不介意我這樣的樣子。其實，在見面前我想了很多，擔心妳會因為見面後對我有什麼負面的感覺，或者...各種不切實際的猜想。大概是因為我平常不太和人交流吧，才會顯得那麼緊張和不自在哈哈哈。希望這次見面不會成為我的黑歷史！我會永遠記得，2024/12/30的自己，是多麼幸運地遇見了妳。</p>
-                        </div>
-                        <div className="text-yellow-500 dark:text-yellow-400 font-bold text-lg mt-4">林楚恩我愛妳 &gt;u&lt;</div>
-                    </motion.div>
 
                     {/* Career Path Card */}
                     <motion.div
