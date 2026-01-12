@@ -100,7 +100,7 @@ const About = () => {
                         {/* Central Avatar */}
                         <div className="relative z-10 shrink-0">
                             <div className="w-32 h-32 md:w-40 md:h-40 rounded-full overflow-hidden border-4 border-gray-100 dark:border-gray-800 shadow-2xl relative z-10 bg-white dark:bg-gray-900">
-                                <img src="https://cloudflare-imgbed-5re.pages.dev/file/1759506193400_1000004107.jpg" alt="Avatar" className="w-full h-full object-cover" />
+                                <img src="https://cloud.dragoncode.dev/f/lYAfX/%E5%89%AA%E8%B2%BC%E7%B0%BF%201768221858561.png" alt="Avatar" className="w-full h-full object-cover" />
                             </div>
                             <div className="absolute bottom-2 right-2 md:bottom-3 md:right-3 w-6 h-6 md:w-8 md:h-8 bg-green-500 rounded-full border-4 border-white dark:border-gray-900 z-20 shadow-lg"></div>
                         </div>
@@ -528,7 +528,7 @@ const About = () => {
                             </div>
 
                             <div className="absolute right-[-20px] bottom-[-20px] w-48 h-48 opacity-80 mix-blend-luminosity group-hover:mix-blend-normal transition-all duration-500">
-                                <img src="https://cloudflare-imgbed-5re.pages.dev/file/1732083431257_image.png" alt="INTJ-A Icon" className="w-full h-full object-contain drop-shadow-2xl" />
+                                <img src="https://cloud.dragoncode.dev/f/pgBiA/%E5%89%AA%E8%B2%BC%E7%B0%BF%201768222519965.png" alt="INTJ-A Icon" className="w-full h-full object-contain drop-shadow-2xl" />
                             </div>
                         </div>
                     </motion.div>

@@ -77,7 +77,7 @@ const ProfileCard = () => {
                             <div className="relative w-32 h-32">
                                 <div className="w-full h-full rounded-full overflow-hidden border-4 border-gray-100 dark:border-[#2a2a2a] shadow-2xl">
                                     <img
-                                        src="https://cloudflare-imgbed-5re.pages.dev/file/1759506193400_1000004107.jpg"
+                                        src="https://cloud.dragoncode.dev/f/lYAfX/%E5%89%AA%E8%B2%BC%E7%B0%BF%201768221858561.png"
                                         alt="Avatar"
                                         className="w-full h-full object-cover"
                                     />
@@ -133,7 +133,7 @@ const ProfileCard = () => {
                         <div className="flex items-center justify-between mt-4">
                             <div className="w-auto h-12 flex items-center">
                                 <img
-                                    src="https://cloudflare-imgbed-5re.pages.dev/file/1765098308498_web.gif"
+                                    src="https://cloud.dragoncode.dev/f/vglFA/cat.gif"
                                     alt="Decoration"
                                     className="h-full object-contain filter dark:brightness-100"
                                 />

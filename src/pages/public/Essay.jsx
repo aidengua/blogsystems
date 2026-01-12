@@ -51,7 +51,7 @@ const Essay = () => {
                     <div className="absolute inset-0 overflow-hidden">
                         <div className="w-full h-full transition-transform duration-1000 ease-out group-hover:scale-105">
                             <LazyImage
-                                src="https://cloudflare-imgbed-5re.pages.dev/file/1764850720558_gif.gif"
+                                src="https://cloud.dragoncode.dev/f/Bg1c8/rain.gif"
                                 alt="Essay Hero"
                                 className="w-full h-full object-cover blur-[2px]"
                                 wrapperClassName="w-full h-full"

@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTheme } from '../contexts/ThemeContext';
+import { useSettings } from '../context/SettingsContext';
 import { collection, query, where, getDocs } from 'firebase/firestore';
 import { db } from '../firebase';
 import clsx from 'clsx';
@@ -12,9 +13,11 @@ const ContextMenu = () => {
     const menuRef = useRef(null);
     const navigate = useNavigate();
     const { isDark, toggleTheme } = useTheme();
+    const { customContextMenuEnabled } = useSettings();
 
     useEffect(() => {
         const handleContextMenu = (e) => {
+            if (!customContextMenuEnabled) return;
             e.preventDefault();
 
             // Calculate position to keep menu within viewport
@@ -48,7 +51,7 @@ const ContextMenu = () => {
             document.removeEventListener('click', handleClick);
             document.removeEventListener('scroll', handleScroll);
         };
-    }, []);
+    }, [customContextMenuEnabled]);
 
     const handleRandomPost = async () => {
         try {

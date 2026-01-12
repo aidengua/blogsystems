@@ -67,7 +67,7 @@ const LineCard = () => {
                         {/* Right QR Code */}
                         <div className="relative z-10 bg-white p-1.5 rounded-lg border border-gray-200 dark:border-none">
                             <img
-                                src="https://cloudflare-imgbed-5re.pages.dev/file/1764755896344_1000037754.jpg"
+                                src="https://cloud.dragoncode.dev/f/qjjuX/%E5%89%AA%E8%B2%BC%E7%B0%BF%201768222234656.png"
                                 alt="Line QR Code"
                                 className="w-16 h-16 object-contain"
                             />

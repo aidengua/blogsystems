@@ -2,15 +2,15 @@ import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const photos = [
-    "https://cloudflare-imgbed-5re.pages.dev/file/1758853806050_1000007552.jpg",
-    "https://cloudflare-imgbed-5re.pages.dev/file/1758855518652_1000007550.jpg",
-    "https://cloudflare-imgbed-5re.pages.dev/file/1764855790445_1000007563.jpg",
-    "https://cloudflare-imgbed-5re.pages.dev/file/1764855797267_1000024703.jpg",
-    "https://cloudflare-imgbed-5re.pages.dev/file/1764855786326_1000007568.jpg",
-    "https://cloudflare-imgbed-5re.pages.dev/file/1764855786467_1000007547.jpg",
-    "https://cloudflare-imgbed-5re.pages.dev/file/1764855790425_1000007558.jpg",
-    "https://cloudflare-imgbed-5re.pages.dev/file/1764855781459_1000007555.jpg",
-    "https://cloudflare-imgbed-5re.pages.dev/file/1764855786258_1000007537.jpg"
+    "https://cloud.dragoncode.dev/f/mZLhW/%E5%89%AA%E8%B2%BC%E7%B0%BF%201768221991035.png",
+    "https://cloud.dragoncode.dev/f/n5num/%E5%89%AA%E8%B2%BC%E7%B0%BF%201768222033885.png",
+    "hhttps://cloud.dragoncode.dev/f/oYRsv/%E5%89%AA%E8%B2%BC%E7%B0%BF%201768222043942.png",
+    "https://cloud.dragoncode.dev/f/pgYtA/%E5%89%AA%E8%B2%BC%E7%B0%BF%201768222054494.png",
+    "https://cloud.dragoncode.dev/f/wj0Hy/%E5%89%AA%E8%B2%BC%E7%B0%BF%201768222117056.png",
+    "https://cloud.dragoncode.dev/f/xG2Hx/%E5%89%AA%E8%B2%BC%E7%B0%BF%201768222142282.png",
+    "https://cloud.dragoncode.dev/f/y8XSL/%E5%89%AA%E8%B2%BC%E7%B0%BF%201768222162293.png",
+    "https://cloud.dragoncode.dev/f/zmnT4/%E5%89%AA%E8%B2%BC%E7%B0%BF%201768222176865.png",
+    "https://cloud.dragoncode.dev/f/AnQUE/%E5%89%AA%E8%B2%BC%E7%B0%BF%201768222181659.png"
 ];
 
 const PhotoWidget = ({ onMoreClick }) => {

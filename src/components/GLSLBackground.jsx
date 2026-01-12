@@ -278,7 +278,10 @@ const GLSLBackground = () => {
         };
     }, [glslBackgroundEnabled, currentGlslEffect]); // Re-run when effect changes
 
-    if (!glslBackgroundEnabled) return null;
+    // Mobile detection
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
+    if (!glslBackgroundEnabled || isMobile) return null;
 
     return (
         <div ref={containerRef} className="fixed top-0 left-0 w-full h-full -z-10 pointer-events-none" />

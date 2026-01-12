@@ -23,7 +23,9 @@ const ControlCenterModal = ({ isOpen, onClose }) => {
         glslBackgroundEnabled,
         toggleGlslBackground,
         currentGlslEffect,
-        setCurrentGlslEffect
+        setCurrentGlslEffect,
+        customContextMenuEnabled,
+        toggleCustomContextMenu
     } = useSettings();
 
     // Fetch Tags
@@ -509,6 +511,32 @@ const ControlCenterModal = ({ isOpen, onClose }) => {
                                             : "text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-white"
                                     )}>
                                         滑動阻尼
+                                    </span>
+                                </button>
+
+                                {/* Custom Context Menu Toggle */}
+                                <button
+                                    onClick={toggleCustomContextMenu}
+                                    className={clsx(
+                                        "flex items-center gap-3 px-4 py-2 rounded-full transition-all duration-300 group border",
+                                        customContextMenuEnabled
+                                            ? "bg-indigo-50 dark:bg-indigo-500/10 border-indigo-200 dark:border-indigo-500/20"
+                                            : "bg-gray-100 dark:bg-white/5 border-transparent hover:bg-gray-200 dark:hover:bg-white/10"
+                                    )}
+                                >
+                                    <div className={clsx(
+                                        "w-6 h-6 rounded-full flex items-center justify-center transition-colors",
+                                        customContextMenuEnabled ? "bg-indigo-500 text-white" : "bg-gray-400 text-white"
+                                    )}>
+                                        <i className="fas fa-mouse-pointer text-xs"></i>
+                                    </div>
+                                    <span className={clsx(
+                                        "text-sm font-bold transition-colors",
+                                        customContextMenuEnabled
+                                            ? "text-indigo-600 dark:text-indigo-400"
+                                            : "text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-white"
+                                    )}>
+                                        右鍵菜單
                                     </span>
                                 </button>
                             </div>

@@ -8,7 +8,7 @@ const Equipment = () => {
             name: "Asus TUF Gaming A15",
             specs: "AMD Ryzen 7 7735HS / NVIDIA GeForce RTX 4060",
             desc: "性能強勁，散熱優秀，可以開發和設計。",
-            image: "https://cloudflare-imgbed-5re.pages.dev/file/1765445402696_image.png", // Placeholder
+            image: "https://cloud.dragoncode.dev/f/zmEI4/image.jpg", // Placeholder
             link: "#"
         },
         {
@@ -16,7 +16,7 @@ const Equipment = () => {
             name: "Macbook Pro M1",
             specs: "M1 / 8GB",
             desc: "以現在來說這台陪伴我四年的電腦更新上了LiquidGlass之後時常卡段，但也足夠辦公。",
-            image: "https://cloudflare-imgbed-5re.pages.dev/file/1765445600024_image.png", // Placeholder
+            image: "https://cloud.dragoncode.dev/f/y8OHL/%E5%89%AA%E8%B2%BC%E7%B0%BF%201768222627484.png", // Placeholder
             link: "#"
         },
         {
@@ -24,7 +24,7 @@ const Equipment = () => {
             name: "OPPO Find X8",
             specs: "浮光白 / 16GB / 256GB",
             desc: "天馬螢幕顯示效果優秀，聯發科天機9400 Soc效能非常好。",
-            image: "https://cloudflare-imgbed-5re.pages.dev/file/1765445430186_image.png", // Placeholder
+            image: "https://cloud.dragoncode.dev/f/xG5Cx/%E5%89%AA%E8%B2%BC%E7%B0%BF%201768222635030.png", // Placeholder
             link: "#"
         },
         {
@@ -32,7 +32,7 @@ const Equipment = () => {
             name: "Canon EOS 70D",
             specs: "18-135鏡頭",
             desc: "放在2025的今天都是相當能打的外拍相機",
-            image: "https://cloudflare-imgbed-5re.pages.dev/file/1765445750417_image.png", // Placeholder
+            image: "https://cloud.dragoncode.dev/f/wjxCy/%E5%89%AA%E8%B2%BC%E7%B0%BF%201768222642572.png", // Placeholder
             link: "#"
         },
         {
@@ -40,7 +40,7 @@ const Equipment = () => {
             name: "弱水時砂 寒武紀",
             specs: "48db降噪 / 100h續航 / LDAC",
             desc: "超長續航能力，音質表現優秀，對我來說是目前最有性價比的耳機",
-            image: "https://cloudflare-imgbed-5re.pages.dev/file/1765445827628_image.png", // Placeholder
+            image: "https://cloud.dragoncode.dev/f/vgxfA/%E5%89%AA%E8%B2%BC%E7%B0%BF%201768222648289.png", // Placeholder
             link: "#"
         },
         {
@@ -48,7 +48,7 @@ const Equipment = () => {
             name: "弱水時砂 琉璃Ultra",
             specs: "55db降噪 / 45h續航 / 寬頻抗風噪",
             desc: "超長續航能力，音質表現優秀，對我來說是目前最有性價比的耳機",
-            image: "https://cloudflare-imgbed-5re.pages.dev/file/1765445951094_image.png", // Placeholder
+            image: "https://cloud.dragoncode.dev/f/r07C2/%E5%89%AA%E8%B2%BC%E7%B0%BF%201768222657107.png", // Placeholder
             link: "#"
         }
     ];
@@ -59,7 +59,7 @@ const Equipment = () => {
             name: "Galaxy Fit3",
             specs: "白色款",
             desc: "非常好的續航力與完整睡眠、運動、血氧監測，配合軟體確實很不錯",
-            image: "https://cloudflare-imgbed-5re.pages.dev/file/1765446094442_image.png", // Placeholder
+            image: "https://cloud.dragoncode.dev/f/qjLsX/%E5%89%AA%E8%B2%BC%E7%B0%BF%201768222663338.png", // Placeholder
             link: "#"
         }
     ];

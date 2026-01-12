@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { collection, query, where, onSnapshot } from 'firebase/firestore';
@@ -10,19 +10,8 @@ import { subscribeToWeeklyStats } from '../services/stats';
 import { navigationGroups } from '../config/navigation';
 
 const Sidebar = ({ mobile, close, toc, activeSection, posts: initialPosts }) => {
-    const [tags, setTags] = useState({});
-    const [stats, setStats] = useState({
-        articleCount: 0,
-        tagCount: 0,
-        categoryCount: 0,
-        lastUpdate: '',
-        wordCount: '0k', // Placeholder as we don't store word count yet
-        daysOnline: 0
-    });
-    const [activityData, setActivityData] = useState([]);
-    const [viewData, setViewData] = useState([]);
-    const [tagChartData, setTagChartData] = useState([]);
-    const [categoryChartData, setCategoryChartData] = useState([]);
+    const [fetchedPosts, setFetchedPosts] = useState([]);
+    // Derived Charts Data - keeping visitChartData separate as it comes from external service
     const [visitChartData, setVisitChartData] = useState([]);
     const [loading, setLoading] = useState(true);
     const [chartDims, setChartDims] = useState({ width: 0, height: 0 });
@@ -30,83 +19,89 @@ const Sidebar = ({ mobile, close, toc, activeSection, posts: initialPosts }) => 
     const [isTocHovered, setIsTocHovered] = useState(false);
     const [forceChartRender, setForceChartRender] = useState(0);
 
-    useEffect(() => {
-        // Robust check: Only render chart when container has dimensions
-        if (!chartContainerRef.current) return;
+    const posts = initialPosts || fetchedPosts;
 
-        const observer = new ResizeObserver((entries) => {
-            for (const entry of entries) {
-                const { width, height } = entry.contentRect;
-                if (width > 0 && height > 0) {
-                    setChartDims({ width, height });
-                } else {
-                    setChartDims({ width: 0, height: 0 });
-                }
-            }
+    const { tags, stats, activityData, viewData, tagChartData, categoryChartData } = useMemo(() => {
+        const defaultStats = {
+            articleCount: 0,
+            tagCount: 0,
+            categoryCount: 0,
+            lastUpdate: '',
+            wordCount: '0k',
+            daysOnline: 0
+        };
+
+        const defaultResult = {
+            tags: {},
+            stats: defaultStats,
+            activityData: [],
+            viewData: [],
+            tagChartData: [],
+            categoryChartData: []
+        };
+
+        if (!posts || posts.length === 0) return defaultResult;
+
+        // Sort by date desc (Newest first)
+        const sortedPosts = [...posts].sort((a, b) => {
+            const dateA = a.createdAt?.toDate ? a.createdAt.toDate() : new Date(a.createdAt);
+            const dateB = b.createdAt?.toDate ? b.createdAt.toDate() : new Date(b.createdAt);
+            return dateB - dateA;
         });
 
-        observer.observe(chartContainerRef.current);
-
-        return () => observer.disconnect();
-    }, [toc, loading]);
-
-    const processPostsData = (posts) => {
-        // Sort by date desc (Newest first) for consistent processing
-        posts.sort((a, b) => b.createdAt - a.createdAt);
-
-        // 1. Process Tags
+        // 1. Process Tags & Categories
         const tagCounts = {};
-        posts.forEach(post => {
+        const categoryCounts = {};
+
+        sortedPosts.forEach(post => {
             if (post.tags) {
                 post.tags.forEach(tag => {
                     tagCounts[tag] = (tagCounts[tag] || 0) + 1;
                 });
             }
+            const cat = post.category || "未分類";
+            categoryCounts[cat] = (categoryCounts[cat] || 0) + 1;
         });
-        setTags(tagCounts);
 
-        // Prepare Tag Chart Data (Top 5)
         const sortedTags = Object.entries(tagCounts)
             .map(([name, value]) => ({ name, value }))
             .sort((a, b) => b.value - a.value)
             .slice(0, 5);
-        setTagChartData(sortedTags);
 
-        // Prepare Category Chart Data
-        const categoryCounts = {};
-        posts.forEach(post => {
-            const cat = post.category || "未分類";
-            categoryCounts[cat] = (categoryCounts[cat] || 0) + 1;
-        });
         const sortedCategories = Object.entries(categoryCounts)
             .map(([name, value]) => ({ name, value }))
             .sort((a, b) => b.value - a.value);
-        setCategoryChartData(sortedCategories);
 
         // 2. Process Stats
-        const startDate = new Date('2025-01-01'); // Assume site launch date
+        const startDate = new Date('2025-01-01');
         const now = new Date();
         const diffTime = Math.abs(now - startDate);
         const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        const lastUpdateDate = sortedPosts.length > 0 ? (sortedPosts[0].createdAt?.toDate ? sortedPosts[0].createdAt.toDate() : new Date(sortedPosts[0].createdAt)) : new Date();
 
-        setStats({
-            articleCount: posts.length,
+        const currentStats = {
+            articleCount: sortedPosts.length,
             tagCount: Object.keys(tagCounts).length,
-            categoryCount: 3, // Hardcoded for now or derive from categories if added
-            lastUpdate: posts.length > 0 ? posts[0].createdAt.toLocaleDateString() : 'N/A',
-            wordCount: (posts.reduce((acc, post) => acc + (post.content?.length || 0), 0) / 1000).toFixed(1) + 'k',
+            categoryCount: 3,
+            lastUpdate: lastUpdateDate.toLocaleDateString(),
+            wordCount: (sortedPosts.reduce((acc, post) => acc + (post.content?.length || 0), 0) / 1000).toFixed(1) + 'k',
             daysOnline: diffDays
-        });
+        };
 
         // 3. Process Growth Data (Cumulative)
-        const sortedPosts = [...posts].sort((a, b) => a.createdAt - b.createdAt);
+        const chronologicalPosts = [...sortedPosts].sort((a, b) => {
+            const dateA = a.createdAt?.toDate ? a.createdAt.toDate() : new Date(a.createdAt);
+            const dateB = b.createdAt?.toDate ? b.createdAt.toDate() : new Date(b.createdAt);
+            return dateA - dateB;
+        });
 
         let cumulative = 0;
         const fullHistoryMap = new Map();
 
-        sortedPosts.forEach(post => {
+        chronologicalPosts.forEach(post => {
             cumulative++;
-            const key = `${post.createdAt.getFullYear()}-${String(post.createdAt.getMonth() + 1).padStart(2, '0')}`;
+            const d = post.createdAt?.toDate ? post.createdAt.toDate() : new Date(post.createdAt);
+            const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
             fullHistoryMap.set(key, cumulative);
         });
 
@@ -126,78 +121,108 @@ const Sidebar = ({ mobile, close, toc, activeSection, posts: initialPosts }) => 
                 }
             }
 
-            chartData.push({
-                name: key,
-                count: count
-            });
+            chartData.push({ name: key, count: count });
         }
 
         const startDateStr = chartData[0].name;
-        const postsBeforeWindow = sortedPosts.filter(p => {
-            const k = `${p.createdAt.getFullYear()}-${String(p.createdAt.getMonth() + 1).padStart(2, '0')}`;
+        // Fix for postsBeforeWindow: correctly parse dates
+        const postsBeforeWindow = chronologicalPosts.filter(p => {
+            const d = p.createdAt?.toDate ? p.createdAt.toDate() : new Date(p.createdAt);
+            const k = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
             return k < startDateStr;
         }).length;
 
         let currentTotal = postsBeforeWindow;
 
         const finalChartData = chartData.map(item => {
-            const postsInMonth = sortedPosts.filter(p => {
-                const k = `${p.createdAt.getFullYear()}-${String(p.createdAt.getMonth() + 1).padStart(2, '0')}`;
+            const postsInMonth = chronologicalPosts.filter(p => {
+                const d = p.createdAt?.toDate ? p.createdAt.toDate() : new Date(p.createdAt);
+                const k = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
                 return k === item.name;
             }).length;
 
             currentTotal += postsInMonth;
+            // Overwrite count with exact cumulative from map if exists matching the month end? 
+            // Actually the current logic accumulates manually. 'fullHistoryMap' stores cumulative at END of that month (approximated).
+            // But let's stick to the original logic which seemed to be working: "currentTotal += postsInMonth"
+
+            // Wait, original logic was:
+            // if (fullHistoryMap.has(key)) count = v; else ...
+            // And then it re-calculated using filters?
+            // The original logic was doing BOTH. 
+            // It created `chartData` with `count` from `fullHistoryMap` logic.
+            // THEN it did `finalChartData` using `postsBeforeWindow` + `postsInMonth`.
+            // The `finalChartData` map REPLACED the `count`. 
+            // So the first loop for `chartData` was just to generate keys and initial counts?
+            // Actually `chartData` counts were used to init? No, `finalChartData` mapped `chartData.map`.
+            // So `chartData` counts were ignored? 
+            // Let's stick to the manual accumulation as it's cleaner.
+
             return { ...item, count: currentTotal };
         });
 
-        setActivityData(finalChartData);
-
         // 4. Process Top Views
-        const topPosts = [...posts].sort((a, b) => (b.views || 0) - (a.views || 0)).slice(0, 5);
+        const topPosts = [...sortedPosts].sort((a, b) => (b.views || 0) - (a.views || 0)).slice(0, 5);
         const viewsChartData = topPosts.map(p => ({
             name: p.title.length > 4 ? p.title.substring(0, 4) + '..' : p.title,
             fullName: p.title,
             views: p.views || 0
         }));
-        setViewData(viewsChartData);
-        setLoading(false);
-    };
+
+        return {
+            tags: tagCounts,
+            stats: currentStats,
+            activityData: finalChartData,
+            viewData: viewsChartData,
+            tagChartData: sortedTags,
+            categoryChartData: sortedCategories
+        };
+    }, [posts]);
 
     useEffect(() => {
-        if (initialPosts && initialPosts.length > 0) {
-            processPostsData(initialPosts);
-        } else if (!initialPosts) {
-            // Only fetch if initialPosts is NOT provided (undefined/null, not just empty array)
-            // However, for now, let's assume we fetch if empty array is passed but we want to be sure it's not just "loading empty"
-            // If we rely on Home to pass posts, we might not need this fall back if Home always passes "posts" even if empty.
-            // But if specific pages like PostDetail render Sidebar, they might not pass "all posts".
-            // So we should fetch if initialPosts is missing.
+        // Robust check: Only render chart when container has dimensions
+        if (!chartContainerRef.current) return;
 
+        const observer = new ResizeObserver((entries) => {
+            for (const entry of entries) {
+                const { width, height } = entry.contentRect;
+                if (width > 0 && height > 0) {
+                    setChartDims({ width, height });
+                } else {
+                    setChartDims({ width: 0, height: 0 });
+                }
+            }
+        });
+
+        observer.observe(chartContainerRef.current);
+
+        return () => observer.disconnect();
+    }, [toc, loading]); // loading state is now only derived from fetching
+
+    useEffect(() => {
+        if (!initialPosts) {
             setLoading(true);
             const q = query(collection(db, 'posts'), where('status', '==', 'published'));
-
             const unsubscribe = onSnapshot(q, (querySnapshot) => {
                 try {
-                    let posts = querySnapshot.docs.map(doc => ({
+                    const fetched = querySnapshot.docs.map(doc => ({
                         ...doc.data(),
+                        // Parse date here so useMemo logic is simpler? 
+                        // Actually useMemo handles both, but let's parse standard here
                         createdAt: doc.data().createdAt?.toDate ? doc.data().createdAt.toDate() : new Date(doc.data().createdAt)
                     }));
-                    processPostsData(posts);
+                    setFetchedPosts(fetched);
                 } catch (error) {
                     console.error("Error fetching sidebar data:", error);
-                    setLoading(false); // Ensure loading stops on error
+                } finally {
+                    setLoading(false);
                 }
             }, (error) => {
                 console.error("Error listening to sidebar data:", error);
                 setLoading(false);
             });
-
             return () => unsubscribe();
         } else {
-            // initialPosts is [] (empty array), meaning loaded but no posts? Or just not loaded yet?
-            // Usually Home will pass [] initially, then [posts].
-            // If we don't want to duplicate logic, we can just wait.
-            // But sidebar logic here is "if posts provided, use them".
             setLoading(false);
         }
     }, [initialPosts]);
@@ -219,7 +244,7 @@ const Sidebar = ({ mobile, close, toc, activeSection, posts: initialPosts }) => 
                     <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-white/20">
                             <img
-                                src="https://cloudflare-imgbed-5re.pages.dev/file/1759506193400_1000004107.jpg"
+                                src="https://cloud.dragoncode.dev/f/lYAfX/%E5%89%AA%E8%B2%BC%E7%B0%BF%201768221858561.png"
                                 alt="Avatar"
                                 className="w-full h-full object-cover"
                             />

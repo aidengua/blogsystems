@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { collection, query, orderBy, getDocs, where } from 'firebase/firestore';
 import { Link } from 'react-router-dom';
 import { db } from '../../firebase';
@@ -33,16 +33,18 @@ const Archives = () => {
     }, []);
 
     // Group posts by year
-    const groupedPosts = posts.reduce((acc, post) => {
-        const year = post.createdAt?.toDate().getFullYear() || 'Unknown';
-        if (!acc[year]) {
-            acc[year] = [];
-        }
-        acc[year].push(post);
-        return acc;
-    }, {});
+    const groupedPosts = useMemo(() => {
+        return posts.reduce((acc, post) => {
+            const year = post.createdAt?.toDate().getFullYear() || 'Unknown';
+            if (!acc[year]) {
+                acc[year] = [];
+            }
+            acc[year].push(post);
+            return acc;
+        }, {});
+    }, [posts]);
 
-    const sortedYears = Object.keys(groupedPosts).sort((a, b) => b - a);
+    const sortedYears = useMemo(() => Object.keys(groupedPosts).sort((a, b) => b - a), [groupedPosts]);
 
     return (
         <MainLayout>

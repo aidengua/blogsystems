@@ -17,7 +17,7 @@ const PremiumGridBackground = () => {
         >
             {/* Static Grid Pattern */}
             <div
-                className="absolute inset-0 w-full h-full"
+                className="absolute inset-0 w-full h-full will-change-transform"
                 style={{
                     backgroundImage: `linear-gradient(to right, ${gridColor} 1px, transparent 1px), linear-gradient(to bottom, ${gridColor} 1px, transparent 1px)`,
                     backgroundSize: '100px 100px', // Larger grid as requested
