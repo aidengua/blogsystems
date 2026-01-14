@@ -8,15 +8,15 @@ import TiltCard from './TiltCard';
 import MarqueeColumn from './MarqueeColumn';
 import { categories } from '../config/navigation';
 
-import img1 from '../assets/data/card (1).png';
-import img2 from '../assets/data/card (2).png';
-import img3 from '../assets/data/card (3).png';
-import img4 from '../assets/data/card (4).png';
-import img5 from '../assets/data/card (5).png';
-import img6 from '../assets/data/card (6).png';
-import img7 from '../assets/data/card (7).png';
-import img8 from '../assets/data/card (8).png';
-import img9 from '../assets/data/card (9).png';
+import img1 from '../assets/data/card1.jpg';
+import img2 from '../assets/data/card2.jpg';
+import img3 from '../assets/data/card3.jpg';
+import img4 from '../assets/data/card4.jpg';
+import img5 from '../assets/data/card5.jpg';
+import img6 from '../assets/data/card6.jpg';
+import img7 from '../assets/data/card7.jpg';
+import img8 from '../assets/data/card8.jpg';
+import img9 from '../assets/data/card9.jpg';
 import starsIcon from '../assets/misc/stars.png';
 
 // --- Sub-components ---
