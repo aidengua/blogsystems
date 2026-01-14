@@ -32,7 +32,7 @@ const Dashboard = () => {
     // Album State
     const [albums, setAlbums] = useState([]);
     const [isPhotoModalOpen, setIsPhotoModalOpen] = useState(false);
-    const [photoData, setPhotoData] = useState({ title: '', src: '', description: '', tags: '' });
+    const [photoData, setPhotoData] = useState({ title: '', src: '', description: '', tags: '', date: '' });
     const [publishingPhoto, setPublishingPhoto] = useState(false);
     const [editingPhoto, setEditingPhoto] = useState(null);
 
@@ -231,7 +231,8 @@ const Dashboard = () => {
             title: photo.title,
             src: photo.src,
             description: photo.description || '',
-            tags: photo.tags ? photo.tags.join(', ') : ''
+            tags: photo.tags ? photo.tags.join(', ') : '',
+            date: photo.createdAt ? photo.createdAt.toDate().toISOString().split('T')[0] : ''
         });
         setIsPhotoModalOpen(true);
     };
@@ -270,11 +271,14 @@ const Dashboard = () => {
         }
 
         setPublishingPhoto(true);
+        const submitDate = photoData.date ? new Date(photoData.date) : new Date();
+
         try {
             if (editingPhoto) {
                 await updateDoc(doc(db, 'albums', editingPhoto.id), {
                     ...photoData,
                     tags: photoData.tags.split(',').map(tag => tag.trim()).filter(tag => tag),
+                    createdAt: submitDate, // Allow updating sort order
                     updatedAt: new Date()
                 });
                 showNotification('照片已更新', 'success');
@@ -283,12 +287,12 @@ const Dashboard = () => {
                 await addDoc(collection(db, 'albums'), {
                     ...photoData,
                     tags: photoData.tags.split(',').map(tag => tag.trim()).filter(tag => tag),
-                    createdAt: new Date(),
+                    createdAt: submitDate,
                     authorId: auth.currentUser.uid
                 });
                 showNotification('照片已發布', 'success');
             }
-            setPhotoData({ title: '', src: '', description: '', tags: '' });
+            setPhotoData({ title: '', src: '', description: '', tags: '', date: '' });
             setIsPhotoModalOpen(false);
         } catch (error) {
             console.error("Error saving photo:", error);
@@ -356,7 +360,7 @@ const Dashboard = () => {
                         <button
                             onClick={() => {
                                 setEditingPhoto(null);
-                                setPhotoData({ title: '', src: '', description: '', tags: '' });
+                                setPhotoData({ title: '', src: '', description: '', tags: '', date: '' });
                                 setIsPhotoModalOpen(true);
                             }}
                             className="flex-1 md:flex-none inline-flex justify-center items-center px-5 py-2.5 bg-pink-600 hover:bg-pink-500 text-white rounded-xl transition-all shadow-lg shadow-pink-500/20 font-medium text-sm group"
@@ -836,13 +840,21 @@ const Dashboard = () => {
                                     placeholder="圖片連結 (URL)"
                                     className="w-full bg-black/30 border border-white/10 rounded-xl p-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-pink-500 transition-all font-mono text-sm"
                                 />
-                                <input
-                                    type="text"
-                                    value={photoData.tags}
-                                    onChange={(e) => setPhotoData({ ...photoData, tags: e.target.value })}
-                                    placeholder="標籤 (用逗號分隔)"
-                                    className="w-full bg-black/30 border border-white/10 rounded-xl p-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-pink-500 transition-all"
-                                />
+                                <div className="grid grid-cols-2 gap-4">
+                                    <input
+                                        type="date"
+                                        value={photoData.date}
+                                        onChange={(e) => setPhotoData({ ...photoData, date: e.target.value })}
+                                        className="w-full bg-black/30 border border-white/10 rounded-xl p-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-pink-500 transition-all"
+                                    />
+                                    <input
+                                        type="text"
+                                        value={photoData.tags}
+                                        onChange={(e) => setPhotoData({ ...photoData, tags: e.target.value })}
+                                        placeholder="標籤 (用逗號分隔)"
+                                        className="w-full bg-black/30 border border-white/10 rounded-xl p-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-pink-500 transition-all"
+                                    />
+                                </div>
                                 <textarea
                                     value={photoData.description}
                                     onChange={(e) => setPhotoData({ ...photoData, description: e.target.value })}
