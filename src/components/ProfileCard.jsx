@@ -77,7 +77,7 @@ const ProfileCard = () => {
                             <div className="relative w-32 h-32">
                                 <div className="w-full h-full rounded-full overflow-hidden border-4 border-gray-100 dark:border-[#2a2a2a] shadow-2xl">
                                     <img
-                                        src="https://cloud.dragoncode.dev/f/lYAfX/%E5%89%AA%E8%B2%BC%E7%B0%BF%201768221858561.png"
+                                        src="https://cloud.dragoncode.dev/f/BgjC8/avatar.jpg"
                                         alt="Avatar"
                                         className="w-full h-full object-cover"
                                     />

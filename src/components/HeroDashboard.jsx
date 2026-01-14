@@ -8,15 +8,15 @@ import TiltCard from './TiltCard';
 import MarqueeColumn from './MarqueeColumn';
 import { categories } from '../config/navigation';
 
-import img1 from '../assets/data/1.png';
-import img2 from '../assets/data/2.png';
-import img3 from '../assets/data/3.png';
-import img4 from '../assets/data/4.png';
-import img5 from '../assets/data/5.png';
-import img6 from '../assets/data/6.png';
-import img7 from '../assets/data/7.png';
-import img8 from '../assets/data/8.png';
-import img9 from '../assets/data/9.png';
+import img1 from '../assets/data/card (1).png';
+import img2 from '../assets/data/card (2).png';
+import img3 from '../assets/data/card (3).png';
+import img4 from '../assets/data/card (4).png';
+import img5 from '../assets/data/card (5).png';
+import img6 from '../assets/data/card (6).png';
+import img7 from '../assets/data/card (7).png';
+import img8 from '../assets/data/card (8).png';
+import img9 from '../assets/data/card (9).png';
 import starsIcon from '../assets/misc/stars.png';
 
 // --- Sub-components ---
@@ -143,15 +143,15 @@ const IntroCard = () => {
 
 
 const photos = [
-    "https://cloud.dragoncode.dev/f/mZLhW/%E5%89%AA%E8%B2%BC%E7%B0%BF%201768221991035.png",
-    "https://cloud.dragoncode.dev/f/n5num/%E5%89%AA%E8%B2%BC%E7%B0%BF%201768222033885.png",
-    "hhttps://cloud.dragoncode.dev/f/oYRsv/%E5%89%AA%E8%B2%BC%E7%B0%BF%201768222043942.png",
-    "https://cloud.dragoncode.dev/f/pgYtA/%E5%89%AA%E8%B2%BC%E7%B0%BF%201768222054494.png",
-    "https://cloud.dragoncode.dev/f/wj0Hy/%E5%89%AA%E8%B2%BC%E7%B0%BF%201768222117056.png",
-    "https://cloud.dragoncode.dev/f/xG2Hx/%E5%89%AA%E8%B2%BC%E7%B0%BF%201768222142282.png",
-    "https://cloud.dragoncode.dev/f/y8XSL/%E5%89%AA%E8%B2%BC%E7%B0%BF%201768222162293.png",
-    "https://cloud.dragoncode.dev/f/zmnT4/%E5%89%AA%E8%B2%BC%E7%B0%BF%201768222176865.png",
-    "https://cloud.dragoncode.dev/f/AnQUE/%E5%89%AA%E8%B2%BC%E7%B0%BF%201768222181659.png"
+    "https://cloud.dragoncode.dev/f/DRof3/image_1.jpg",
+    "https://cloud.dragoncode.dev/f/GZNHA/image_8.jpg",
+    "https://cloud.dragoncode.dev/f/JZnIK/image_3.jpg",
+    "https://cloud.dragoncode.dev/f/ElVsp/image.jpg",
+    "https://cloud.dragoncode.dev/f/KONF4/image_2.jpg",
+    "https://cloud.dragoncode.dev/f/LgkUQ/image_4.jpg",
+    "https://cloud.dragoncode.dev/f/MjzSz/image_5.jpg",
+    "https://cloud.dragoncode.dev/f/Nxwuj/image_7.jpg",
+    "https://cloud.dragoncode.dev/f/O7KHv/image_6.jpg"
 ];
 
 const FeatureCard = ({ posts, showRecommend, setShowRecommend }) => {

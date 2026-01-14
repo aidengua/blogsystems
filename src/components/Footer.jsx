@@ -7,7 +7,7 @@ const Footer = () => {
                     <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
                         <span>©2019 - {new Date().getFullYear()} By</span>
                         <img
-                            src="https://cloud.dragoncode.dev/f/lYAfX/%E5%89%AA%E8%B2%BC%E7%B0%BF%201768221858561.png"
+                            src="https://cloud.dragoncode.dev/f/BgjC8/avatar.jpg"
                             alt="Avatar"
                             className="w-5 h-5 rounded-full animate-[spin_4s_linear_infinite]"
                         />

@@ -53,7 +53,7 @@ const Changelog = () => {
                     <div className="absolute inset-0 overflow-hidden">
                         <div className="w-full h-full transition-transform duration-1000 ease-out group-hover:scale-105">
                             <LazyImage
-                                src="https://cloudflare-imgbed-5re.pages.dev/file/1765861552254_street.gif"
+                                src="https://cloud.dragoncode.dev/f/DRJi3/street.gif"
                                 alt="Changelog Hero"
                                 className="w-full h-full object-cover blur-[2px]"
                                 wrapperClassName="w-full h-full"

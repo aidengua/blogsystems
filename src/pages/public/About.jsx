@@ -100,7 +100,7 @@ const About = () => {
                         {/* Central Avatar */}
                         <div className="relative z-10 shrink-0">
                             <div className="w-32 h-32 md:w-40 md:h-40 rounded-full overflow-hidden border-4 border-gray-100 dark:border-gray-800 shadow-2xl relative z-10 bg-white dark:bg-gray-900">
-                                <img src="https://cloud.dragoncode.dev/f/lYAfX/%E5%89%AA%E8%B2%BC%E7%B0%BF%201768221858561.png" alt="Avatar" className="w-full h-full object-cover" />
+                                <img src="https://cloud.dragoncode.dev/f/BgjC8/avatar.jpg" alt="Avatar" className="w-full h-full object-cover" />
                             </div>
                             <div className="absolute bottom-2 right-2 md:bottom-3 md:right-3 w-6 h-6 md:w-8 md:h-8 bg-green-500 rounded-full border-4 border-white dark:border-gray-900 z-20 shadow-lg"></div>
                         </div>

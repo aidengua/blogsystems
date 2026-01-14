@@ -73,7 +73,7 @@ const MobileMenu = ({ isOpen, onClose }) => {
                                 <div className="flex items-center gap-3">
                                     <div className="w-8 h-8 rounded-full overflow-hidden border border-white/10">
                                         <img
-                                            src="https://cloud.dragoncode.dev/f/lYAfX/%E5%89%AA%E8%B2%BC%E7%B0%BF%201768221858561.png"
+                                            src="https://cloud.dragoncode.dev/f/BgjC8/avatar.jpg"
                                             alt="Avatar"
                                             className="w-full h-full object-cover"
                                         />
