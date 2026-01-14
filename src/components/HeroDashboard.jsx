@@ -75,8 +75,8 @@ const IntroCard = () => {
         <SpotlightCard className="relative h-full min-h-[400px] overflow-hidden group cursor-pointer hover:shadow-2xl transition-shadow duration-500 bg-white dark:bg-[#1a1a1a] border border-gray-200 dark:border-white/10" spotlightColor="rgba(112, 156, 239, 0.15)">
             <div className="relative md:absolute inset-0 flex flex-col md:flex-row h-full">
                 {/* Left Content */}
-                <div className="w-full md:w-1/2 p-6 md:p-8 flex flex-col z-20 relative h-full">
-                    <div className="flex-grow flex flex-col justify-center mb-4 pb-8">
+                <div className="w-full md:w-1/2 p-6 md:p-8 flex flex-col z-20 relative h-full items-center md:items-start text-center md:text-left">
+                    <div className="flex-grow flex flex-col justify-center mb-4 pb-0 md:pb-8 items-center md:items-start">
                         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 w-fit mb-3">
                             <img src={starsIcon} alt="stars" className="w-4 h-4 object-contain" />
                             <span className="text-xs text-gray-600 dark:text-gray-300 font-medium">內容方向</span>
@@ -90,7 +90,7 @@ const IntroCard = () => {
                     </div>
 
                     {/* Category Buttons - Capsule Style */}
-                    <div className="grid grid-cols-2 gap-2 mt-auto w-full max-w-[200px]">
+                    <div className="grid grid-cols-2 gap-2 mt-auto w-full max-w-[200px] mx-auto md:mx-0">
                         {categories.map((cat) => (
                             <Link
                                 key={cat.title}
@@ -123,7 +123,7 @@ const IntroCard = () => {
                 </div>
 
                 {/* Right Image Grid (Vertical & Animated) */}
-                <div className="w-full md:w-1/2 relative z-20 overflow-hidden h-48 md:h-full">
+                <div className="w-full md:w-1/2 relative z-20 overflow-hidden h-48 md:h-full hidden md:block">
                     <div className="absolute inset-0 flex justify-center gap-3 p-3 opacity-80 hover:opacity-100 transition-opacity duration-500">
                         <MarqueeColumn images={images} duration={35} />
                         <MarqueeColumn images={[...images.slice(4), ...images.slice(0, 4)]} duration={30} />

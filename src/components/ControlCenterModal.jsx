@@ -370,7 +370,7 @@ const ControlCenterModal = ({ isOpen, onClose }) => {
                         </div>
 
                         {/* Middle Bar: Lab Experiments */}
-                        <div className="bg-white/80 dark:bg-[#0f0f11]/80 backdrop-blur-md border border-gray-200 dark:border-white/10 rounded-3xl p-4 flex flex-col gap-3 shadow-2xl relative overflow-hidden">
+                        <div className="hidden lg:flex bg-white/80 dark:bg-[#0f0f11]/80 backdrop-blur-md border border-gray-200 dark:border-white/10 rounded-3xl p-4 flex-col gap-3 shadow-2xl relative overflow-hidden">
                             <div className="absolute top-0 right-0 p-2 opacity-10 pointer-events-none">
                                 <i className="fas fa-flask text-6xl text-purple-500"></i>
                             </div>
@@ -518,7 +518,7 @@ const ControlCenterModal = ({ isOpen, onClose }) => {
                                 <button
                                     onClick={toggleCustomContextMenu}
                                     className={clsx(
-                                        "flex items-center gap-3 px-4 py-2 rounded-full transition-all duration-300 group border",
+                                        "hidden lg:flex items-center gap-3 px-4 py-2 rounded-full transition-all duration-300 group border",
                                         customContextMenuEnabled
                                             ? "bg-indigo-50 dark:bg-indigo-500/10 border-indigo-200 dark:border-indigo-500/20"
                                             : "bg-gray-100 dark:bg-white/5 border-transparent hover:bg-gray-200 dark:hover:bg-white/10"

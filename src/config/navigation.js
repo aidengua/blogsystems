@@ -1,14 +1,14 @@
 
 export const libraryLinks = [
-    { to: "/archives", label: "全部文章", icon: "fas fa-archive", color: "text-purple-400", bg: "bg-purple-500/20" },
-    { to: "/categories", label: "分類列表", icon: "fas fa-folder", color: "text-green-400", bg: "bg-green-500/20" },
-    { to: "/tags", label: "標籤列表", icon: "fas fa-tags", color: "text-orange-400", bg: "bg-orange-500/20" }
+    { to: "/posts", label: "全部", icon: "fas fa-archive", color: "text-purple-400", bg: "bg-purple-500/10" },
+    { to: "/categories", label: "分類", icon: "fas fa-folder", color: "text-green-400", bg: "bg-green-500/10" },
+    { to: "/tags", label: "列表", icon: "fas fa-tags", color: "text-orange-400", bg: "bg-orange-500/10" }
 ];
 
 export const creationLinks = [
-    { to: "/changelog", label: "更新日誌", icon: "fas fa-history", color: "text-yellow-400", bg: "bg-yellow-500/20" },
-    { to: "/essay", label: "隨筆短文", icon: "fas fa-pen-fancy", color: "text-pink-400", bg: "bg-pink-500/20" },
-    { to: "/album", label: "生活相簿", icon: "fas fa-images", color: "text-blue-400", bg: "bg-blue-500/20" }
+    { to: "/changelog", label: "更新", icon: "fas fa-history", color: "text-yellow-400", bg: "bg-yellow-500/20" },
+    { to: "/essay", label: "短文", icon: "fas fa-pen-fancy", color: "text-pink-400", bg: "bg-pink-500/20" },
+    { to: "/album", label: "生活", icon: "fas fa-images", color: "text-blue-400", bg: "bg-blue-500/20" }
 ];
 
 export const authorLinks = [
