@@ -32,6 +32,7 @@ import GLSLBackground from './components/GLSLBackground';
 import { MusicProvider } from './context/MusicContext';
 import MusicPlayerCapsule from './components/MusicPlayerCapsule';
 import { SettingsProvider } from './context/SettingsContext';
+import CustomCursor from './components/CustomCursor';
 
 function App() {
   const location = useLocation();
@@ -39,6 +40,7 @@ function App() {
   return (
     <LoadingProvider>
       <SettingsProvider>
+        <CustomCursor />
         <SmoothScroll />
         <GLSLBackground />
         <MusicProvider>

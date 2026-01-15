@@ -9,9 +9,10 @@ import { collection, query, getDocs, where } from 'firebase/firestore';
 import { db } from '../firebase';
 
 // Inline MobileMenu for performance optimization (avoid separate chunk loading)
-const MobileMenu = ({ isOpen, onClose }) => {
+const MobileMenu = ({ isOpen, onClose, origin }) => {
     const navigate = useNavigate();
 
+    // ... (Random Post Logic & Scroll Lock) ...
     // Random Post Logic
     const handleRandomPost = async (e) => {
         e.preventDefault();
@@ -42,45 +43,48 @@ const MobileMenu = ({ isOpen, onClose }) => {
         };
     }, [isOpen]);
 
-    // Modal Animation Variants (Centered with Jelly effect)
+    // Dynamic Variants based on Origin
+    const startX = origin ? origin.x - window.innerWidth / 2 : 0;
+    const startY = origin ? origin.y - window.innerHeight / 2 : 0;
+
+    const modalVariants = {
+        hidden: {
+            opacity: 0,
+            scale: 0.1,
+            x: startX,
+            y: startY,
+        },
+        visible: {
+            opacity: 1,
+            scale: 1,
+            x: 0,
+            y: 0,
+            transition: {
+                type: "tween",
+                duration: 0.35,
+                ease: "easeOut"
+            }
+        },
+        exit: {
+            opacity: 0,
+            scale: 0.1,
+            x: startX,
+            y: startY,
+            transition: {
+                duration: 0.3,
+                ease: "easeIn"
+            }
+        }
+    };
+
+    // ... (Item Variants) ...
     const overlayVariants = {
         hidden: { opacity: 0 },
         visible: { opacity: 1 },
         exit: { opacity: 0 }
     };
 
-    const modalVariants = {
-        hidden: {
-            opacity: 0,
-            scale: 0.9,
-            y: "50%" // Start slightly lower for popup effect
-        },
-        visible: {
-            opacity: 1,
-            scale: 1,
-            y: 0,
-            transition: {
-                type: "spring",
-                damping: 25, // Higher damping = less bounce ("smooth")
-                stiffness: 320, // High stiffness = fast response
-                mass: 1
-            }
-        },
-        exit: {
-            opacity: 0,
-            scale: 0.9,
-            y: "50%",
-            transition: {
-                duration: 0.2,
-                ease: "easeOut"
-            }
-        }
-    };
-
-    const itemVariants = {
-        hidden: { opacity: 0, x: -20 },
-        visible: { opacity: 1, x: 0 }
-    };
+    // ... (rest of render logic remains same until next block)
 
     return (
         <AnimatePresence>
@@ -103,9 +107,9 @@ const MobileMenu = ({ isOpen, onClose }) => {
                             initial="hidden"
                             animate="visible"
                             exit="exit"
-                            className="w-full max-w-sm bg-white dark:bg-[#1c1c1e] rounded-[30px] shadow-2xl overflow-hidden flex flex-col max-h-[85vh] border border-gray-200 dark:border-white/10 pointer-events-auto"
+                            className="w-full max-w-sm bg-white dark:bg-[#1c1c1e] rounded-[30px] shadow-2xl overflow-hidden flex flex-col max-h-[85vh] border border-gray-200 dark:border-white/10 pointer-events-auto origin-center"
                         >
-                            {/* Valid Header */}
+                            {/* ... Content ... */}
                             <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 dark:border-white/5">
                                 <div className="flex items-center gap-3">
                                     <div className="w-10 h-10 rounded-full overflow-hidden border border-gray-200 dark:border-white/10">
@@ -233,8 +237,20 @@ const MobileMenu = ({ isOpen, onClose }) => {
 
 const MainLayout = ({ children }) => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+    const [menuOrigin, setMenuOrigin] = useState({ x: 0, y: 0 });
     const location = useLocation();
     const isAdmin = location.pathname.startsWith('/admin');
+
+    const handleToggleSidebar = (e) => {
+        if (e && e.currentTarget) {
+            const rect = e.currentTarget.getBoundingClientRect();
+            setMenuOrigin({
+                x: rect.left + rect.width / 2,
+                y: rect.top + rect.height / 2
+            });
+        }
+        setIsSidebarOpen(!isSidebarOpen);
+    };
 
     return (
         <div className="min-h-screen flex flex-col relative">
@@ -244,7 +260,7 @@ const MainLayout = ({ children }) => {
             </div>
 
             <div className="relative z-10 flex flex-col min-h-screen">
-                {!isAdmin && <Navbar toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)} />}
+                {!isAdmin && <Navbar toggleSidebar={handleToggleSidebar} />}
 
                 <main className="flex-grow w-full">
                     {children}
@@ -253,7 +269,7 @@ const MainLayout = ({ children }) => {
                 <Footer />
 
                 {/* Mobile Menu Overlay */}
-                <MobileMenu isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
+                <MobileMenu isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} origin={menuOrigin} />
             </div>
         </div>
     );

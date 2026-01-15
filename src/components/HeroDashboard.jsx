@@ -85,7 +85,7 @@ const IntroCard = () => {
                             夢想家工作室<br />藝術與科技生活
                         </h2>
                         <p className="text-gray-500 font-mono text-xs">
-                            dreamersaudio.shop
+                            blog.luyude.com
                         </p>
                     </div>
 

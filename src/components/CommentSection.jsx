@@ -35,6 +35,27 @@ const CommentSection = ({ postId, postTitle }) => {
         return () => unsubscribe();
     }, [postId]);
 
+    // Handle initial scroll to comment from URL hash
+    useEffect(() => {
+        if (!loading && comments.length > 0 && window.location.hash) {
+            const hash = window.location.hash.substring(1); // remove '#'
+            if (hash.startsWith('comment-')) {
+                // Short timeout to ensure DOM render
+                setTimeout(() => {
+                    const element = document.getElementById(hash);
+                    if (element) {
+                        element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        // Add temporary highlight effect
+                        element.classList.add('ring-2', 'ring-[#709CEF]', 'ring-offset-2', 'dark:ring-offset-[#121212]');
+                        setTimeout(() => {
+                            element.classList.remove('ring-2', 'ring-[#709CEF]', 'ring-offset-2', 'dark:ring-offset-[#121212]');
+                        }, 2000);
+                    }
+                }, 500);
+            }
+        }
+    }, [loading, comments]);
+
     return (
         <div className="space-y-8">
             <CommentForm postId={postId} postTitle={postTitle} />
@@ -55,12 +76,13 @@ const CommentSection = ({ postId, postTitle }) => {
                             {comments.map((comment) => (
                                 <motion.div
                                     key={comment.id}
+                                    id={`comment-${comment.id}`}
                                     layout
                                     initial={{ opacity: 0, y: 20, scale: 0.95 }}
                                     animate={{ opacity: 1, y: 0, scale: 1 }}
                                     exit={{ opacity: 0, scale: 0.9 }}
                                     transition={{ duration: 0.3 }}
-                                    className="bg-white dark:bg-[#1e1e1e] p-6 rounded-xl border border-gray-100 dark:border-gray-800 shadow-sm"
+                                    className="bg-white dark:bg-[#1e1e1e] p-6 rounded-xl border border-gray-100 dark:border-gray-800 shadow-sm scroll-mt-24"
                                 >
                                     <div className="flex justify-between items-start mb-3">
                                         <div className="flex items-center gap-3">

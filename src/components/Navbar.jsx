@@ -61,6 +61,18 @@ const Navbar = ({ toggleSidebar }) => {
     // Search State
     const [isSearchOpen, setIsSearchOpen] = useState(false);
     const [isControlCenterOpen, setIsControlCenterOpen] = useState(false);
+    const [controlCenterOrigin, setControlCenterOrigin] = useState({ x: 0, y: 0 });
+
+    const handleOpenControlCenter = (e) => {
+        if (e && e.currentTarget) {
+            const rect = e.currentTarget.getBoundingClientRect();
+            setControlCenterOrigin({
+                x: rect.left + rect.width / 2,
+                y: rect.top + rect.height / 2
+            });
+        }
+        setIsControlCenterOpen(true);
+    };
 
     // Handle Ctrl+K to open search
     useEffect(() => {
@@ -193,7 +205,7 @@ const Navbar = ({ toggleSidebar }) => {
                     <div className={clsx(capsuleClass, "gap-2 !p-1")}>
                         <button
                             onClick={toggleSidebar}
-                            className="lg:hidden w-8 h-8 flex items-center justify-center text-gray-900 dark:text-white hover:scale-110 transition-transform"
+                            className="lg:hidden w-8 h-8 flex items-center justify-center text-gray-900 dark:text-white transition-opacity hover:opacity-80"
                         >
                             <i className="fas fa-bars text-sm"></i>
                         </button>
@@ -261,10 +273,10 @@ const Navbar = ({ toggleSidebar }) => {
                     >
                         {/* Control Center Button */}
                         <button
-                            onClick={() => setIsControlCenterOpen(true)}
+                            onClick={handleOpenControlCenter}
                             className="w-8 h-8 rounded-full bg-gray-100 dark:bg-white/20 hover:bg-[#60a5fa] text-gray-600 dark:text-gray-300 hover:text-white flex items-center justify-center transition-colors duration-300"
                         >
-                            <i className="fas fa-th-large text-sm"></i>
+                            <i className="fas fa-layer-group text-sm"></i>
                         </button>
 
                         {/* Search Button */}
@@ -319,7 +331,11 @@ const Navbar = ({ toggleSidebar }) => {
             </nav >
 
             <SearchModal isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
-            <ControlCenterModal isOpen={isControlCenterOpen} onClose={() => setIsControlCenterOpen(false)} />
+            <ControlCenterModal
+                isOpen={isControlCenterOpen}
+                onClose={() => setIsControlCenterOpen(false)}
+                origin={controlCenterOrigin}
+            />
         </>
     );
 };

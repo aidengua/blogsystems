@@ -4,7 +4,7 @@ import { collection, getDocs, query, orderBy } from 'firebase/firestore';
 import { db } from '../../firebase';
 import MainLayout from '../../layouts/MainLayout';
 import LazyImage from '../../components/LazyImage';
-import mainImage from '../../assets/main.png';
+
 import CommentSection from '../../components/CommentSection';
 import { motion, AnimatePresence } from 'framer-motion';
 

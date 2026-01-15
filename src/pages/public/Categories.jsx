@@ -67,13 +67,13 @@ const Categories = () => {
 
     return (
         <MainLayout>
-            <div className="min-h-screen pt-24 pb-20 container mx-auto px-4 max-w-7xl">
+            <div className="min-h-screen pt-20 md:pt-24 pb-20 container mx-auto px-4 max-w-7xl">
                 {/* Header */}
-                <div className="text-center mb-12 animate-fade-in">
-                    <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">
+                <div className="text-center mb-8 md:mb-12 animate-fade-in">
+                    <h1 className="text-3xl md:text-5xl font-bold text-gray-900 dark:text-white mb-2 md:mb-4">
                         文章分類
                     </h1>
-                    <p className="text-gray-500 dark:text-gray-400 text-lg">
+                    <p className="text-gray-500 dark:text-gray-400 text-base md:text-lg">
                         探索 {Object.keys(categories).length} 個不同的主題領域
                     </p>
                 </div>
@@ -87,7 +87,7 @@ const Categories = () => {
                         {/* Categories Grid */}
                         <motion.div
                             layout
-                            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16"
+                            className="grid grid-cols-3 md:grid-cols-2 lg:grid-cols-4 gap-2 md:gap-6 mb-8 md:mb-16"
                         >
                             {Object.entries(categories).map(([catName, count]) => {
                                 const meta = getMeta(catName);
@@ -99,33 +99,37 @@ const Categories = () => {
                                         key={catName}
                                         onClick={() => setSelectedCategory(isSelected ? null : catName)}
                                         className={clsx(
-                                            "relative h-32 rounded-2xl overflow-hidden cursor-pointer transition-all duration-500",
-                                            isSelected ? "ring-4 ring-offset-4 ring-offset-white dark:ring-offset-[#121212] ring-[#709CEF] scale-105 z-10 shadow-2xl" : "hover:scale-[1.02] opacity-90 hover:opacity-100"
+                                            "relative h-16 md:h-32 rounded-xl md:rounded-2xl overflow-hidden cursor-pointer touch-manipulation transform-gpu transition-all duration-300 ease-out",
+                                            isSelected
+                                                ? "ring-2 md:ring-4 ring-offset-2 md:ring-offset-4 ring-offset-white dark:ring-offset-[#121212] ring-[#709CEF] z-10 shadow-lg scale-[1.02]"
+                                                : "active:scale-95 opacity-90 hover:opacity-100 hover:scale-[1.02]"
                                         )}
+                                        style={{ WebkitTapHighlightColor: 'transparent' }}
                                     >
                                         {/* Background Gradient */}
                                         <div className={clsx(
-                                            "absolute inset-0 bg-gradient-to-br transition-transform duration-700",
+                                            "absolute inset-0 bg-gradient-to-br transition-all duration-300",
                                             meta.gradient
                                         )}></div>
 
                                         {/* Content */}
-                                        <div className="absolute inset-0 p-6 flex flex-col justify-between z-10">
+                                        <div className="absolute inset-0 p-2 md:p-6 flex flex-col justify-between z-10">
                                             <div className="flex justify-between items-start">
-                                                <i className={clsx("fas text-2xl text-white", meta.icon)}></i>
-                                                <span className="text-2xl font-bold text-white/40 font-display">
+                                                <i className={clsx("fas text-white opacity-80", meta.icon, "text-sm md:text-2xl")}></i>
+                                                <span className="font-bold text-white/40 font-display text-sm md:text-2xl">
                                                     {count}
                                                 </span>
                                             </div>
-                                            <h3 className="text-xl font-bold text-white tracking-wide">
+                                            <h3 className="font-bold text-white tracking-wide text-xs md:text-xl line-clamp-1 break-all">
                                                 {catName}
                                             </h3>
                                         </div>
 
-                                        {/* Decorative Icon */}
+                                        {/* Decorative Icon - Hidden on mobile for cleaner look or resized */}
                                         <i className={clsx(
-                                            "fas absolute -bottom-4 -right-4 text-[6rem] text-white/10 pointer-events-none",
-                                            meta.icon
+                                            "fas absolute -bottom-2 -right-2 text-white/10 pointer-events-none",
+                                            meta.icon,
+                                            "text-[2.5rem] md:text-[6rem]"
                                         )}></i>
                                     </motion.div>
                                 );
@@ -133,8 +137,8 @@ const Categories = () => {
                         </motion.div>
 
                         {/* Filtered Posts Grid */}
-                        <div className="flex justify-between items-center mb-6">
-                            <h2 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 md:gap-0 mb-6">
+                            <h2 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
                                 {selectedCategory ? (
                                     <>
                                         <i className={`fas ${getMeta(selectedCategory).icon} text-[#709CEF]`}></i>
@@ -151,7 +155,7 @@ const Categories = () => {
                             {selectedCategory && (
                                 <button
                                     onClick={() => setSelectedCategory(null)}
-                                    className="px-4 py-2 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-red-500 hover:text-white transition-all flex items-center gap-2 text-sm font-medium"
+                                    className="px-4 py-2 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-red-500 hover:text-white transition-all flex items-center gap-2 text-sm font-medium w-full md:w-auto justify-center"
                                 >
                                     <i className="fas fa-times"></i>
                                     清除篩選

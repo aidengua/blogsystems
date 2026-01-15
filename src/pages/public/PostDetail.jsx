@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { collection, query, where, getDocs, updateDoc, increment, doc, getCountFromServer } from 'firebase/firestore';
 import ReactMarkdown from 'react-markdown';
@@ -42,6 +42,7 @@ const PostDetail = () => {
     const [toc, setToc] = useState([]);
     const [activeSection, setActiveSection] = useState('');
     const [commentCount, setCommentCount] = useState(0);
+    const articleRef = useRef(null);
 
     useEffect(() => {
         const fetchPost = async () => {
@@ -75,31 +76,40 @@ const PostDetail = () => {
         }
     }, [slug]);
 
-    // Generate TOC from rendered DOM elements to ensure ID consistency
+    // Generate TOC from rendered DOM elements
     useEffect(() => {
-        if (post?.content) {
-            // Wait for render cycle to complete
-            setTimeout(() => {
-                const article = document.querySelector('.prose');
-                if (article) {
-                    const headings = Array.from(article.querySelectorAll('h1, h2, h3'));
-                    const newToc = headings.map(heading => {
-                        // Ensure heading has an ID (rehype-slug should have added it, but fallback if missing)
-                        if (!heading.id) {
-                            heading.id = heading.innerText.toLowerCase().replace(/[^\w\u4e00-\u9fa5]+/g, '-').replace(/^-+|-+$/g, '');
-                        }
+        if (!loading && post?.content && articleRef.current) {
+            const updateToc = () => {
+                const headings = Array.from(articleRef.current.querySelectorAll('h1, h2, h3'));
+                const newToc = headings.map(heading => {
+                    // Ensure heading has an ID
+                    if (!heading.id) {
+                        heading.id = heading.innerText.toLowerCase().replace(/[^\w\u4e00-\u9fa5]+/g, '-').replace(/^-+|-+$/g, '');
+                    }
 
-                        return {
-                            id: heading.id,
-                            text: heading.innerText,
-                            level: parseInt(heading.tagName.substring(1))
-                        };
-                    });
+                    return {
+                        id: heading.id,
+                        text: heading.innerText,
+                        level: parseInt(heading.tagName.substring(1))
+                    };
+                });
+
+                // Only update if TOC actually changed to prevent loops
+                if (JSON.stringify(newToc) !== JSON.stringify(toc)) {
                     setToc(newToc);
                 }
-            }, 100);
+            };
+
+            // Initial parse
+            updateToc();
+
+            // Observe for changes (in case images load or content shifts, though mostly for initial render catch)
+            const observer = new MutationObserver(updateToc);
+            observer.observe(articleRef.current, { childList: true, subtree: true });
+
+            return () => observer.disconnect();
         }
-    }, [post]);
+    }, [loading, post?.content]);
 
     // Intersection Observer for Active Section
     useEffect(() => {
@@ -123,6 +133,53 @@ const PostDetail = () => {
             headings.forEach((heading) => observer.unobserve(heading));
         };
     }, [toc]);
+
+    const markdownComponents = useMemo(() => ({
+        img: (props) => {
+            if (!props.src) return null;
+            return <img {...props} />;
+        },
+        pre: ({ children, ...props }) => {
+            // Check if child is a gallery code block
+            const childProps = children?.props || {};
+            const className = childProps.className || '';
+            const isGallery = /language-gallery/.test(className);
+
+            if (isGallery) {
+                return <>{children}</>;
+            }
+            return <pre {...props}>{children}</pre>;
+        },
+        code({ node, inline, className, children, ...props }) {
+            const match = /language-(\w+)/.exec(className || '');
+            const isGallery = match && match[1] === 'gallery';
+
+            if (!inline && isGallery) {
+                const images = [];
+                // Parse image markdown: ![alt](src) within the code block content
+                const lines = String(children).split('\n');
+                const imgRegex = /!\[(.*?)\]\((.*?)\)/;
+
+                lines.forEach(line => {
+                    const imgMatch = line.match(imgRegex);
+                    if (imgMatch) {
+                        images.push({
+                            alt: imgMatch[1],
+                            src: imgMatch[2]
+                        });
+                    }
+                });
+
+                return <PostGallery images={images} />;
+            }
+
+            return (
+                <code className={className} {...props}>
+                    {children}
+                </code>
+            );
+        }
+    }), []);
 
     if (loading) return (
         <MainLayout>
@@ -238,7 +295,9 @@ const PostDetail = () => {
                 <div className="flex flex-col lg:flex-row gap-8">
                     <div className="w-full lg:w-3/4">
                         <div className="bg-white/80 dark:bg-white/5 backdrop-blur-md border border-gray-200 dark:border-white/10 rounded-2xl shadow-2xl p-6 md:p-12">
-                            <article className="prose prose-lg dark:prose-invert max-w-none 
+                            <article
+                                ref={articleRef}
+                                className="prose prose-lg dark:prose-invert max-w-none 
                                 prose-headings:font-display prose-headings:font-bold 
                                 prose-a:text-primary hover:prose-a:text-blue-600 
                                 prose-img:rounded-xl prose-img:shadow-lg
@@ -247,52 +306,7 @@ const PostDetail = () => {
                                 <ReactMarkdown
                                     remarkPlugins={[remarkGfm]}
                                     rehypePlugins={[rehypeSlug]}
-                                    components={{
-                                        img: (props) => {
-                                            if (!props.src) return null;
-                                            return <img {...props} />;
-                                        },
-                                        pre: ({ children, ...props }) => {
-                                            // Check if child is a gallery code block
-                                            const childProps = children?.props || {};
-                                            const className = childProps.className || '';
-                                            const isGallery = /language-gallery/.test(className);
-
-                                            if (isGallery) {
-                                                return <>{children}</>;
-                                            }
-                                            return <pre {...props}>{children}</pre>;
-                                        },
-                                        code({ node, inline, className, children, ...props }) {
-                                            const match = /language-(\w+)/.exec(className || '');
-                                            const isGallery = match && match[1] === 'gallery';
-
-                                            if (!inline && isGallery) {
-                                                const images = [];
-                                                // Parse image markdown: ![alt](src) within the code block content
-                                                const lines = String(children).split('\n');
-                                                const imgRegex = /!\[(.*?)\]\((.*?)\)/;
-
-                                                lines.forEach(line => {
-                                                    const imgMatch = line.match(imgRegex);
-                                                    if (imgMatch) {
-                                                        images.push({
-                                                            alt: imgMatch[1],
-                                                            src: imgMatch[2]
-                                                        });
-                                                    }
-                                                });
-
-                                                return <PostGallery images={images} />;
-                                            }
-
-                                            return (
-                                                <code className={className} {...props}>
-                                                    {children}
-                                                </code>
-                                            );
-                                        }
-                                    }}
+                                    components={markdownComponents}
                                 >
                                     {preprocessContent(post.content)}
                                 </ReactMarkdown>

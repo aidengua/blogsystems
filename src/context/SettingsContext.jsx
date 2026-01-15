@@ -24,6 +24,15 @@ export const SettingsProvider = ({ children }) => {
         localStorage.setItem('customContextMenuEnabled', JSON.stringify(customContextMenuEnabled));
     }, [customContextMenuEnabled]);
 
+    const [customCursorEnabled, setCustomCursorEnabled] = useState(() => {
+        const saved = localStorage.getItem('customCursorEnabled');
+        return saved !== null ? JSON.parse(saved) : true;
+    });
+
+    useEffect(() => {
+        localStorage.setItem('customCursorEnabled', JSON.stringify(customCursorEnabled));
+    }, [customCursorEnabled]);
+
     const toggleSmoothScroll = () => {
         setSmoothScrollEnabled(prev => !prev);
     };
@@ -36,6 +45,10 @@ export const SettingsProvider = ({ children }) => {
         setCustomContextMenuEnabled(prev => !prev);
     };
 
+    const toggleCustomCursor = () => {
+        setCustomCursorEnabled(prev => !prev);
+    };
+
     return (
         <SettingsContext.Provider value={{
             smoothScrollEnabled,
@@ -45,7 +58,9 @@ export const SettingsProvider = ({ children }) => {
             currentGlslEffect,
             setCurrentGlslEffect,
             customContextMenuEnabled,
-            toggleCustomContextMenu
+            toggleCustomContextMenu,
+            customCursorEnabled,
+            toggleCustomCursor
         }}>
             {children}
         </SettingsContext.Provider>
