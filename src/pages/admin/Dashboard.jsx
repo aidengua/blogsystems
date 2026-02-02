@@ -11,6 +11,8 @@ import {
 } from 'recharts';
 import { motion, AnimatePresence } from 'framer-motion';
 import SpotlightCard from '../../components/SpotlightCard';
+import SectionLoader from '../../components/SectionLoader';
+import LogoLoader from '../../components/LogoLoader';
 
 const Dashboard = () => {
     const navigate = useNavigate();
@@ -323,7 +325,7 @@ const Dashboard = () => {
     if (loading) return (
         <MainLayout>
             <div className="min-h-screen flex items-center justify-center">
-                <div className="animate-spin rounded-full h-12 w-12 border-4 border-[#709CEF] border-t-transparent"></div>
+                <SectionLoader />
             </div>
         </MainLayout>
     );
@@ -783,7 +785,7 @@ const Dashboard = () => {
                                     >
                                         {publishingEssay ? (
                                             <>
-                                                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                                                <LogoLoader size="w-4 h-4" animate={true} className="mr-2" />
                                                 {editingEssay ? '更新中...' : '發布中...'}
                                             </>
                                         ) : (
@@ -875,7 +877,7 @@ const Dashboard = () => {
                                     >
                                         {publishingPhoto ? (
                                             <>
-                                                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                                                <LogoLoader size="w-4 h-4" animate={true} className="mr-2" />
                                                 {editingPhoto ? '更新中...' : '發布中...'}
                                             </>
                                         ) : (

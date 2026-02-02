@@ -10,6 +10,7 @@ import Sidebar from '../../components/Sidebar';
 import Pagination from '../../components/Pagination';
 
 import { motion, AnimatePresence } from 'framer-motion';
+import SectionLoader from '../../components/SectionLoader';
 
 const Home = () => {
     const [posts, setPosts] = useState([]);
@@ -108,9 +109,7 @@ const Home = () => {
                                 </AnimatePresence>
 
                                 {loading ? (
-                                    <div className="flex justify-center py-20">
-                                        <div className="animate-spin rounded-full h-12 w-12 border-4 border-primary border-t-transparent"></div>
-                                    </div>
+                                    <SectionLoader />
                                 ) : (
                                     <>
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

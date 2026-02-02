@@ -1,15 +1,20 @@
 import { useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLoading } from '../context/LoadingContext';
+import { useTheme } from '../contexts/ThemeContext';
+import LogoLoader from './LogoLoader';
 
 const LoadingScreen = () => {
-    const { isLoading, progress, loadingText } = useLoading();
+    const { isLoading, progress } = useLoading();
+    const { isDark } = useTheme();
 
     useEffect(() => {
         if (isLoading) {
             document.body.style.overflow = 'hidden';
         } else {
             document.body.style.overflow = 'unset';
+            // Also reset scroll position to top when loading finishes, optional but good for UX
+            window.scrollTo(0, 0);
         }
         return () => {
             document.body.style.overflow = 'unset';
@@ -23,46 +28,31 @@ const LoadingScreen = () => {
                     initial={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
                     transition={{ duration: 0.5 }}
-                    className="fixed inset-0 z-[9999] bg-[#1a1a1a] flex flex-col items-center justify-center pointer-events-auto"
+                    className={`fixed inset-0 z-[9999] flex flex-col items-center justify-center pointer-events-auto transition-colors duration-300 ${isDark ? 'bg-[#1a1a1a]' : 'bg-[#f5f5f7]'
+                        }`}
                 >
-                    <div className="w-full max-w-md px-8 flex flex-col items-center gap-8">
-                        {/* Liquid Glass Progress Bar */}
-                        <div className="relative w-full h-3 bg-white/5 rounded-full overflow-hidden backdrop-blur-sm border border-white/10 shadow-[inset_0_1px_2px_rgba(0,0,0,0.3)]">
-                            {/* Liquid Bar */}
-                            <motion.div
-                                className="absolute top-0 left-0 h-full bg-gradient-to-r from-[#709CEF] via-[#a8c0ff] to-[#709CEF] bg-[length:200%_100%]"
-                                initial={{ width: "0%" }}
-                                animate={{
-                                    width: `${progress}%`,
-                                    backgroundPosition: ["0% 50%", "100% 50%"]
-                                }}
-                                transition={{
-                                    width: { ease: "linear", duration: 0.1 },
-                                    backgroundPosition: { duration: 2, repeat: Infinity, ease: "linear" }
-                                }}
-                                style={{
-                                    boxShadow: "0 0 15px rgba(112, 156, 239, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.4)"
-                                }}
-                            >
-                                {/* Light Field / Shine Effect */}
-                                <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/40 to-transparent -skew-x-12 animate-shine" />
-                            </motion.div>
-                        </div>
+                    <div className="flex flex-col items-center gap-8">
+                        {/* Logo Loader */}
+                        <motion.div
+                            initial={{ scale: 0.8, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            exit={{ scale: 0.8, opacity: 0 }}
+                            transition={{ duration: 0.5, ease: "easeOut" }}
+                        >
+                            <LogoLoader size="w-20 h-20" animate={false} />
+                        </motion.div>
 
-                        {/* Loading Text */}
-                        <div className="flex flex-col items-center gap-3 font-sans">
-                            <motion.span
-                                key={loadingText}
-                                initial={{ opacity: 0, y: 5, filter: "blur(4px)" }}
-                                animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                                exit={{ opacity: 0, y: -5, filter: "blur(4px)" }}
-                                className="text-gray-300 text-sm tracking-wide font-medium"
-                            >
-                                {loadingText}
-                            </motion.span>
-                            <span className="text-[#709CEF] text-xs font-semibold tracking-wider">
-                                {Math.round(progress)}%
-                            </span>
+                        {/* Simple Progress Bar */}
+                        <div className="w-48 flex flex-col items-center gap-2">
+                            <div className={`w-full h-1 rounded-full overflow-hidden ${isDark ? 'bg-white/10' : 'bg-black/10'
+                                }`}>
+                                <motion.div
+                                    className={`h-full rounded-full ${isDark ? 'bg-white' : 'bg-[#2c3e50]'}`}
+                                    initial={{ width: "0%" }}
+                                    animate={{ width: `${progress}%` }}
+                                    transition={{ ease: "linear", duration: 0.1 }}
+                                />
+                            </div>
                         </div>
                     </div>
                 </motion.div>

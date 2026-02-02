@@ -10,6 +10,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import SpotlightCard from '../../components/SpotlightCard';
 import { formatContentWithGemini } from '../../services/gemini';
 import PostGallery from '../../components/PostGallery';
+import LogoLoader from '../../components/LogoLoader';
 
 // Helper to preprocess gallery tags
 const preprocessContent = (content) => {
@@ -287,7 +288,7 @@ const EditorSection = ({
                 >
                     {loading ? (
                         <>
-                            <i className="fas fa-spinner fa-spin mr-2"></i>
+                            <LogoLoader size="w-4 h-4" animate={true} className="mr-2 inline-flex" />
                             儲存中...
                         </>
                     ) : (

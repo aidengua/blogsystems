@@ -5,6 +5,7 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { db } from '../firebase';
 import CommentForm from './CommentForm';
+import SectionLoader from './SectionLoader';
 
 const CommentSection = ({ postId, postTitle }) => {
     const [comments, setComments] = useState([]);
@@ -67,9 +68,7 @@ const CommentSection = ({ postId, postTitle }) => {
                 </h3>
 
                 {loading ? (
-                    <div className="flex justify-center py-8">
-                        <div className="animate-spin rounded-full h-8 w-8 border-2 border-[#709CEF] border-t-transparent"></div>
-                    </div>
+                    <SectionLoader className="min-h-[100px]" />
                 ) : comments.length > 0 ? (
                     <div className="space-y-4">
                         <AnimatePresence mode="popLayout">

@@ -4,6 +4,7 @@ import { collection, getDocs, query, where, orderBy } from 'firebase/firestore';
 import Fuse from 'fuse.js';
 import { motion, AnimatePresence } from 'framer-motion';
 import { db } from '../firebase';
+import LogoLoader from './LogoLoader';
 
 const SearchModal = ({ isOpen, onClose }) => {
     const [queryText, setQueryText] = useState('');
@@ -141,8 +142,8 @@ const SearchModal = ({ isOpen, onClose }) => {
                         {/* Results */}
                         <div className="max-h-[60vh] overflow-y-auto custom-scrollbar">
                             {loading && searchItems.length === 0 ? (
-                                <div className="p-8 text-center text-gray-500">
-                                    <i className="fas fa-spinner fa-spin mb-2"></i>
+                                <div className="p-8 text-center text-gray-500 flex flex-col items-center">
+                                    <LogoLoader size="w-8 h-8" animate={true} className="mb-2" />
                                     <p>正在加載索引...</p>
                                 </div>
                             ) : queryText && results.length === 0 ? (

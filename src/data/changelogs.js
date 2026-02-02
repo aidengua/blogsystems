@@ -1,5 +1,25 @@
 const changelogs = [
     {
+        version: 'v1.16.0',
+        date: '2026-02-02',
+        title: '短文頁面與載入動畫視覺升級',
+        type: 'major',
+        changes: [
+            {
+                type: 'changed',
+                text: '載入動畫優化：移除 Logo 閃爍效果，並新增優雅的縮小淡出 (Scale Down) 離場動畫，提升視覺連貫性。'
+            },
+            {
+                type: 'changed',
+                text: '短文頁面升級：實作交錯式彈性進場 (Staggered Spring) 動畫，修正卡片閃爍問題，並統一全站主色為 #709CEF。'
+            },
+            {
+                type: 'changed',
+                text: '互動體驗修飾：優化短文卡片懸停效果，以 Ring 陰影取代邊框寬度變化，徹底解決版面位移 (Layout Shift) 問題。'
+            }
+        ]
+    },
+    {
         version: 'v1.15.0',
         date: '2026-01-15',
         title: '風格游標與效能修正',

@@ -22,10 +22,6 @@ const ControlCenterModal = ({ isOpen, onClose, origin }) => {
     const {
         smoothScrollEnabled,
         toggleSmoothScroll,
-        glslBackgroundEnabled,
-        toggleGlslBackground,
-        currentGlslEffect,
-        setCurrentGlslEffect,
         customContextMenuEnabled,
         toggleCustomContextMenu,
         customCursorEnabled,
@@ -336,20 +332,33 @@ const ControlCenterModal = ({ isOpen, onClose, origin }) => {
                                                 <h2 className="text-xl font-bold text-gray-900 dark:text-white tracking-tight">最近評論</h2>
                                                 <div className="flex items-center gap-2">
                                                     {page > 1 && (
-                                                        <button onClick={handlePrevPage} className="w-8 h-8 rounded-full bg-gray-200 dark:bg-white/5 flex items-center justify-center">
-                                                            <i className="fas fa-chevron-left text-gray-600 dark:text-gray-400 text-xs"></i>
+                                                        <button
+                                                            onClick={handlePrevPage}
+                                                            className="group w-8 h-8 rounded-full bg-white/50 dark:bg-white/5 backdrop-blur-md border border-gray-200/50 dark:border-white/10 flex items-center justify-center transition-all duration-300 hover:bg-white dark:hover:bg-white/20 hover:shadow-lg dark:hover:shadow-black/50"
+                                                        >
+                                                            <i className="fas fa-chevron-left text-gray-500 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white transition-colors text-[10px]"></i>
                                                         </button>
                                                     )}
                                                     <button
                                                         onClick={handleNextPage}
                                                         disabled={comments.length < 6}
-                                                        className={clsx("w-8 h-8 rounded-full flex items-center justify-center", comments.length < 6 ? "bg-gray-100 dark:bg-white/5 opacity-50" : "bg-gray-200 dark:bg-white/5")}
+                                                        className={clsx(
+                                                            "group w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300 border backdrop-blur-md",
+                                                            comments.length < 6
+                                                                ? "bg-gray-100/50 dark:bg-white/5 border-transparent opacity-50 cursor-not-allowed"
+                                                                : "bg-white/50 dark:bg-white/5 border-gray-200/50 dark:border-white/10 hover:bg-white dark:hover:bg-white/20 hover:shadow-lg dark:hover:shadow-black/50"
+                                                        )}
                                                     >
-                                                        <i className="fas fa-chevron-right text-gray-600 dark:text-gray-400 text-xs"></i>
+                                                        <i className={clsx(
+                                                            "fas fa-chevron-right transition-colors text-[10px]",
+                                                            comments.length < 6
+                                                                ? "text-gray-400 dark:text-gray-600"
+                                                                : "text-gray-500 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
+                                                        )}></i>
                                                     </button>
                                                 </div>
                                             </div>
-                                            <div className="flex-1 overflow-y-auto custom-scrollbar pr-1 pb-16"> {/* pb-16 for extra scroll space */}
+                                            <div className="flex-1 overflow-y-auto overflow-x-hidden custom-scrollbar pr-1 pb-16"> {/* pb-16 for extra scroll space */}
                                                 <div className="grid grid-cols-1 gap-3">
                                                     {comments.map((comment) => (
                                                         <div key={comment.id} className="relative group/card">
@@ -440,34 +449,40 @@ const ControlCenterModal = ({ isOpen, onClose, origin }) => {
                                             </div>
                                             <h2 className="text-3xl font-bold text-gray-900 dark:text-white tracking-tight">最近評論</h2>
                                         </div>
-                                        <div className="flex items-center gap-2">
+                                        <div className="flex items-center gap-3">
                                             {page > 1 && (
                                                 <button
                                                     onClick={handlePrevPage}
-                                                    className="w-10 h-10 rounded-full bg-gray-200 dark:bg-white/5 hover:bg-gray-300 dark:hover:bg-white/10 flex items-center justify-center transition-colors text-gray-900 dark:text-white"
+                                                    className="group w-10 h-10 rounded-full bg-white/50 dark:bg-white/5 backdrop-blur-md border border-gray-200/50 dark:border-white/10 flex items-center justify-center transition-all duration-300 hover:bg-white dark:hover:bg-white/20 hover:shadow-lg dark:hover:shadow-black/50"
                                                 >
-                                                    <i className="fas fa-chevron-left text-gray-600 dark:text-gray-400"></i>
+                                                    <i className="fas fa-chevron-left text-gray-500 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white transition-colors text-xs"></i>
                                                 </button>
                                             )}
                                             <button
                                                 onClick={handleNextPage}
                                                 disabled={comments.length < 6}
                                                 className={clsx(
-                                                    "w-10 h-10 rounded-full flex items-center justify-center transition-colors text-gray-900 dark:text-white",
+                                                    "group w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 border backdrop-blur-md",
                                                     comments.length < 6
-                                                        ? "bg-gray-100 dark:bg-white/5 opacity-50 cursor-not-allowed text-gray-400"
-                                                        : "bg-gray-200 dark:bg-white/5 hover:bg-gray-300 dark:hover:bg-white/10"
+                                                        ? "bg-gray-100/50 dark:bg-white/5 border-transparent opacity-50 cursor-not-allowed"
+                                                        : "bg-white/50 dark:bg-white/5 border-gray-200/50 dark:border-white/10 hover:bg-white dark:hover:bg-white/20 hover:shadow-lg dark:hover:shadow-black/50"
                                                 )}
                                             >
-                                                <i className="fas fa-chevron-right text-gray-600 dark:text-gray-400"></i>
+                                                <i className={clsx(
+                                                    "fas fa-chevron-right transition-colors text-xs",
+                                                    comments.length < 6
+                                                        ? "text-gray-400 dark:text-gray-600"
+                                                        : "text-gray-500 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
+                                                )}></i>
                                             </button>
                                         </div>
                                     </div>
 
-                                    <div className="flex-1 overflow-y-auto custom-scrollbar pr-2 -mr-2 space-y-4">
-                                        {loadingComments ? (
+                                    <div className="flex-1 overflow-y-auto overflow-x-hidden custom-scrollbar pr-2 -mr-2 space-y-4">
+                                        {loadingComments && comments.length === 0 ? (
                                             <div className="flex items-center justify-center h-full text-gray-500">
-                                                <i className="fas fa-circle-notch fa-spin mr-2"></i> Loading...
+                                                <div className="w-5 h-5 border-2 border-gray-300 border-t-gray-600 rounded-full animate-spin mr-2"></div>
+                                                Loading...
                                             </div>
                                         ) : comments.length > 0 ? (
                                             <AnimatePresence mode="wait">
@@ -545,9 +560,9 @@ const ControlCenterModal = ({ isOpen, onClose, origin }) => {
                                     {/* Close Button Inside Tags Card */}
                                     <button
                                         onClick={onClose}
-                                        className="absolute top-6 right-6 w-8 h-8 flex items-center justify-center rounded-full bg-gray-200 dark:bg-white/5 hover:bg-gray-300 dark:hover:bg-white/20 text-gray-500 dark:text-white/60 hover:text-gray-900 dark:hover:text-white transition-colors z-50"
+                                        className="group absolute top-6 right-6 w-10 h-10 rounded-full bg-white/50 dark:bg-white/5 backdrop-blur-md border border-gray-200/50 dark:border-white/10 flex items-center justify-center transition-all duration-300 hover:bg-white dark:hover:bg-white/20 hover:shadow-lg dark:hover:shadow-black/50 z-50"
                                     >
-                                        <i className="fas fa-times"></i>
+                                        <i className="fas fa-times text-gray-500 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white transition-colors text-xs"></i>
                                     </button>
 
                                     <div className="mb-6">
@@ -593,101 +608,6 @@ const ControlCenterModal = ({ isOpen, onClose, origin }) => {
                                 </div>
                             </div>
 
-                            {/* Middle Bar: Lab Experiments */}
-                            <div className="hidden lg:flex bg-white/80 dark:bg-[#0f0f11]/80 backdrop-blur-md border border-gray-200 dark:border-white/10 rounded-3xl p-4 flex-col gap-3 shadow-2xl relative overflow-hidden">
-                                <div className="absolute top-0 right-0 p-2 opacity-10 pointer-events-none">
-                                    <i className="fas fa-flask text-6xl text-purple-500"></i>
-                                </div>
-                                <div className="flex items-center gap-2 px-1">
-                                    <i className="fas fa-flask text-purple-500"></i>
-                                    <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">實驗室 Lab</span>
-                                </div>
-
-                                <div
-                                    className={clsx(
-                                        "flex items-center justify-between px-4 py-3 rounded-xl transition-all duration-300 border group overflow-hidden relative",
-                                        glslBackgroundEnabled
-                                            ? "bg-purple-50 dark:bg-purple-500/10 border-purple-200 dark:border-purple-500/20"
-                                            : "bg-gray-100 dark:bg-white/5 border-transparent hover:bg-gray-200 dark:hover:bg-white/10"
-                                    )}
-                                >
-                                    <div
-                                        onClick={toggleGlslBackground}
-                                        className="flex items-center gap-3 cursor-pointer flex-1 select-none"
-                                    >
-                                        <div className={clsx(
-                                            "w-8 h-8 rounded-lg flex items-center justify-center transition-colors flex-shrink-0",
-                                            glslBackgroundEnabled ? "bg-purple-500 text-white" : "bg-gray-400/20 text-gray-500 dark:text-gray-400"
-                                        )}>
-                                            <i className="fas fa-dna"></i>
-                                        </div>
-                                        <div className="text-left">
-                                            <div className={clsx(
-                                                "text-sm font-bold transition-colors",
-                                                glslBackgroundEnabled ? "text-purple-700 dark:text-purple-400" : "text-gray-700 dark:text-gray-300"
-                                            )}>
-                                                動態背景 GLSL
-                                            </div>
-                                            <div className="text-[10px] text-gray-400 dark:text-gray-500 font-mono">
-                                                Experimental
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div className="flex items-center gap-2">
-                                        <AnimatePresence mode="wait">
-                                            {glslBackgroundEnabled ? (
-                                                <motion.div
-                                                    key="options"
-                                                    initial={{ opacity: 0, x: 20 }}
-                                                    animate={{ opacity: 1, x: 0 }}
-                                                    exit={{ opacity: 0, x: 20 }}
-                                                    transition={{ duration: 0.3, ease: "easeOut" }}
-                                                    className="flex items-center gap-2"
-                                                >
-                                                    {[0, 1, 2, 3].map((index) => (
-                                                        <button
-                                                            key={index}
-                                                            onClick={(e) => {
-                                                                e.stopPropagation();
-                                                                setCurrentGlslEffect(index);
-                                                            }}
-                                                            className={clsx(
-                                                                "relative w-7 h-7 rounded-md border flex-shrink-0 overflow-hidden transition-all",
-                                                                currentGlslEffect === index
-                                                                    ? "border-purple-500 ring-1 ring-purple-500"
-                                                                    : "border-gray-200 dark:border-white/10 hover:border-gray-300 dark:hover:border-white/20"
-                                                            )}
-                                                        >
-                                                            <div className={clsx(
-                                                                "absolute inset-0 opacity-80",
-                                                                index === 0 && "bg-gradient-to-br from-blue-400 to-purple-600",
-                                                                index === 1 && "bg-gradient-to-br from-emerald-400 to-cyan-600",
-                                                                index === 2 && "bg-gradient-to-br from-orange-400 to-rose-600",
-                                                                index === 3 && "bg-gradient-to-br from-slate-700 to-black",
-                                                            )}></div>
-                                                            {currentGlslEffect === index && (
-                                                                <div className="absolute inset-0 flex items-center justify-center text-white text-[10px] bg-black/10">
-                                                                    <i className="fas fa-check text-[8px]"></i>
-                                                                </div>
-                                                            )}
-                                                        </button>
-                                                    ))}
-                                                </motion.div>
-                                            ) : (
-                                                <motion.div
-                                                    key="dot"
-                                                    initial={{ scale: 0 }}
-                                                    animate={{ scale: 1 }}
-                                                    exit={{ scale: 0 }}
-                                                    onClick={toggleGlslBackground}
-                                                    className="w-2 h-2 rounded-full bg-gray-300 dark:bg-gray-600 cursor-pointer"
-                                                ></motion.div>
-                                            )}
-                                        </AnimatePresence>
-                                    </div>
-                                </div>
-                            </div>
 
                             {/* Bottom Bar: Settings */}
                             <div className="bg-white/80 dark:bg-[#0f0f11]/80 backdrop-blur-md border border-gray-200 dark:border-white/10 rounded-full p-2 flex items-center justify-between shadow-2xl">

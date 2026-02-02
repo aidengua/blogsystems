@@ -9,6 +9,7 @@ import MainLayout from '../../layouts/MainLayout';
 import Sidebar from '../../components/Sidebar';
 import CommentSection from '../../components/CommentSection';
 import PostGallery from '../../components/PostGallery';
+import SectionLoader from '../../components/SectionLoader';
 
 // Helper to preprocess gallery tags
 const preprocessContent = (content) => {
@@ -184,7 +185,7 @@ const PostDetail = () => {
     if (loading) return (
         <MainLayout>
             <div className="min-h-screen flex items-center justify-center">
-                <div className="animate-spin rounded-full h-12 w-12 border-4 border-primary border-t-transparent"></div>
+                <SectionLoader />
             </div>
         </MainLayout>
     );

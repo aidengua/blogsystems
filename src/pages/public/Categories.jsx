@@ -6,6 +6,7 @@ import MainLayout from '../../layouts/MainLayout';
 import { motion, AnimatePresence } from 'framer-motion';
 import clsx from 'clsx';
 import LazyImage from '../../components/LazyImage';
+import SectionLoader from '../../components/SectionLoader';
 
 const Categories = () => {
     const [categories, setCategories] = useState({});
@@ -79,9 +80,7 @@ const Categories = () => {
                 </div>
 
                 {loading ? (
-                    <div className="flex justify-center py-20">
-                        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
-                    </div>
+                    <SectionLoader />
                 ) : (
                     <>
                         {/* Categories Grid */}

@@ -3,6 +3,7 @@ import { collection, query, orderBy, onSnapshot, deleteDoc, doc } from 'firebase
 import { db } from '../firebase';
 import { Link } from 'react-router-dom';
 import { useNotification } from '../context/NotificationContext';
+import SectionLoader from './SectionLoader';
 
 const AdminCommentTable = () => {
     const [comments, setComments] = useState([]);
@@ -45,7 +46,7 @@ const AdminCommentTable = () => {
     if (loading) {
         return (
             <div className="flex justify-center py-12">
-                <div className="animate-spin rounded-full h-8 w-8 border-2 border-blue-500 border-t-transparent"></div>
+                <SectionLoader className="min-h-[100px]" />
             </div>
         );
     }

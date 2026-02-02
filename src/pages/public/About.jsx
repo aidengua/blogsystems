@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { incrementVisits, subscribeToStats, subscribeToWeeklyStats } from '../../services/stats';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import SkillsCreativeEngine from '../../components/SkillsCreativeEngine';
+import LogoLoader from '../../components/LogoLoader';
 
 
 const About = () => {
@@ -384,7 +385,7 @@ const About = () => {
                                             </ResponsiveContainer>
                                         ) : (
                                             <div className="flex items-center justify-center h-full text-gray-500 text-sm gap-2">
-                                                <div className="animate-spin rounded-full h-4 w-4 border-2 border-blue-500 border-t-transparent"></div>
+                                                <LogoLoader size="w-4 h-4" animate={true} />
                                                 Loading...
                                             </div>
                                         )}

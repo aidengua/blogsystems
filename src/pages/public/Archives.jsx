@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { db } from '../../firebase';
 import MainLayout from '../../layouts/MainLayout';
 import { motion } from 'framer-motion';
+import SectionLoader from '../../components/SectionLoader';
 
 const Archives = () => {
     const [posts, setPosts] = useState([]);
@@ -56,9 +57,7 @@ const Archives = () => {
                 </div>
 
                 {loading ? (
-                    <div className="flex justify-center py-20">
-                        <div className="animate-spin rounded-full h-12 w-12 border-4 border-blue-500 border-t-transparent"></div>
-                    </div>
+                    <SectionLoader />
                 ) : (
                     <div className="space-y-12">
                         {sortedYears.map((year, yearIndex) => (

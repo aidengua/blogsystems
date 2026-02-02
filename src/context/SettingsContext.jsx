@@ -8,9 +8,6 @@ export const SettingsProvider = ({ children }) => {
         return saved !== null ? JSON.parse(saved) : true;
     });
 
-    const [glslBackgroundEnabled, setGlslBackgroundEnabled] = useState(false);
-    const [currentGlslEffect, setCurrentGlslEffect] = useState(0);
-
     useEffect(() => {
         localStorage.setItem('smoothScrollEnabled', JSON.stringify(smoothScrollEnabled));
     }, [smoothScrollEnabled]);
@@ -37,10 +34,6 @@ export const SettingsProvider = ({ children }) => {
         setSmoothScrollEnabled(prev => !prev);
     };
 
-    const toggleGlslBackground = () => {
-        setGlslBackgroundEnabled(prev => !prev);
-    };
-
     const toggleCustomContextMenu = () => {
         setCustomContextMenuEnabled(prev => !prev);
     };
@@ -53,10 +46,6 @@ export const SettingsProvider = ({ children }) => {
         <SettingsContext.Provider value={{
             smoothScrollEnabled,
             toggleSmoothScroll,
-            glslBackgroundEnabled,
-            toggleGlslBackground,
-            currentGlslEffect,
-            setCurrentGlslEffect,
             customContextMenuEnabled,
             toggleCustomContextMenu,
             customCursorEnabled,

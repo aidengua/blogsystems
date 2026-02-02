@@ -25,6 +25,7 @@ import { collection, query, orderBy, limit, getDocs } from 'firebase/firestore';
 import { db } from '../firebase';
 
 import SpotlightCard from './SpotlightCard';
+import LogoLoader from './LogoLoader';
 
 const NotificationBar = () => {
     const [latestEssay, setLatestEssay] = useState(null);
@@ -227,7 +228,7 @@ const FeatureCard = ({ posts, showRecommend, setShowRecommend }) => {
                         {/* Loading Indicator */}
                         {isLoading && (
                             <div className="absolute inset-0 flex items-center justify-center z-10 bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm">
-                                <div className="w-8 h-8 border-2 border-[#709CEF]/30 border-t-[#709CEF] rounded-full animate-spin"></div>
+                                <LogoLoader size="w-8 h-8" animate={true} />
                             </div>
                         )}
                     </motion.div>

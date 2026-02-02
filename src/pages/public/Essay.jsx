@@ -43,6 +43,31 @@ const Essay = () => {
         }, 100);
     };
 
+    const containerVariants = {
+        hidden: { opacity: 0 },
+        visible: {
+            opacity: 1,
+            transition: {
+                staggerChildren: 0.1
+            }
+        }
+    };
+
+    const cardVariants = {
+        hidden: { opacity: 0, y: 30, scale: 0.95 },
+        visible: (index) => ({
+            opacity: 1,
+            y: 0,
+            scale: 1,
+            transition: {
+                delay: index * 0.1,
+                type: "spring",
+                stiffness: 100,
+                damping: 15
+            }
+        })
+    };
+
     return (
         <MainLayout>
             <div className="container mx-auto px-4 pt-24 pb-12 max-w-7xl">
@@ -77,17 +102,18 @@ const Essay = () => {
                 <div>
                     {loading ? (
                         <div className="flex justify-center py-20">
-                            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+                            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#709CEF]"></div>
                         </div>
                     ) : (
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                            {essays.map((essay) => (
+                            {essays.map((essay, index) => (
                                 <motion.div
                                     key={essay.id}
-                                    initial={{ opacity: 0, y: 20 }}
-                                    whileInView={{ opacity: 1, y: 0 }}
-                                    viewport={{ once: true }}
-                                    className="group relative bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl overflow-hidden hover:border-blue-500/50 transition-all duration-300 hover:shadow-[0_0_20px_rgba(59,130,246,0.15)] flex flex-col"
+                                    variants={cardVariants}
+                                    initial="hidden"
+                                    animate="visible"
+                                    custom={index}
+                                    className="group relative bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl overflow-hidden hover:border-[#709CEF] hover:ring-1 hover:ring-[#709CEF] transition-all duration-300 flex flex-col"
                                 >
                                     <div className="p-6 flex flex-col flex-grow">
                                         <div className="text-gray-900 dark:text-white text-lg font-bold mb-4 leading-relaxed flex-grow">
@@ -109,7 +135,7 @@ const Essay = () => {
                                             </div>
                                             <button
                                                 onClick={() => handleOpenComments(essay)}
-                                                className={`text-lg transition-colors ${activeEssay?.id === essay.id ? 'text-blue-400' : 'text-gray-400 hover:text-blue-500 dark:hover:text-white'}`}
+                                                className={`text-lg transition-colors ${activeEssay?.id === essay.id ? 'text-[#709CEF]' : 'text-gray-400 hover:text-[#709CEF] dark:hover:text-white'}`}
                                             >
                                                 <i className="fas fa-comment-alt"></i>
                                             </button>
@@ -138,7 +164,7 @@ const Essay = () => {
                             >
                                 <div className="mb-8 p-6 bg-white dark:bg-gray-900/50 border border-gray-200 dark:border-gray-800 rounded-2xl">
                                     <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2 flex items-center gap-2">
-                                        <i className="fas fa-quote-left text-blue-500"></i>
+                                        <i className="fas fa-quote-left text-[#709CEF]"></i>
                                         留言對象
                                     </h2>
                                     <p className="text-gray-600 dark:text-gray-300 italic">
