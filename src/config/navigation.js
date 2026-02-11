@@ -1,7 +1,7 @@
 
 export const libraryLinks = [
     { to: "/posts", label: "全部", icon: "fas fa-archive", color: "text-purple-400", bg: "bg-purple-500/10" },
-    { to: "/categories", label: "分類", icon: "fas fa-folder", color: "text-green-400", bg: "bg-green-500/10" },
+
     { to: "/tags", label: "列表", icon: "fas fa-tags", color: "text-orange-400", bg: "bg-orange-500/10" }
 ];
 

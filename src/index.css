@@ -25,25 +25,51 @@ html.lenis body {
 }
 
 @theme {
-    --color-primary: #709CEF;
-    --color-primary-dark: #5A86D9;
+    /* ========================================= */
+    /*              Color Palette                */
+    /* ========================================= */
 
-    /* Semantic Colors */
+    /* Brand Colors (Previously 'blue') */
+    --color-brand-50: #eff6ff;
+    --color-brand-100: #dbeafe;
+    --color-brand-200: #bfdbfe;
+    --color-brand-300: #93c5fd;
+    --color-brand-400: #8AB3F5;
+    --color-brand-500: #709CEF;
+    /* Main Brand Color */
+    --color-brand-600: #5A86D9;
+    --color-brand-700: #1d4ed8;
+    --color-brand-800: #1e40af;
+    --color-brand-900: #1e3a8a;
+    --color-brand-950: #172554;
+
+    /* Base Colors */
+    --color-white: #ffffff;
+    --color-black: #000000;
+
+    /* Semantic Aliases */
+    --color-primary: var(--color-brand-500);
+    --color-primary-dark: var(--color-brand-600);
+
+    /* Backgrounds */
     --bg-base: #f0f9eb;
     --bg-surface: rgba(255, 255, 255, 0.9);
     --bg-overlay: rgba(255, 255, 255, 0.7);
+    --bg-card: var(--bg-surface);
 
+    /* Text */
     --text-main: #4c4948;
     --text-muted: #858585;
-    --text-highlight: #709CEF;
+    --text-highlight: var(--color-brand-500);
 
+    /* Borders */
     --border-base: rgba(0, 0, 0, 0.05);
     --border-highlight: rgba(112, 156, 239, 0.5);
 
-    /* Legacy Butterfly mappings (for backward compatibility during refactor) */
+    /* Legacy Butterfly mappings */
     --color-butterfly-bg: var(--bg-base);
     --color-butterfly-text: var(--text-main);
-    --color-butterfly-card: var(--bg-surface);
+    --color-butterfly-card: var(--bg-card);
     --color-butterfly-darkCard: rgba(31, 41, 55, 0.9);
     /* Will be overridden in dark mode */
 

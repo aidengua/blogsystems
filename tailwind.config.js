@@ -16,27 +16,42 @@ export default {
         base: 'var(--bg-base)',
         surface: 'var(--bg-surface)',
         overlay: 'var(--bg-overlay)',
+        card: 'var(--bg-card)',
         main: 'var(--text-main)',
         muted: 'var(--text-muted)',
         highlight: 'var(--text-highlight)',
 
+        // Brand Palette (Aliased to 'blue' for compatibility, or use 'brand')
         blue: {
-          50: '#eff6ff',
-          100: '#dbeafe',
-          200: '#bfdbfe',
-          300: '#93c5fd',
-          400: '#8AB3F5', // Lighter shade of #709CEF
-          500: '#709CEF', // Main color
-          600: '#5A86D9', // Darker shade for hover
-          700: '#1d4ed8',
-          800: '#1e40af',
-          900: '#1e3a8a',
-          950: '#172554',
+          50: 'var(--color-brand-50)',
+          100: 'var(--color-brand-100)',
+          200: 'var(--color-brand-200)',
+          300: 'var(--color-brand-300)',
+          400: 'var(--color-brand-400)',
+          500: 'var(--color-brand-500)',
+          600: 'var(--color-brand-600)',
+          700: 'var(--color-brand-700)',
+          800: 'var(--color-brand-800)',
+          900: 'var(--color-brand-900)',
+          950: 'var(--color-brand-950)',
+        },
+        brand: {
+          50: 'var(--color-brand-50)',
+          100: 'var(--color-brand-100)',
+          200: 'var(--color-brand-200)',
+          300: 'var(--color-brand-300)',
+          400: 'var(--color-brand-400)',
+          500: 'var(--color-brand-500)',
+          600: 'var(--color-brand-600)',
+          700: 'var(--color-brand-700)',
+          800: 'var(--color-brand-800)',
+          900: 'var(--color-brand-900)',
+          950: 'var(--color-brand-950)',
         },
         butterfly: {
           bg: 'var(--bg-base)',
           text: 'var(--text-main)',
-          card: 'var(--bg-surface)',
+          card: 'var(--bg-card)', // Unified to card/surface
           darkCard: 'var(--bg-surface)', // Unified to surface
         }
       },
