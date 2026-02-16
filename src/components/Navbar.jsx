@@ -35,7 +35,7 @@ const ScrollIndicator = ({ progress }) => {
     );
 };
 
-const Navbar = ({ toggleSidebar }) => {
+const Navbar = ({ toggleSidebar, onOpenCategoryModal }) => {
     const [scrolled, setScrolled] = useState(false);
     const [scrollProgress, setScrollProgress] = useState(0);
     const { isDark, toggleTheme } = useTheme();
@@ -233,7 +233,12 @@ const Navbar = ({ toggleSidebar }) => {
                                 <i className="fas fa-chevron-down text-[10px] opacity-70 group-hover:rotate-180 transition-transform"></i>
                             </button>
                             <div className="absolute top-full left-1/2 -translate-x-1/2 pt-4 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform group-hover:translate-y-0 translate-y-2">
-                                <FluidDropdown items={libraryLinks} />
+                                <FluidDropdown items={libraryLinks.map(item => {
+                                    if (item.id === 'category-modal') {
+                                        return { ...item, onClick: onOpenCategoryModal };
+                                    }
+                                    return item;
+                                })} />
                             </div>
                         </div>
 
