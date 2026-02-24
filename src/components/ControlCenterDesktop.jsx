@@ -92,7 +92,7 @@ const ControlCenterDesktop = ({
     };
 
     return (
-        <div className="hidden lg:flex fixed inset-0 z-[80] items-center justify-center p-8 pointer-events-none">
+        <div className="hidden lg:flex fixed inset-0 z-[120] items-center justify-center p-8 pointer-events-none">
             <motion.div
                 variants={desktopModalVariants}
                 initial="hidden"

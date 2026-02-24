@@ -54,49 +54,35 @@ const MobileMenu = ({ isOpen, onClose, origin, onOpenCategoryModal }) => {
 
     const containerVariants = {
         hidden: {
-            opacity: 0,
-            scale: 0.8,
-            x: startX,
-            y: startY,
-            clipPath: "circle(0% at 50% 50%)"
+            y: "100%",
+            opacity: 0
         },
         visible: {
-            opacity: 1,
-            scale: 1,
-            x: 0,
             y: 0,
-            clipPath: "circle(150% at 50% 50%)",
+            opacity: 1,
             transition: {
-                type: "spring",
-                stiffness: 300,
-                damping: 30,
-                mass: 0.8,
-                staggerChildren: 0.05,
-                delayChildren: 0.1
+                type: "tween",
+                ease: "easeOut",
+                duration: 0.3,
             }
         },
         exit: {
+            y: "100%",
             opacity: 0,
-            scale: 0.9,
-            x: startX, // Optional: return to origin
-            y: startY,
-            clipPath: "circle(0% at 50% 50%)",
             transition: {
-                type: "spring",
-                stiffness: 300,
-                damping: 30,
-                duration: 0.3
+                type: "tween",
+                ease: "easeIn",
+                duration: 0.25
             }
         }
     };
 
     const itemVariants = {
-        hidden: { opacity: 0, y: 20, scale: 0.9 },
+        hidden: { opacity: 0, y: 15 },
         visible: {
             opacity: 1,
             y: 0,
-            scale: 1,
-            transition: { type: "spring", stiffness: 400, damping: 20 }
+            transition: { type: "tween", ease: "easeOut", duration: 0.25 }
         }
     };
 
@@ -111,21 +97,18 @@ const MobileMenu = ({ isOpen, onClose, origin, onOpenCategoryModal }) => {
                         exit="exit"
                         variants={overlayVariants}
                         onClick={onClose}
-                        className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 lg:hidden"
+                        className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[110] lg:hidden"
                     />
 
                     {/* Menu Container */}
-                    <div className="fixed inset-0 z-[60] lg:hidden flex items-center justify-center p-4 pointer-events-none">
+                    <div className="fixed inset-x-0 bottom-0 z-[120] lg:hidden flex items-end justify-center pointer-events-none">
                         <motion.div
                             variants={containerVariants}
                             initial="hidden"
                             animate="visible"
                             exit="exit"
-                            className="bg-white/80 dark:bg-black/80 backdrop-blur-2xl rounded-[32px] w-full max-w-sm max-h-[85vh] shadow-[0_8px_32px_rgba(0,0,0,0.12)] border border-white/20 dark:border-white/10 overflow-hidden flex flex-col pointer-events-auto origin-center relative"
+                            className="bg-white/90 dark:bg-black/95 backdrop-blur-xl rounded-t-[32px] w-full max-h-[85vh] shadow-[0_-8px_32px_rgba(0,0,0,0.12)] border-t border-white/20 dark:border-white/10 overflow-hidden flex flex-col pointer-events-auto relative"
                         >
-                            {/* Decorative Background Glows */}
-                            <div className="absolute -top-20 -right-20 w-64 h-64 bg-primary/20 rounded-full blur-3xl pointer-events-none" />
-                            <div className="absolute -bottom-20 -left-20 w-64 h-64 bg-blue-500/20 rounded-full blur-3xl pointer-events-none" />
 
                             {/* Header */}
                             <div className="flex items-center justify-between px-6 py-5 border-b border-gray-200/50 dark:border-white/5 relative z-10">
@@ -178,20 +161,56 @@ const MobileMenu = ({ isOpen, onClose, origin, onOpenCategoryModal }) => {
 
                                 {/* Navigation Groups */}
                                 <div className="space-y-6">
-                                    {navigationGroups.map((group, idx) => {
-                                        let items = group.items.map(item => {
-                                            if (item.id === 'category-modal') {
-                                                return {
-                                                    ...item,
-                                                    isAction: true,
-                                                    onClick: onOpenCategoryModal
-                                                };
-                                            }
-                                            return item;
-                                        });
-                                        // Inject Random Post into '關於'
-                                        if (group.title === "關於") {
-                                            items = [
+                                    {/* Primary Menu Links (Combined 文庫 and 創作) */}
+                                    <motion.div variants={itemVariants} className="grid grid-cols-2 gap-3">
+                                        {navigationGroups
+                                            .filter(g => ['文庫', '創作'].includes(g.title))
+                                            .flatMap(g => g.items)
+                                            .filter(item => item.id !== 'category-modal')
+                                            .map((item, itemIdx) => {
+                                                const Content = () => (
+                                                    <>
+                                                        <div className={clsx(
+                                                            "rounded-xl flex items-center justify-center text-lg shadow-sm group-active:scale-90 transition-transform duration-300 w-10 h-10 shrink-0",
+                                                            item.color, item.bg
+                                                        )}>
+                                                            <i className={clsx("fas", item.icon.replace('fas ', '').replace('fa ', ''))}></i>
+                                                        </div>
+                                                        <span className={clsx(
+                                                            "text-gray-600 dark:text-gray-300 font-medium leading-tight line-clamp-1 transition-colors group-hover:text-gray-900 dark:group-hover:text-white text-sm"
+                                                        )}>
+                                                            {item.label}
+                                                        </span>
+                                                    </>
+                                                );
+
+                                                const linkClass = "flex items-center justify-start gap-4 p-3 rounded-2xl bg-white/50 dark:bg-white/5 border border-gray-100/50 dark:border-white/5 hover:bg-white dark:hover:bg-white/10 hover:shadow-md dark:hover:shadow-none active:scale-[0.98] transition-all w-full group relative overflow-hidden h-16";
+
+                                                const HoverEffect = () => (
+                                                    <div className="absolute inset-0 bg-gradient-to-br from-white/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+                                                );
+
+                                                return item.isAction ? (
+                                                    <button key={itemIdx} onClick={item.onClick} className={linkClass}>
+                                                        <HoverEffect /><Content />
+                                                    </button>
+                                                ) : (
+                                                    <Link key={itemIdx} to={item.to} onClick={onClose} className={linkClass}>
+                                                        <HoverEffect /><Content />
+                                                    </Link>
+                                                );
+                                            })}
+                                    </motion.div>
+
+                                    {/* About Group */}
+                                    <motion.div variants={itemVariants} className="space-y-3">
+                                        <h4 className="text-[10px] font-bold text-gray-400 uppercase tracking-wider px-1 flex items-center gap-2">
+                                            <span className="w-full h-px bg-gray-200 dark:bg-white/10"></span>
+                                            <span className="whitespace-nowrap">關於</span>
+                                            <span className="w-full h-px bg-gray-200 dark:bg-white/10"></span>
+                                        </h4>
+                                        <div className="grid grid-cols-2 gap-3">
+                                            {[
                                                 {
                                                     label: "隨便逛逛",
                                                     icon: "fas fa-random",
@@ -200,73 +219,42 @@ const MobileMenu = ({ isOpen, onClose, origin, onOpenCategoryModal }) => {
                                                     isAction: true,
                                                     onClick: handleRandomPost
                                                 },
-                                                ...group.items
-                                            ];
-                                        }
+                                                ...(navigationGroups.find(g => g.title === '關於')?.items || [])
+                                            ].map((item, itemIdx) => {
+                                                const Content = () => (
+                                                    <>
+                                                        <div className={clsx(
+                                                            "rounded-xl flex items-center justify-center text-lg shadow-sm group-active:scale-90 transition-transform duration-300 w-10 h-10 shrink-0",
+                                                            item.color, item.bg
+                                                        )}>
+                                                            <i className={clsx("fas", item.icon.replace('fas ', '').replace('fa ', ''))}></i>
+                                                        </div>
+                                                        <span className={clsx(
+                                                            "text-gray-600 dark:text-gray-300 font-medium leading-tight line-clamp-1 transition-colors group-hover:text-gray-900 dark:group-hover:text-white text-sm"
+                                                        )}>
+                                                            {item.label}
+                                                        </span>
+                                                    </>
+                                                );
 
-                                        const isAboutGroup = group.title === "關於";
-                                        const gridClass = isAboutGroup ? "grid-cols-2" : "grid-cols-3";
+                                                const linkClass = "flex items-center justify-start gap-4 p-3 rounded-2xl bg-white/50 dark:bg-white/5 border border-gray-100/50 dark:border-white/5 hover:bg-white dark:hover:bg-white/10 hover:shadow-md dark:hover:shadow-none active:scale-[0.98] transition-all w-full group relative overflow-hidden h-16";
 
-                                        return (
-                                            <motion.div key={idx} variants={itemVariants} className="space-y-2">
-                                                {!['文庫', '創作'].includes(group.title) && (
-                                                    <h4 className="text-[10px] font-bold text-gray-400 uppercase tracking-wider px-1 flex items-center gap-2">
-                                                        <span className="w-full h-px bg-gray-200 dark:bg-white/10"></span>
-                                                        <span className="whitespace-nowrap">{group.title}</span>
-                                                        <span className="w-full h-px bg-gray-200 dark:bg-white/10"></span>
-                                                    </h4>
-                                                )}
+                                                const HoverEffect = () => (
+                                                    <div className="absolute inset-0 bg-gradient-to-br from-white/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+                                                );
 
-                                                <div className={`grid ${gridClass} gap-2`}>
-                                                    {items.map((item, itemIdx) => {
-                                                        const Content = () => (
-                                                            <>
-                                                                <div className={clsx(
-                                                                    "rounded-xl flex items-center justify-center text-lg shadow-sm group-active:scale-90 transition-transform duration-300",
-                                                                    item.color, item.bg,
-                                                                    isAboutGroup ? "w-8 h-8" : "w-10 h-10 mb-1"
-                                                                )}>
-                                                                    <i className={clsx("fas", item.icon.replace('fas ', '').replace('fa ', ''))}></i>
-                                                                </div>
-                                                                <span className={clsx(
-                                                                    "text-gray-600 dark:text-gray-300 font-medium leading-tight line-clamp-1 transition-colors group-hover:text-gray-900 dark:group-hover:text-white",
-                                                                    isAboutGroup ? "text-xs" : "text-[11px] px-1"
-                                                                )}>
-                                                                    {item.label}
-                                                                </span>
-                                                            </>
-                                                        );
-
-                                                        const className = clsx(
-                                                            "flex items-center justify-center p-2 rounded-2xl bg-white/50 dark:bg-white/5 border border-gray-100/50 dark:border-white/5 hover:bg-white dark:hover:bg-white/10 hover:shadow-md dark:hover:shadow-none active:scale-[0.98] transition-all w-full group relative overflow-hidden",
-                                                            isAboutGroup ? "flex-row gap-3 h-12 text-left" : "flex-col gap-1 h-20 text-center"
-                                                        );
-
-                                                        // Hover Effect background
-                                                        const HoverEffect = () => (
-                                                            <div className="absolute inset-0 bg-gradient-to-br from-white/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
-                                                        );
-
-                                                        if (item.isAction) {
-                                                            return (
-                                                                <button key={itemIdx} onClick={item.onClick} className={className}>
-                                                                    <HoverEffect />
-                                                                    <Content />
-                                                                </button>
-                                                            );
-                                                        }
-
-                                                        return (
-                                                            <Link key={itemIdx} to={item.to} onClick={onClose} className={className}>
-                                                                <HoverEffect />
-                                                                <Content />
-                                                            </Link>
-                                                        );
-                                                    })}
-                                                </div>
-                                            </motion.div>
-                                        );
-                                    })}
+                                                return item.isAction ? (
+                                                    <button key={itemIdx} onClick={item.onClick} className={linkClass}>
+                                                        <HoverEffect /><Content />
+                                                    </button>
+                                                ) : (
+                                                    <Link key={itemIdx} to={item.to} onClick={onClose} className={linkClass}>
+                                                        <HoverEffect /><Content />
+                                                    </Link>
+                                                );
+                                            })}
+                                        </div>
+                                    </motion.div>
                                 </div>
                             </div>
                         </motion.div>

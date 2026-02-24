@@ -8,6 +8,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import SearchModal from './SearchModal';
 import ControlCenterModal from './ControlCenterModal';
 import { libraryLinks, creationLinks, authorLinks } from '../config/navigation';
+import ReactDOM from 'react-dom';
 
 const ScrollIndicator = ({ progress }) => {
     const [isHovered, setIsHovered] = useState(false);

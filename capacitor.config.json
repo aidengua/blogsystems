@@ -1,5 +1,15 @@
 {
   "appId": "com.blogsystems.app",
-  "appName": "BlogSystems",
-  "webDir": "dist"
+  "appName": "blogsystems",
+  "webDir": "dist",
+  "plugins": {
+    "StatusBar": {
+      "overlaysWebView": true,
+      "style": "DARK",
+      "visible": false
+    },
+    "SplashScreen": {
+      "launchShowDuration": 0
+    }
+  }
 }

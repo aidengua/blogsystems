@@ -23,38 +23,25 @@ const ControlCenterMobile = ({
 
     const containerVariants = {
         hidden: {
-            opacity: 0,
-            scale: 0.8,
-            x: startX,
-            y: startY,
-            clipPath: "circle(0% at 50% 50%)"
+            y: "100%",
+            opacity: 0
         },
         visible: {
-            opacity: 1,
-            scale: 1,
-            x: 0,
             y: 0,
-            clipPath: "circle(150% at 50% 50%)",
+            opacity: 1,
             transition: {
-                type: "spring",
-                stiffness: 300,
-                damping: 30,
-                mass: 0.8,
-                staggerChildren: 0.05,
-                delayChildren: 0.1
+                type: "tween",
+                ease: "easeOut",
+                duration: 0.3,
             }
         },
         exit: {
+            y: "100%",
             opacity: 0,
-            scale: 0.9,
-            x: startX,
-            y: startY,
-            clipPath: "circle(0% at 50% 50%)",
             transition: {
-                type: "spring",
-                stiffness: 300,
-                damping: 30,
-                duration: 0.3
+                type: "tween",
+                ease: "easeIn",
+                duration: 0.25
             }
         }
     };
@@ -63,25 +50,21 @@ const ControlCenterMobile = ({
         enter: (direction) => ({
             x: direction > 0 ? 30 : -30,
             opacity: 0,
-            scale: 0.95
         }),
         center: {
             zIndex: 1,
             x: 0,
             opacity: 1,
-            scale: 1,
             transition: {
-                x: { type: "spring", stiffness: 350, damping: 25 },
+                x: { type: "tween", ease: "easeOut", duration: 0.25 },
                 opacity: { duration: 0.2 },
-                scale: { duration: 0.2 }
             }
         },
         exit: (direction) => ({
             zIndex: 0,
             x: direction < 0 ? 30 : -30,
             opacity: 0,
-            scale: 0.95,
-            transition: { duration: 0.15 }
+            transition: { duration: 0.2 }
         })
     };
 
@@ -105,17 +88,14 @@ const ControlCenterMobile = ({
     };
 
     return (
-        <div className="fixed inset-0 z-[80] lg:hidden flex items-center justify-center p-4 pointer-events-none">
+        <div className="fixed inset-x-0 bottom-0 z-[120] lg:hidden flex items-end justify-center pointer-events-none">
             <motion.div
                 variants={containerVariants}
                 initial="hidden"
                 animate="visible"
                 exit="exit"
-                className="bg-white/80 dark:bg-black/80 backdrop-blur-2xl rounded-[32px] w-full max-w-sm h-[85vh] shadow-[0_8px_32px_rgba(0,0,0,0.12)] border border-white/20 dark:border-white/10 overflow-hidden flex flex-col pointer-events-auto origin-center relative"
+                className="bg-white/90 dark:bg-black/95 backdrop-blur-xl rounded-t-[32px] w-full max-h-[85vh] h-[85vh] shadow-[0_-8px_32px_rgba(0,0,0,0.12)] border-t border-white/20 dark:border-white/10 overflow-hidden flex flex-col pointer-events-auto relative"
             >
-                {/* Decorative Background Glows */}
-                <div className="absolute -top-20 -right-20 w-64 h-64 bg-purple-500/20 rounded-full blur-3xl pointer-events-none" />
-                <div className="absolute -bottom-20 -left-20 w-64 h-64 bg-blue-500/20 rounded-full blur-3xl pointer-events-none" />
 
                 {/* Header with Tabs */}
                 <div className="flex items-center justify-between px-6 py-5 border-b border-gray-200/50 dark:border-white/5 relative z-10 shrink-0">

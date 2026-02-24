@@ -18,3 +18,7 @@ public class MainActivity extends BridgeActivity {
         webSettings.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
     }
 }
+
+
+
+//        android:usesCleartextTraffic="true"

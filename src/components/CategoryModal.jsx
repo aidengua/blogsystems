@@ -16,19 +16,16 @@ const CategoryModal = ({ isOpen, onClose }) => {
     const modalVariants = {
         hidden: {
             opacity: 0,
-            scale: 0.95,
-            y: 20
+            y: "100%"
         },
         visible: {
             opacity: 1,
-            scale: 1,
             y: 0,
-            transition: { type: "spring", stiffness: 300, damping: 30 }
+            transition: { type: "tween", ease: "easeOut", duration: 0.3 }
         },
         exit: {
             opacity: 0,
-            scale: 0.95,
-            y: 20,
+            y: "100%",
             transition: { duration: 0.2 }
         }
     };
@@ -38,7 +35,7 @@ const CategoryModal = ({ isOpen, onClose }) => {
         visible: {
             opacity: 1,
             y: 0,
-            transition: { type: "spring", stiffness: 400, damping: 20 }
+            transition: { type: "tween", ease: "easeOut", duration: 0.25 }
         }
     };
 
@@ -48,7 +45,7 @@ const CategoryModal = ({ isOpen, onClose }) => {
                 <>
                     {/* Backdrop */}
                     <motion.div
-                        className="fixed inset-0 z-[70] bg-black/40 backdrop-blur-sm"
+                        className="fixed inset-0 z-[110] bg-black/40 backdrop-blur-sm"
                         variants={backdropVariants}
                         initial="hidden"
                         animate="visible"
@@ -57,24 +54,24 @@ const CategoryModal = ({ isOpen, onClose }) => {
                     />
 
                     {/* Modal Container Wrapper */}
-                    <div className="fixed inset-0 z-[80] flex items-center justify-center p-4 pointer-events-none">
+                    <div className="fixed inset-x-0 bottom-0 md:inset-0 z-[120] flex items-end md:items-center justify-center pointer-events-none md:p-4">
                         <motion.div
                             className={clsx(
-                                "bg-white/90 dark:bg-[#18181b]/90 backdrop-blur-2xl shadow-2xl overflow-hidden pointer-events-auto relative flex flex-col",
-                                "w-full max-h-[85vh] border border-white/20 dark:border-white/10",
-                                // Mobile (match MobileMenu)
-                                "max-w-sm rounded-[32px]",
+                                "bg-white/95 dark:bg-[#18181b]/95 backdrop-blur-xl shadow-2xl overflow-hidden pointer-events-auto relative flex flex-col",
+                                "w-full border-t md:border border-white/20 dark:border-white/10",
+                                // Mobile (match Bottom Sheet)
+                                "rounded-t-[32px] max-h-[85vh]",
                                 // Desktop overrides
-                                "md:max-w-2xl md:rounded-3xl md:max-h-auto"
+                                "md:max-w-2xl md:rounded-3xl md:max-h-[90vh]"
                             )}
                             variants={modalVariants}
                             initial="hidden"
                             animate="visible"
                             exit="exit"
                         >
-                            {/* Decorative Background Glows */}
-                            <div className="absolute -top-32 -right-32 w-80 h-80 bg-primary/10 rounded-full blur-3xl pointer-events-none" />
-                            <div className="absolute -bottom-32 -left-32 w-80 h-80 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
+                            {/* Decorative Background Glows (Hidden on Mobile) */}
+                            <div className="hidden md:block absolute -top-32 -right-32 w-80 h-80 bg-primary/10 rounded-full blur-3xl pointer-events-none" />
+                            <div className="hidden md:block absolute -bottom-32 -left-32 w-80 h-80 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
 
                             {/* Header */}
                             <div className="relative px-6 py-4 md:px-8 md:py-6 border-b border-gray-200/50 dark:border-white/5 flex items-center justify-between z-10 shrink-0">

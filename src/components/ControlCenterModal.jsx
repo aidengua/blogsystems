@@ -184,7 +184,7 @@ const ControlCenterModal = ({ isOpen, onClose, origin }) => {
                     {/* Shared Backdrop */}
                     <motion.div
                         key="backdrop"
-                        className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[70] touch-none"
+                        className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[110] touch-none"
                         variants={backdropVariants}
                         initial="hidden"
                         animate="visible"
