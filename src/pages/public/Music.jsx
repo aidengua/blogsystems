@@ -25,6 +25,7 @@ const Music = () => {
     const [autoScroll, setAutoScroll] = useState(true);
     const [showPlaylist, setShowPlaylist] = useState(false); // Toggle for playlist
     const [showVolume, setShowVolume] = useState(false); // Toggle volume slider
+    const [mobileView, setMobileView] = useState('vinyl'); // 'vinyl' | 'lyrics'
 
     // Spacebar to Toggle Play
     useEffect(() => {
@@ -64,7 +65,7 @@ const Music = () => {
     if (!currentSong) return <div className="min-h-screen bg-gray-50 dark:bg-[#0e0e0e]" />;
 
     return (
-        <div className="relative min-h-screen w-full bg-gray-50 dark:bg-[#0e0e0e] text-gray-900 dark:text-white font-sans overflow-hidden flex flex-col">
+        <div className="relative h-[100dvh] w-full bg-gray-50 dark:bg-[#0e0e0e] text-gray-900 dark:text-white font-sans overflow-hidden flex flex-col">
 
             {/* 1. Global Navbar */}
             <div className="relative z-50">
@@ -86,12 +87,28 @@ const Music = () => {
             </div>
 
             {/* Main Content Area - Compacted for Single Screen View */}
-            <div className="flex-1 relative z-10 flex flex-col items-center justify-center w-full max-w-[1600px] mx-auto px-8 lg:px-20 pt-20 lg:pt-24 pb-4">
+            <div className="flex-1 relative z-10 flex flex-col items-center justify-center w-full max-w-[1600px] mx-auto px-6 lg:px-20 pt-20 lg:pt-24 pb-4 overflow-hidden">
 
-                <div className="flex flex-col lg:flex-row items-center w-full gap-12 lg:gap-24">
+                {/* Mobile View Toggle */}
+                <div className="flex lg:hidden w-full max-w-[240px] bg-black/10 dark:bg-white/10 rounded-full p-1 mb-8 backdrop-blur-md border border-white/5 z-20 shrink-0">
+                    <button
+                        onClick={() => setMobileView('vinyl')}
+                        className={`flex-1 py-2 text-sm font-bold rounded-full transition-all ${mobileView === 'vinyl' ? 'bg-white text-gray-900 shadow-md' : 'text-gray-500 dark:text-white/60 hover:text-white'}`}
+                    >
+                        Vinyl
+                    </button>
+                    <button
+                        onClick={() => setMobileView('lyrics')}
+                        className={`flex-1 py-2 text-sm font-bold rounded-full transition-all ${mobileView === 'lyrics' ? 'bg-white text-gray-900 shadow-md' : 'text-gray-500 dark:text-white/60 hover:text-white'}`}
+                    >
+                        Lyrics
+                    </button>
+                </div>
+
+                <div className="flex flex-row items-center justify-center w-full h-full gap-0 lg:gap-24 relative">
 
                     {/* LEFT: Vinyl Player Card */}
-                    <div className="flex flex-col items-center gap-6 shrink-0 relative group">
+                    <div className={`flex flex-col items-center justify-center gap-6 shrink-0 absolute lg:relative w-full lg:w-auto h-full lg:h-auto transition-opacity duration-300 ${mobileView === 'lyrics' ? 'opacity-0 pointer-events-none lg:opacity-100 lg:pointer-events-auto' : 'opacity-100'}`}>
 
                         {/* The Vinyl Card Container - Reduced Size */}
                         <div className="relative w-[280px] h-[280px] lg:w-[380px] lg:h-[380px] bg-white/40 dark:bg-white/10 backdrop-blur-xl rounded-[40px] shadow-2xl flex items-center justify-center border border-gray-200 dark:border-white/10 overflow-hidden">
@@ -151,12 +168,12 @@ const Music = () => {
 
 
                     {/* RIGHT: Lyrics (Focused, Centered) */}
-                    <div className="flex-1 w-full h-[40vh] lg:h-[50vh] flex flex-col items-center justify-center relative">
+                    <div className={`flex-1 w-full h-full flex flex-col items-center justify-center absolute lg:relative transition-opacity duration-300 ${mobileView === 'vinyl' ? 'opacity-0 pointer-events-none lg:opacity-100 lg:pointer-events-auto' : 'opacity-100'}`}>
                         <div
                             ref={lyricsContainerRef}
                             onMouseEnter={() => setAutoScroll(false)}
                             onMouseLeave={() => setAutoScroll(true)}
-                            className="w-full h-full overflow-y-auto scrollbar-hide py-[20vh] space-y-8 lg:space-y-10 text-center mask-image-y"
+                            className="w-full h-full overflow-y-auto scrollbar-hide py-[10vh] lg:py-[20vh] space-y-8 lg:space-y-10 text-center mask-image-y"
                         >
                             {parsedLyrics.length > 0 ? parsedLyrics.map((line, i) => (
                                 <motion.div
@@ -261,80 +278,89 @@ const Music = () => {
                 </div>
             </div>
 
-            {/* Floating Playlist Overlay (Right Side - Redesigned) */}
+            {/* Floating Playlist Overlay (Bottom Sheet Mobile / Drawer Desktop) */}
             <AnimatePresence>
                 {showPlaylist && (
-                    <motion.div
-                        initial={{ x: '100%', opacity: 0 }}
-                        animate={{ x: 0, opacity: 1 }}
-                        exit={{ x: '100%', opacity: 0 }}
-                        transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                        className="absolute top-0 right-0 h-full w-full max-w-[480px] bg-[#121212]/95 backdrop-blur-3xl z-[60] shadow-2xl flex flex-col border-l border-white/5"
-                    >
-                        {/* Header */}
-                        <div className="p-8 border-b border-white/5 flex items-start justify-between bg-white/5">
-                            <div>
-                                <h3 className="text-2xl font-bold text-white mb-1">Current Playing</h3>
-                                <p className="text-sm text-white/40 font-mono tracking-wider">{playlist.length} Songs</p>
+                    <>
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            onClick={() => setShowPlaylist(false)}
+                            className="absolute inset-0 z-[55] bg-black/60 backdrop-blur-sm lg:hidden"
+                        />
+                        <motion.div
+                            initial={{ y: '100%', opacity: 0 }}
+                            animate={{ y: 0, opacity: 1 }}
+                            exit={{ y: '100%', opacity: 0 }}
+                            transition={{ type: "tween", ease: "easeOut", duration: 0.3 }}
+                            className="absolute bottom-0 left-0 w-full h-[85dvh] lg:top-0 lg:right-0 lg:left-auto lg:h-full lg:w-[480px] bg-[#121212]/95 lg:backdrop-blur-3xl z-[60] shadow-2xl flex flex-col border-t lg:border-t-0 lg:border-l border-white/10 rounded-t-[32px] lg:rounded-none"
+                        >
+                            {/* Header */}
+                            <div className="p-8 border-b border-white/5 flex items-start justify-between bg-white/5">
+                                <div>
+                                    <h3 className="text-2xl font-bold text-white mb-1">Current Playing</h3>
+                                    <p className="text-sm text-white/40 font-mono tracking-wider">{playlist.length} Songs</p>
+                                </div>
+                                <button
+                                    onClick={() => setShowPlaylist(false)}
+                                    className="w-10 h-10 rounded-xl bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors text-white/50 hover:text-white"
+                                >
+                                    <i className="fas fa-times text-lg"></i>
+                                </button>
                             </div>
-                            <button
-                                onClick={() => setShowPlaylist(false)}
-                                className="w-10 h-10 rounded-xl bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors text-white/50 hover:text-white"
-                            >
-                                <i className="fas fa-times text-lg"></i>
-                            </button>
-                        </div>
 
-                        {/* Song List */}
-                        <div className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent p-4 space-y-2">
-                            {playlist.map((song, i) => {
-                                const isActive = currentSong.id === song.id;
-                                return (
-                                    <motion.div
-                                        key={song.id}
-                                        onClick={() => playSong(song)}
-                                        initial={false}
-                                        className={`
+                            {/* Song List */}
+                            <div className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent p-4 space-y-2">
+                                {playlist.map((song, i) => {
+                                    const isActive = currentSong.id === song.id;
+                                    return (
+                                        <motion.div
+                                            key={song.id}
+                                            onClick={() => playSong(song)}
+                                            initial={false}
+                                            className={`
                                             group relative p-4 rounded-3xl flex items-center gap-6 cursor-pointer border border-transparent transition-all duration-300
                                             ${isActive
-                                                ? 'bg-white/10 border-white/5 shadow-2xl shadow-black/50'
-                                                : 'hover:bg-white/5 text-gray-400 opacity-60 hover:opacity-100'}
+                                                    ? 'bg-white/10 border-white/5 shadow-2xl shadow-black/50'
+                                                    : 'hover:bg-white/5 text-gray-400 opacity-60 hover:opacity-100'}
                                         `}
-                                    >
-                                        {/* Index / Playing State */}
-                                        <div className="w-8 flex justify-center shrink-0">
-                                            {isActive ? (
-                                                <div className="flex gap-1 items-end h-4">
-                                                    <motion.div animate={{ height: [4, 16, 4] }} transition={{ repeat: Infinity, duration: 0.8 }} className="w-1 bg-yellow-400 rounded-full" />
-                                                    <motion.div animate={{ height: [8, 12, 8] }} transition={{ repeat: Infinity, duration: 1.1 }} className="w-1 bg-yellow-400 rounded-full" />
-                                                    <motion.div animate={{ height: [4, 10, 4] }} transition={{ repeat: Infinity, duration: 0.9 }} className="w-1 bg-yellow-400 rounded-full" />
+                                        >
+                                            {/* Index / Playing State */}
+                                            <div className="w-8 flex justify-center shrink-0">
+                                                {isActive ? (
+                                                    <div className="flex gap-1 items-end h-4">
+                                                        <motion.div animate={{ height: [4, 16, 4] }} transition={{ repeat: Infinity, duration: 0.8 }} className="w-1 bg-yellow-400 rounded-full" />
+                                                        <motion.div animate={{ height: [8, 12, 8] }} transition={{ repeat: Infinity, duration: 1.1 }} className="w-1 bg-yellow-400 rounded-full" />
+                                                        <motion.div animate={{ height: [4, 10, 4] }} transition={{ repeat: Infinity, duration: 0.9 }} className="w-1 bg-yellow-400 rounded-full" />
+                                                    </div>
+                                                ) : (
+                                                    <span className="text-sm font-mono font-bold opacity-30 group-hover:text-white group-hover:opacity-100 transition-all">
+                                                        {(i + 1).toString().padStart(2, '0')}
+                                                    </span>
+                                                )}
+                                            </div>
+
+                                            {/* Info */}
+                                            <div className="flex-1 min-w-0 flex flex-col gap-1">
+                                                <div className={`text-base font-bold truncate ${isActive ? 'text-white' : 'text-inherit'}`}>
+                                                    {song.title}
                                                 </div>
-                                            ) : (
-                                                <span className="text-sm font-mono font-bold opacity-30 group-hover:text-white group-hover:opacity-100 transition-all">
-                                                    {(i + 1).toString().padStart(2, '0')}
-                                                </span>
-                                            )}
-                                        </div>
-
-                                        {/* Info */}
-                                        <div className="flex-1 min-w-0 flex flex-col gap-1">
-                                            <div className={`text-base font-bold truncate ${isActive ? 'text-white' : 'text-inherit'}`}>
-                                                {song.title}
+                                                <div className="text-xs font-medium opacity-50 truncate">
+                                                    {song.artist}
+                                                </div>
                                             </div>
-                                            <div className="text-xs font-medium opacity-50 truncate">
-                                                {song.artist}
-                                            </div>
-                                        </div>
 
-                                        {/* Cover Art (Right Side) */}
-                                        <div className="w-12 h-12 rounded-lg overflow-hidden shadow-lg shrink-0 border border-white/5 bg-black/20">
-                                            <img src={song.cover} className="w-full h-full object-cover" loading="lazy" />
-                                        </div>
-                                    </motion.div>
-                                );
-                            })}
-                        </div>
-                    </motion.div>
+                                            {/* Cover Art (Right Side) */}
+                                            <div className="w-12 h-12 rounded-lg overflow-hidden shadow-lg shrink-0 border border-white/5 bg-black/20">
+                                                <img src={song.cover} className="w-full h-full object-cover" loading="lazy" />
+                                            </div>
+                                        </motion.div>
+                                    );
+                                })}
+                            </div>
+                        </motion.div>
+                    </>
                 )}
             </AnimatePresence>
 

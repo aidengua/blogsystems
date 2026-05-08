@@ -5,27 +5,61 @@ const STATS_DOC_ID = 'general';
 
 export const incrementVisits = async () => {
     const today = new Date().toISOString().split('T')[0];
-    const visitedKey = `visited_${today}`;
 
-    if (sessionStorage.getItem(visitedKey)) {
-        return;
+    // Check unique device overall
+    let isUniqueDevice = false;
+    let deviceId = localStorage.getItem('deviceId');
+    if (!deviceId) {
+        deviceId = crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2, 15);
+        localStorage.setItem('deviceId', deviceId);
+        isUniqueDevice = true;
     }
 
-    sessionStorage.setItem(visitedKey, 'true');
+    // Check unique device for today
+    let lastVisitDate = localStorage.getItem('lastVisitDate');
+    let isDailyUnique = lastVisitDate !== today;
+    if (isDailyUnique) {
+        localStorage.setItem('lastVisitDate', today);
+    }
 
     try {
-        // Increment total visits
+        let regionName = 'Unknown';
+        // Cache region in sessionStorage to avoid spamming the ipapi
+        let cachedRegion = sessionStorage.getItem('userRegion');
+        if (cachedRegion) {
+            regionName = cachedRegion;
+        } else {
+            try {
+                const response = await fetch('https://ipapi.co/json/');
+                const data = await response.json();
+                regionName = data.country_name || 'Unknown';
+                sessionStorage.setItem('userRegion', regionName);
+            } catch (e) {
+                console.error("Failed to fetch region:", e);
+            }
+        }
+
+        // Increment total visits and region count
         const generalRef = doc(db, 'site_stats', STATS_DOC_ID);
-        await setDoc(generalRef, {
-            totalVisits: increment(1)
-        }, { merge: true });
+        const updates = {
+            totalVisits: increment(1), // total page views
+            [`regions.${regionName}`]: increment(1) // count region on every page view
+        };
+        if (isUniqueDevice) {
+            updates.uniqueDevices = increment(1);
+        }
+        await setDoc(generalRef, updates, { merge: true });
 
         // Increment daily visits
         const dailyRef = doc(db, 'site_stats', today);
-        await setDoc(dailyRef, {
-            visits: increment(1),
+        const dailyUpdates = {
+            visits: increment(1), // daily page views
             date: today
-        }, { merge: true });
+        };
+        if (isDailyUnique) {
+            dailyUpdates.uniqueDevices = increment(1);
+        }
+        await setDoc(dailyRef, dailyUpdates, { merge: true });
 
     } catch (error) {
         console.error("Error incrementing stats:", error);
@@ -43,7 +77,13 @@ export const subscribeToStats = (callback) => {
     const yesterdayRef = doc(db, 'site_stats', yesterday);
 
     const unsubGeneral = onSnapshot(generalRef, (doc) => {
-        callback(prev => ({ ...prev, total: doc.data()?.totalVisits || 0 }));
+        const data = doc.data() || {};
+        callback(prev => ({ 
+            ...prev, 
+            total: data.totalVisits || 0,
+            uniqueDevices: data.uniqueDevices || 0,
+            regions: data.regions || {}
+        }));
     });
 
     const unsubToday = onSnapshot(todayRef, (doc) => {
@@ -78,7 +118,8 @@ export const subscribeToWeeklyStats = (callback) => {
             statsMap.set(dateStr, {
                 date: displayDate,
                 fullDate: dateStr,
-                visits: doc.data()?.visits || 0
+                visits: doc.data()?.visits || 0,
+                uniqueDevices: doc.data()?.uniqueDevices || 0
             });
 
             // Convert map to sorted array
@@ -96,4 +137,27 @@ export const subscribeToWeeklyStats = (callback) => {
     return () => {
         unsubs.forEach(unsub => unsub());
     };
+};
+
+export const subscribeToStatsSettings = (callback) => {
+    const settingsRef = doc(db, 'site_stats', 'settings');
+    return onSnapshot(settingsRef, (doc) => {
+        const data = doc.data() || {};
+        callback({
+            showPageViewsCurve: data.showPageViewsCurve ?? true,
+            showUniqueDevicesCurve: data.showUniqueDevicesCurve ?? true,
+            showUniqueDevicesCard: data.showUniqueDevicesCard ?? true,
+            showYesterdayViewsCard: data.showYesterdayViewsCard ?? true
+        });
+    });
+};
+
+export const updateStatsSettings = async (newSettings) => {
+    try {
+        const settingsRef = doc(db, 'site_stats', 'settings');
+        await setDoc(settingsRef, newSettings, { merge: true });
+    } catch (error) {
+        console.error("Error updating stats settings:", error);
+        throw error;
+    }
 };

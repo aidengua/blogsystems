@@ -13,6 +13,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import SpotlightCard from '../../components/SpotlightCard';
 import SectionLoader from '../../components/SectionLoader';
 import LogoLoader from '../../components/LogoLoader';
+import { subscribeToStatsSettings, updateStatsSettings } from '../../services/stats';
 
 const Dashboard = () => {
     const navigate = useNavigate();
@@ -38,7 +39,32 @@ const Dashboard = () => {
     const [publishingPhoto, setPublishingPhoto] = useState(false);
     const [editingPhoto, setEditingPhoto] = useState(null);
 
+    // Settings State
+    const [statsSettings, setStatsSettings] = useState({
+        showPageViewsCurve: true,
+        showUniqueDevicesCurve: true,
+        showUniqueDevicesCard: true,
+        showYesterdayViewsCard: true
+    });
+
     const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8', '#82ca9d'];
+
+    useEffect(() => {
+        const unsubscribe = subscribeToStatsSettings(setStatsSettings);
+        return () => unsubscribe();
+    }, []);
+
+    const handleToggleSetting = async (key) => {
+        const newSettings = { ...statsSettings, [key]: !statsSettings[key] };
+        setStatsSettings(newSettings); // Optimistic UI
+        try {
+            await updateStatsSettings(newSettings);
+            showNotification('設定已儲存', 'success');
+        } catch (error) {
+            showNotification('儲存失敗', 'error');
+            setStatsSettings(statsSettings); // Revert
+        }
+    };
 
     useEffect(() => {
         const q = query(collection(db, 'posts'), orderBy('createdAt', 'asc'));
@@ -498,7 +524,8 @@ const Dashboard = () => {
                         { id: 'posts', label: '文章列表', color: 'bg-[#709CEF]' },
                         { id: 'essays', label: '短文列表', color: 'bg-purple-600' },
                         { id: 'albums', label: '相簿列表', color: 'bg-pink-600' },
-                        { id: 'comments', label: '留言管理', color: 'bg-green-600' }
+                        { id: 'comments', label: '留言管理', color: 'bg-green-600' },
+                        { id: 'settings', label: '網站設定', color: 'bg-orange-600' }
                     ].map((tab) => (
                         <button
                             key={tab.id}
@@ -522,6 +549,36 @@ const Dashboard = () => {
                 >
                     {activeTab === 'comments' ? (
                         <AdminCommentTable />
+                    ) : activeTab === 'settings' ? (
+                        <SpotlightCard className="overflow-hidden" spotlightColor="rgba(234, 88, 12, 0.05)">
+                            <div className="p-6 border-b border-white/10 bg-black/20">
+                                <h2 className="text-lg font-bold text-white">
+                                    數據面板顯示設定
+                                </h2>
+                                <p className="text-sm text-gray-500 mt-1">控制公開數據頁面 (Data Analytics) 上的資訊顯示</p>
+                            </div>
+                            <div className="p-6 divide-y divide-white/5">
+                                {[
+                                    { key: 'showPageViewsCurve', title: '顯示「總瀏覽次數」走勢線', desc: '圖表上的藍色數據曲線' },
+                                    { key: 'showUniqueDevicesCurve', title: '顯示「實際訪問裝置」走勢線', desc: '圖表上的紫色數據曲線' },
+                                    { key: 'showUniqueDevicesCard', title: '顯示「實際訪問裝置」卡片', desc: '頂部的核心數據卡片' },
+                                    { key: 'showYesterdayViewsCard', title: '顯示「昨日瀏覽」卡片', desc: '頂部的核心數據卡片' }
+                                ].map(({ key, title, desc }) => (
+                                    <div key={key} className="py-4 flex items-center justify-between hover:bg-white/[0.02] -mx-6 px-6 transition-colors">
+                                        <div>
+                                            <h3 className="text-white font-medium text-sm">{title}</h3>
+                                            <p className="text-gray-500 text-xs mt-0.5">{desc}</p>
+                                        </div>
+                                        <button 
+                                            onClick={() => handleToggleSetting(key)}
+                                            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 focus:ring-offset-gray-900 ${statsSettings[key] ? 'bg-orange-500' : 'bg-gray-600'}`}
+                                        >
+                                            <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${statsSettings[key] ? 'translate-x-6' : 'translate-x-1'}`} />
+                                        </button>
+                                    </div>
+                                ))}
+                            </div>
+                        </SpotlightCard>
                     ) : (
                         <SpotlightCard className="overflow-hidden" spotlightColor="rgba(112, 156, 239, 0.05)">
                             <div className="p-6 border-b border-white/10 flex justify-between items-center bg-black/20">

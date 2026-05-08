@@ -42,7 +42,6 @@ const About = () => {
         }, 2000);
 
         // Initialize stats
-        incrementVisits();
         const unsubscribe = subscribeToStats(setStats);
         const unsubscribeWeekly = subscribeToWeeklyStats(setWeeklyStats);
 
@@ -272,127 +271,83 @@ const About = () => {
                         </div>
                     </motion.div>
 
-                    {/* 5. Statistics Card (Flip Card) */}
+                    {/* 5. Statistics Card (Redesigned) */}
                     <motion.div
                         initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}
-                        className="col-span-1 md:col-span-1 lg:col-span-1 h-[300px] perspective-1000"
+                        className="col-span-1 md:col-span-1 lg:col-span-1 h-full"
                     >
-                        <motion.div
-                            animate={{ rotateY: isFlipped ? 180 : 0 }}
-                            transition={{ duration: 0.6, type: "spring", stiffness: 260, damping: 20 }}
-                            style={{ transformStyle: 'preserve-3d' }}
-                            className="relative w-full h-full"
+                        <div
+                            ref={statsCardRef}
+                            onMouseMove={handleStatsMouseMove}
+                            onMouseLeave={handleStatsMouseLeave}
+                            className={`h-full bg-white dark:bg-black rounded-3xl p-6 text-gray-900 dark:text-white border border-gray-200 dark:border-gray-800 flex flex-col group overflow-hidden relative shadow-xl`}
                         >
-                            {/* Front Side */}
-                            {/* Front Side */}
+                            {/* Spotlight Overlay */}
                             <div
-                                ref={statsCardRef}
-                                onMouseMove={handleStatsMouseMove}
-                                onMouseLeave={handleStatsMouseLeave}
-                                className={`absolute inset-0 bg-white dark:bg-gradient-to-br dark:from-black dark:to-gray-900 rounded-3xl p-5 text-gray-900 dark:text-white border border-gray-200 dark:border-gray-800 flex flex-col justify-between group overflow-hidden ${isFlipped ? 'pointer-events-none' : 'pointer-events-auto'}`}
-                                style={{ backfaceVisibility: 'hidden' }}
-                            >
-                                {/* Spotlight Overlay */}
-                                <div
-                                    className="pointer-events-none absolute -inset-px transition duration-300 z-0"
-                                    style={{
-                                        opacity: statsSpotlight.opacity,
-                                        background: `radial-gradient(600px circle at ${statsSpotlight.x}px ${statsSpotlight.y}px, rgba(59, 130, 246, 0.15), transparent 40%)`
-                                    }}
-                                />
+                                className="pointer-events-none absolute -inset-px transition duration-300 z-0"
+                                style={{
+                                    opacity: statsSpotlight.opacity,
+                                    background: `radial-gradient(600px circle at ${statsSpotlight.x}px ${statsSpotlight.y}px, rgba(59, 130, 246, 0.15), transparent 40%)`
+                                }}
+                            />
 
-                                <div className="absolute top-0 right-0 p-3 opacity-5 pointer-events-none z-0">
-                                    <i className="fas fa-chart-pie text-8xl transform rotate-12"></i>
-                                </div>
-                                <div className="relative z-10 top-1">
-                                    <div className="flex justify-between items-start mb-4">
-                                        <div>
-                                            <div className="text-gray-400 text-xs mb-0.5 uppercase tracking-wider font-bold">數據</div>
-                                            <h3 className="text-xl font-bold">訪問統計</h3>
-                                        </div>
-                                        <div className="w-8 h-8 rounded-full bg-blue-500/10 flex items-center justify-center border border-blue-500/20">
-                                            <i className="fas fa-chart-line text-blue-400 text-sm"></i>
-                                        </div>
-                                    </div>
+                            <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none z-0">
+                                <i className="fas fa-chart-line text-8xl transform rotate-12 -translate-y-4 translate-x-4"></i>
+                            </div>
 
-                                    <div className="grid grid-cols-2 gap-2">
-                                        <div className="bg-gray-50 dark:bg-white/5 rounded-xl p-2.5 backdrop-blur-sm border border-gray-200 dark:border-white/5 hover:bg-gray-100 dark:hover:bg-white/10 transition-colors">
-                                            <div className="text-[10px] text-gray-500 dark:text-gray-400 mb-0.5 flex items-center gap-1 font-bold uppercase"><i className="fas fa-user-clock text-blue-400 text-[10px]"></i> 今日人數</div>
-                                            <div className="text-lg font-bold text-gray-900 dark:text-white tracking-tight leading-none">{stats.today}</div>
-                                        </div>
-                                        <div className="bg-gray-50 dark:bg-white/5 rounded-xl p-2.5 backdrop-blur-sm border border-gray-200 dark:border-white/5 hover:bg-gray-100 dark:hover:bg-white/10 transition-colors">
-                                            <div className="text-[10px] text-gray-500 dark:text-gray-400 mb-0.5 flex items-center gap-1 font-bold uppercase"><i className="fas fa-eye text-green-400 text-[10px]"></i> 總訪問量</div>
-                                            <div className="text-lg font-bold text-gray-900 dark:text-white tracking-tight leading-none">{stats.total}</div>
-                                        </div>
-                                        <div className="bg-gray-50 dark:bg-white/5 rounded-xl p-2.5 backdrop-blur-sm border border-gray-200 dark:border-white/5 hover:bg-gray-100 dark:hover:bg-white/10 transition-colors">
-                                            <div className="text-[10px] text-gray-500 dark:text-gray-400 mb-0.5 flex items-center gap-1 font-bold uppercase"><i className="fas fa-history text-purple-400 text-[10px]"></i> 昨日人數</div>
-                                            <div className="text-lg font-bold text-gray-900 dark:text-white/90 tracking-tight leading-none">{stats.yesterday}</div>
-                                        </div>
-                                        <div className="bg-gray-50 dark:bg-white/5 rounded-xl p-2.5 backdrop-blur-sm border border-gray-200 dark:border-white/5 hover:bg-gray-100 dark:hover:bg-white/10 transition-colors">
-                                            <div className="text-[10px] text-gray-500 dark:text-gray-400 mb-0.5 flex items-center gap-1 font-bold uppercase"><i className="fas fa-calendar-alt text-orange-400 text-[10px]"></i> 昨日訪問</div>
-                                            <div className="text-lg font-bold text-gray-900 dark:text-white/90 tracking-tight leading-none">{stats.yesterday}</div>
-                                        </div>
-                                    </div>
+                            <div className="relative z-10 flex justify-between items-start mb-5">
+                                <div>
+                                    <div className="text-gray-400 text-xs mb-1 uppercase tracking-wider font-bold">Data</div>
+                                    <h3 className="text-2xl font-bold">訪問統計</h3>
                                 </div>
-                                <div className="relative z-20">
-                                    <button
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            setIsFlipped(true);
-                                        }}
-                                        className="w-full py-2 rounded-xl bg-[#709CEF] hover:bg-[#5f8bd6] text-white transition-all text-xs font-bold flex items-center justify-center gap-2 active:scale-95 pointer-events-auto cursor-pointer"
-                                    >
-                                        <i className="fas fa-chart-bar"></i> 查看詳細圖表
-                                    </button>
+                                <div className="w-10 h-10 rounded-full bg-blue-500/10 flex items-center justify-center border border-blue-500/20">
+                                    <i className="fas fa-chart-line text-blue-500 text-lg"></i>
                                 </div>
                             </div>
 
-                            {/* Back Side */}
-                            {/* Back Side */}
-                            <div
-                                className={`absolute inset-0 bg-white dark:bg-black rounded-3xl p-6 text-gray-900 dark:text-white border border-gray-200 dark:border-gray-800 flex flex-col justify-between ${isFlipped ? 'pointer-events-auto' : 'pointer-events-none'}`}
-                                style={{ backfaceVisibility: 'hidden', transform: 'rotateY(180deg)' }}
-                            >
-                                <div className="h-full flex flex-col">
-                                    <div className="flex justify-between items-center mb-2 shrink-0">
-                                        <h3 className="text-lg font-bold flex items-center gap-2"><i className="fas fa-chart-bar text-blue-500"></i> 近7日趨勢</h3>
-                                        <button
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                setIsFlipped(false);
-                                            }}
-                                            className="w-8 h-8 rounded-full bg-gray-100 dark:bg-white/5 hover:bg-gray-200 dark:hover:bg-white/10 flex items-center justify-center text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors relative z-20 pointer-events-auto cursor-pointer"
-                                        >
-                                            <i className="fas fa-times"></i>
-                                        </button>
-                                    </div>
-                                    <div className="flex-grow min-h-0 w-full relative -ml-2">
-                                        {isFlipped ? (
-                                            <ResponsiveContainer width="100%" height="100%">
-                                                <BarChart data={weeklyStats}>
-                                                    <XAxis dataKey="date" tick={{ fontSize: 10, fill: '#9ca3af' }} axisLine={false} tickLine={false} dy={10} />
-                                                    <Tooltip
-                                                        contentStyle={{ backgroundColor: '#1f2937', border: '1px solid #374151', borderRadius: '8px', fontSize: '12px', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)' }}
-                                                        itemStyle={{ color: '#fff' }}
-                                                        cursor={{ fill: 'rgba(255,255,255,0.05)' }}
-                                                    />
-                                                    <Bar dataKey="visits" radius={[4, 4, 0, 0]}>
-                                                        {weeklyStats.map((entry, index) => (
-                                                            <Cell key={`cell-${index}`} fill={index === weeklyStats.length - 1 ? '#3b82f6' : '#4b5563'} />
-                                                        ))}
-                                                    </Bar>
-                                                </BarChart>
-                                            </ResponsiveContainer>
-                                        ) : (
-                                            <div className="flex items-center justify-center h-full text-gray-500 text-sm gap-2">
-                                                <LogoLoader size="w-4 h-4" animate={true} />
-                                                Loading...
-                                            </div>
-                                        )}
-                                    </div>
+                            <div className="relative z-10 grid grid-cols-3 gap-2 mb-5">
+                                <div className="flex flex-col">
+                                    <span className="text-[10px] text-gray-500 dark:text-gray-400 font-bold uppercase mb-1 flex items-center gap-1"><i className="fas fa-user-clock text-blue-500"></i> 今日</span>
+                                    <span className="text-xl font-bold text-gray-900 dark:text-white leading-none">{stats.today}</span>
+                                </div>
+                                <div className="flex flex-col border-l border-gray-200 dark:border-gray-800 pl-2">
+                                    <span className="text-[10px] text-gray-500 dark:text-gray-400 font-bold uppercase mb-1 flex items-center gap-1"><i className="fas fa-history text-purple-500"></i> 昨日</span>
+                                    <span className="text-xl font-bold text-gray-900 dark:text-white leading-none">{stats.yesterday}</span>
+                                </div>
+                                <div className="flex flex-col border-l border-gray-200 dark:border-gray-800 pl-2">
+                                    <span className="text-[10px] text-gray-500 dark:text-gray-400 font-bold uppercase mb-1 flex items-center gap-1"><i className="fas fa-globe text-green-500"></i> 總量</span>
+                                    <span className="text-xl font-bold text-gray-900 dark:text-white leading-none">{stats.total}</span>
                                 </div>
                             </div>
-                        </motion.div>
+
+                            <div className="relative z-10 flex-grow flex flex-col w-full min-h-[130px] bg-gray-50 dark:bg-white/5 rounded-2xl p-3 border border-gray-100 dark:border-gray-800/50">
+                                <div className="text-[10px] text-gray-500 dark:text-gray-400 font-bold uppercase mb-2 ml-1">近7日趨勢</div>
+                                <div className="flex-grow w-full relative -ml-2">
+                                    {weeklyStats && weeklyStats.length > 0 ? (
+                                        <ResponsiveContainer width="100%" height="100%">
+                                            <BarChart data={weeklyStats}>
+                                                <XAxis dataKey="date" tick={{ fontSize: 9, fill: '#9ca3af' }} axisLine={false} tickLine={false} dy={5} />
+                                                <Tooltip
+                                                    contentStyle={{ backgroundColor: '#1f2937', border: '1px solid #374151', borderRadius: '12px', fontSize: '11px', boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)' }}
+                                                    cursor={{ fill: 'rgba(59, 130, 246, 0.1)' }}
+                                                    itemStyle={{ color: '#fff', fontWeight: 'bold' }}
+                                                />
+                                                <Bar dataKey="visits" radius={[4, 4, 0, 0]}>
+                                                    {weeklyStats.map((entry, index) => (
+                                                        <Cell key={`cell-${index}`} fill={index === weeklyStats.length - 1 ? '#3b82f6' : '#6b7280'} />
+                                                    ))}
+                                                </Bar>
+                                            </BarChart>
+                                        </ResponsiveContainer>
+                                    ) : (
+                                        <div className="flex items-center justify-center h-full text-gray-500 text-xs gap-2">
+                                            <LogoLoader size="w-3 h-3" animate={true} />
+                                            Loading...
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
                     </motion.div>
 
                     {/* 6. Location Map */}
@@ -487,49 +442,37 @@ const About = () => {
                             <div className="relative z-10">
                                 <div className="flex justify-between items-start">
                                     <div>
-                                        <div className="text-purple-600 dark:text-purple-300 text-sm font-bold tracking-wider mb-2 uppercase">Personality</div>
-                                        <h3 className="text-4xl font-black text-gray-900 dark:text-white mb-1">INTJ-A</h3>
-                                        <div className="text-xl font-bold text-gray-500 dark:text-gray-400 mb-6">建築師 (Architect)</div>
+                                        <div className="text-purple-600 dark:text-purple-300 text-sm font-bold tracking-wider mb-2">人格特質</div>
+                                        <h3 className="text-4xl font-black text-gray-900 dark:text-white mb-1">INTP</h3>
+                                        <div className="text-xl font-bold text-gray-500 dark:text-gray-400 mb-6">邏輯學家</div>
                                     </div>
                                     <div className="hidden sm:block">
                                         <i className="fas fa-chess-knight text-purple-500/30 text-5xl"></i>
                                     </div>
                                 </div>
 
-                                <div className="space-y-3 max-w-[240px] relative z-20">
-                                    <div className="flex items-center gap-2 text-xs">
-                                        <span className="w-16 text-gray-500 dark:text-gray-400 font-bold">Introverted</span>
-                                        <div className="flex-1 h-1.5 bg-gray-200 dark:bg-gray-700/50 rounded-full overflow-hidden">
-                                            <motion.div initial={{ width: 0 }} whileInView={{ width: '52%' }} transition={{ duration: 1, delay: 0.5 }} className="h-full bg-purple-500 rounded-full"></motion.div>
-                                        </div>
-                                        <span className="w-8 text-right text-purple-600 dark:text-purple-300 font-mono">52%</span>
+                                <div className="flex flex-row gap-6 sm:gap-8 relative z-20 mt-2 whitespace-nowrap">
+                                    <div className="flex flex-col">
+                                        <span className="text-gray-500 dark:text-gray-400 text-xs font-bold mb-0.5">內向 (I)</span>
+                                        <span className="text-2xl font-black text-gray-900 dark:text-white font-mono">52<span className="text-sm font-bold text-purple-500 ml-0.5">%</span></span>
                                     </div>
-                                    <div className="flex items-center gap-2 text-xs">
-                                        <span className="w-16 text-gray-500 dark:text-gray-400 font-bold">Intuitive</span>
-                                        <div className="flex-1 h-1.5 bg-gray-200 dark:bg-gray-700/50 rounded-full overflow-hidden">
-                                            <motion.div initial={{ width: 0 }} whileInView={{ width: '63%' }} transition={{ duration: 1, delay: 0.6 }} className="h-full bg-purple-500 rounded-full"></motion.div>
-                                        </div>
-                                        <span className="w-8 text-right text-purple-600 dark:text-purple-300 font-mono">63%</span>
+                                    <div className="flex flex-col">
+                                        <span className="text-gray-500 dark:text-gray-400 text-xs font-bold mb-0.5">直覺 (N)</span>
+                                        <span className="text-2xl font-black text-gray-900 dark:text-white font-mono">63<span className="text-sm font-bold text-purple-500 ml-0.5">%</span></span>
                                     </div>
-                                    <div className="flex items-center gap-2 text-xs">
-                                        <span className="w-16 text-gray-500 dark:text-gray-400 font-bold">Thinking</span>
-                                        <div className="flex-1 h-1.5 bg-gray-200 dark:bg-gray-700/50 rounded-full overflow-hidden">
-                                            <motion.div initial={{ width: 0 }} whileInView={{ width: '52%' }} transition={{ duration: 1, delay: 0.7 }} className="h-full bg-purple-500 rounded-full"></motion.div>
-                                        </div>
-                                        <span className="w-8 text-right text-purple-600 dark:text-purple-300 font-mono">52%</span>
+                                    <div className="flex flex-col">
+                                        <span className="text-gray-500 dark:text-gray-400 text-xs font-bold mb-0.5">思考 (T)</span>
+                                        <span className="text-2xl font-black text-gray-900 dark:text-white font-mono">52<span className="text-sm font-bold text-purple-500 ml-0.5">%</span></span>
                                     </div>
-                                    <div className="flex items-center gap-2 text-xs">
-                                        <span className="w-16 text-gray-500 dark:text-gray-400 font-bold">Judging</span>
-                                        <div className="flex-1 h-1.5 bg-gray-200 dark:bg-gray-700/50 rounded-full overflow-hidden">
-                                            <motion.div initial={{ width: 0 }} whileInView={{ width: '68%' }} transition={{ duration: 1, delay: 0.8 }} className="h-full bg-purple-500 rounded-full"></motion.div>
-                                        </div>
-                                        <span className="w-8 text-right text-purple-600 dark:text-purple-300 font-mono">68%</span>
+                                    <div className="flex flex-col">
+                                        <span className="text-gray-500 dark:text-gray-400 text-xs font-bold mb-0.5">感知 (P)</span>
+                                        <span className="text-2xl font-black text-gray-900 dark:text-white font-mono">68<span className="text-sm font-bold text-purple-500 ml-0.5">%</span></span>
                                     </div>
                                 </div>
                             </div>
 
-                            <div className="absolute right-[-20px] bottom-[-20px] w-48 h-48 opacity-80 mix-blend-luminosity group-hover:mix-blend-normal transition-all duration-500">
-                                <img src="https://cloud.dragoncode.dev/f/pgBiA/%E5%89%AA%E8%B2%BC%E7%B0%BF%201768222519965.png" alt="INTJ-A Icon" className="w-full h-full object-contain drop-shadow-2xl" />
+                            <div className="absolute right-[-20px] bottom-[-20px] w-48 h-48 opacity-80">
+                                <img src="https://cloud.dragoncode.dev/f/8ZYtY/intp.webp" alt="INTP Icon" className="w-full h-full object-contain drop-shadow-2xl" />
                             </div>
                         </div>
                     </motion.div>

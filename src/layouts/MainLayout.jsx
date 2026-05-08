@@ -9,6 +9,7 @@ import { collection, query, getDocs, where } from 'firebase/firestore';
 import { db } from '../firebase';
 import MobileMenu from '../components/MobileMenu';
 import CategoryModal from '../components/CategoryModal';
+import { incrementVisits } from '../services/stats';
 
 const MainLayout = ({ children }) => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -16,6 +17,10 @@ const MainLayout = ({ children }) => {
     const [menuOrigin, setMenuOrigin] = useState({ x: 0, y: 0 });
     const location = useLocation();
     const isAdmin = location.pathname.startsWith('/admin');
+
+    useEffect(() => {
+        incrementVisits();
+    }, [location.pathname]);
 
     const handleToggleSidebar = (e) => {
         if (e && e.currentTarget) {

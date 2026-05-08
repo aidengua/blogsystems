@@ -17,6 +17,7 @@ const Equipment = lazy(() => import('./pages/public/Equipment'));
 const Essay = lazy(() => import('./pages/public/Essay'));
 const Album = lazy(() => import('./pages/public/Album'));
 const Music = lazy(() => import('./pages/public/Music'));
+const Stats = lazy(() => import('./pages/public/Stats'));
 
 import PrivateRoute from './components/PrivateRoute';
 import PageWrapper from './components/PageWrapper';
@@ -124,6 +125,11 @@ function App() {
                 <Route path="/music" element={
                   <PageWrapper>
                     <Music />
+                  </PageWrapper>
+                } />
+                <Route path="/stats" element={
+                  <PageWrapper>
+                    <Stats />
                   </PageWrapper>
                 } />
 
