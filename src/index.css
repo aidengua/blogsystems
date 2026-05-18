@@ -277,3 +277,107 @@ html {
 ::view-transition-old(root) {
     z-index: 1;
 }
+
+/* ========================================= */
+/*          React DatePicker Custom          */
+/* ========================================= */
+
+.react-datepicker__header {
+    background-color: transparent !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+.react-datepicker__current-month, 
+.react-datepicker-time__header, 
+.react-datepicker-year-header {
+    color: #fff !important;
+}
+
+.react-datepicker__day-name {
+    color: #9ca3af !important;
+}
+
+.react-datepicker__day {
+    color: #e5e7eb !important;
+    border-radius: 0.5rem !important;
+}
+
+.react-datepicker__day:hover {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+.react-datepicker__day--selected, 
+.react-datepicker__day--in-selecting-range, 
+.react-datepicker__day--in-range, 
+.react-datepicker__month-text--selected, 
+.react-datepicker__month-text--in-selecting-range, 
+.react-datepicker__month-text--in-range, 
+.react-datepicker__quarter-text--selected, 
+.react-datepicker__quarter-text--in-selecting-range, 
+.react-datepicker__quarter-text--in-range, 
+.react-datepicker__year-text--selected, 
+.react-datepicker__year-text--in-selecting-range, 
+.react-datepicker__year-text--in-range {
+    background-color: #dc2626 !important; /* red-600 */
+    color: #fff !important;
+}
+
+.react-datepicker__day--keyboard-selected {
+    background-color: rgba(220, 38, 38, 0.5) !important;
+}
+
+.react-datepicker-popper[data-placement^=bottom] .react-datepicker__triangle::before, 
+.react-datepicker-popper[data-placement^=bottom] .react-datepicker__triangle::after {
+    border-bottom-color: rgba(20, 20, 20, 0.95) !important;
+}
+
+.react-datepicker-popper[data-placement^=top] .react-datepicker__triangle::before, 
+.react-datepicker-popper[data-placement^=top] .react-datepicker__triangle::after {
+    border-top-color: rgba(20, 20, 20, 0.95) !important;
+}
+
+/* ========================================= */
+/*       DatePicker Animations & Effects     */
+/* ========================================= */
+
+@keyframes popupFadeIn {
+    0% {
+        opacity: 0;
+        transform: translateY(-5px) scale(0.98);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.react-datepicker {
+    animation: popupFadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+    background-color: rgba(20, 20, 20, 0.95) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    backdrop-filter: blur(12px) !important;
+    font-family: inherit !important;
+    color: #fff !important;
+    border-radius: 0.75rem !important;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5) !important;
+}
+
+@keyframes monthSwitch {
+    0% {
+        opacity: 0.5;
+        transform: scale(0.98);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.react-datepicker__month-container {
+    animation: monthSwitch 0.3s ease-out forwards;
+}
+
+/* Add subtle transition for individual days */
+.react-datepicker__day {
+    transition: all 0.2s ease;
+}

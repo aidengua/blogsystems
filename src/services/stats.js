@@ -1,5 +1,5 @@
 import { db } from '../firebase';
-import { doc, setDoc, increment, onSnapshot } from 'firebase/firestore';
+import { doc, setDoc, increment, onSnapshot, query, collection, where, getDoc, getDocs, deleteField } from 'firebase/firestore';
 
 const STATS_DOC_ID = 'general';
 
@@ -139,6 +139,47 @@ export const subscribeToWeeklyStats = (callback) => {
     };
 };
 
+export const subscribeToChartStats = (range, callback) => {
+    if (range === '7days') {
+        return subscribeToWeeklyStats(callback);
+    } else if (range === 'thisYear') {
+        const currentYear = new Date().getFullYear();
+        const startOfYear = `${currentYear}-01-01`;
+        
+        const q = query(
+            collection(db, 'site_stats'),
+            where('date', '>=', startOfYear)
+        );
+        
+        return onSnapshot(q, (snapshot) => {
+            const monthlyStats = new Map();
+            // Initialize 12 months with 0
+            for (let i = 0; i < 12; i++) {
+                monthlyStats.set(i, {
+                    date: `${i + 1}月`, // "1月", "2月"
+                    fullDate: `${currentYear}-${String(i + 1).padStart(2, '0')}`,
+                    visits: 0,
+                    uniqueDevices: 0
+                });
+            }
+            
+            snapshot.forEach((doc) => {
+                const data = doc.data();
+                if (data.date && data.date.startsWith(currentYear.toString())) {
+                    const monthIndex = new Date(data.date).getMonth();
+                    const existing = monthlyStats.get(monthIndex);
+                    if (existing) {
+                        existing.visits += (parseInt(data.visits, 10) || 0);
+                        existing.uniqueDevices += (parseInt(data.uniqueDevices, 10) || 0);
+                    }
+                }
+            });
+            
+            callback(Array.from(monthlyStats.values()));
+        });
+    }
+};
+
 export const subscribeToStatsSettings = (callback) => {
     const settingsRef = doc(db, 'site_stats', 'settings');
     return onSnapshot(settingsRef, (doc) => {
@@ -158,6 +199,145 @@ export const updateStatsSettings = async (newSettings) => {
         await setDoc(settingsRef, newSettings, { merge: true });
     } catch (error) {
         console.error("Error updating stats settings:", error);
+        throw error;
+    }
+};
+
+export const updateDailyStats = async (daysData) => {
+    try {
+        let totalVisitsDiff = 0;
+        let totalDevicesDiff = 0;
+
+        const promises = daysData.map(async (day) => {
+            const dailyRef = doc(db, 'site_stats', day.fullDate);
+            const existingDoc = await getDoc(dailyRef);
+            const existingData = existingDoc.exists() ? existingDoc.data() : { visits: 0, uniqueDevices: 0 };
+            
+            const newVisits = parseInt(day.visits, 10) || 0;
+            const newDevices = parseInt(day.uniqueDevices, 10) || 0;
+            
+            const oldVisits = existingData.visits || 0;
+            const oldDevices = existingData.uniqueDevices || 0;
+
+            totalVisitsDiff += (newVisits - oldVisits);
+            totalDevicesDiff += (newDevices - oldDevices);
+
+            const updates = {
+                visits: newVisits,
+                uniqueDevices: newDevices,
+                date: day.fullDate
+            };
+            
+            // Only set original if it hasn't been backed up yet
+            if (!existingData.hasOwnProperty('originalVisits')) {
+                updates.originalVisits = oldVisits;
+            }
+            if (!existingData.hasOwnProperty('originalUniqueDevices')) {
+                updates.originalUniqueDevices = oldDevices;
+            }
+            
+            await setDoc(dailyRef, updates, { merge: true });
+        });
+        await Promise.all(promises);
+
+        // Update the general document with the total differences
+        if (totalVisitsDiff !== 0 || totalDevicesDiff !== 0) {
+            const generalRef = doc(db, 'site_stats', STATS_DOC_ID);
+            await setDoc(generalRef, {
+                totalVisits: increment(totalVisitsDiff),
+                uniqueDevices: increment(totalDevicesDiff)
+            }, { merge: true });
+        }
+    } catch (error) {
+        console.error("Error updating daily stats:", error);
+        throw error;
+    }
+};
+
+export const restoreDailyStats = async (dateStr) => {
+    try {
+        const dailyRef = doc(db, 'site_stats', dateStr);
+        const existingDoc = await getDoc(dailyRef);
+        if (existingDoc.exists()) {
+            const existingData = existingDoc.data();
+            if (existingData.hasOwnProperty('originalVisits')) {
+                const oldVisits = existingData.visits || 0;
+                const oldDevices = existingData.uniqueDevices || 0;
+                const originalVisits = existingData.originalVisits;
+                const originalDevices = existingData.originalUniqueDevices || 0;
+
+                const visitsDiff = originalVisits - oldVisits;
+                const devicesDiff = originalDevices - oldDevices;
+
+                await setDoc(dailyRef, {
+                    visits: originalVisits,
+                    uniqueDevices: originalDevices,
+                    originalVisits: deleteField(),
+                    originalUniqueDevices: deleteField()
+                }, { merge: true });
+
+                if (visitsDiff !== 0 || devicesDiff !== 0) {
+                    const generalRef = doc(db, 'site_stats', STATS_DOC_ID);
+                    await setDoc(generalRef, {
+                        totalVisits: increment(visitsDiff),
+                        uniqueDevices: increment(devicesDiff)
+                    }, { merge: true });
+                }
+            }
+        }
+    } catch (error) {
+        console.error("Error restoring daily stats:", error);
+        throw error;
+    }
+};
+
+export const restoreAllDailyStats = async () => {
+    try {
+        const statsCollection = collection(db, 'site_stats');
+        const q = query(statsCollection); // Fetch all documents
+        const snapshot = await getDocs(q);
+        
+        const promises = [];
+        let totalVisitsDiff = 0;
+        let totalDevicesDiff = 0;
+
+        snapshot.forEach((document) => {
+            const data = document.data();
+            if (data.hasOwnProperty('originalVisits')) {
+                const docRef = doc(db, 'site_stats', document.id);
+                
+                const oldVisits = data.visits || 0;
+                const oldDevices = data.uniqueDevices || 0;
+                const originalVisits = data.originalVisits;
+                const originalDevices = data.originalUniqueDevices || 0;
+
+                totalVisitsDiff += (originalVisits - oldVisits);
+                totalDevicesDiff += (originalDevices - oldDevices);
+
+                promises.push(
+                    setDoc(docRef, {
+                        visits: originalVisits,
+                        uniqueDevices: originalDevices,
+                        originalVisits: deleteField(),
+                        originalUniqueDevices: deleteField()
+                    }, { merge: true })
+                );
+            }
+        });
+        
+        await Promise.all(promises);
+
+        if (totalVisitsDiff !== 0 || totalDevicesDiff !== 0) {
+            const generalRef = doc(db, 'site_stats', STATS_DOC_ID);
+            await setDoc(generalRef, {
+                totalVisits: increment(totalVisitsDiff),
+                uniqueDevices: increment(totalDevicesDiff)
+            }, { merge: true });
+        }
+
+        return promises.length; // Return number of restored documents
+    } catch (error) {
+        console.error("Error restoring all daily stats:", error);
         throw error;
     }
 };

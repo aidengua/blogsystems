@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { signOut } from 'firebase/auth';
 import { useNavigate, Link } from 'react-router-dom';
-import { collection, deleteDoc, doc, query, orderBy, onSnapshot, addDoc, updateDoc } from 'firebase/firestore';
+import { collection, deleteDoc, doc, query, orderBy, onSnapshot, addDoc, updateDoc, getDoc } from 'firebase/firestore';
 import { auth, db } from '../../firebase';
 import MainLayout from '../../layouts/MainLayout';
 import AdminCommentTable from '../../components/AdminCommentTable';
@@ -13,7 +13,9 @@ import { motion, AnimatePresence } from 'framer-motion';
 import SpotlightCard from '../../components/SpotlightCard';
 import SectionLoader from '../../components/SectionLoader';
 import LogoLoader from '../../components/LogoLoader';
-import { subscribeToStatsSettings, updateStatsSettings } from '../../services/stats';
+import { subscribeToStatsSettings, updateStatsSettings, subscribeToWeeklyStats, updateDailyStats, restoreDailyStats, restoreAllDailyStats } from '../../services/stats';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 
 const Dashboard = () => {
     const navigate = useNavigate();
@@ -46,13 +48,66 @@ const Dashboard = () => {
         showUniqueDevicesCard: true,
         showYesterdayViewsCard: true
     });
+    
+    // Override State
+    const [overrideData, setOverrideData] = useState([]);
+    const [isSavingOverride, setIsSavingOverride] = useState(false);
+
+    // Custom Date Override
+    const [customDate, setCustomDate] = useState(new Date().toISOString().split('T')[0]);
+    const [customVisits, setCustomVisits] = useState('');
+    const [customDevices, setCustomDevices] = useState('');
+    const [originalCustomVisits, setOriginalCustomVisits] = useState(null);
+    const [originalCustomDevices, setOriginalCustomDevices] = useState(null);
+    const [isSavingCustom, setIsSavingCustom] = useState(false);
+    const [isFetchingCustom, setIsFetchingCustom] = useState(false);
+    const [isRestoringAll, setIsRestoringAll] = useState(false);
+    const [isRandomizing, setIsRandomizing] = useState(false);
 
     const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8', '#82ca9d'];
 
     useEffect(() => {
         const unsubscribe = subscribeToStatsSettings(setStatsSettings);
-        return () => unsubscribe();
+        const unsubscribeWeekly = subscribeToWeeklyStats(setOverrideData);
+        return () => {
+            unsubscribe();
+            unsubscribeWeekly();
+        };
     }, []);
+
+    // Fetch existing stats when custom date changes
+    useEffect(() => {
+        const fetchCustomDateStats = async () => {
+            setIsFetchingCustom(true);
+            try {
+                const docRef = doc(db, 'site_stats', customDate);
+                const docSnap = await getDoc(docRef);
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    setCustomVisits(data.visits || 0);
+                    setCustomDevices(data.uniqueDevices || 0);
+                    
+                    if (data.hasOwnProperty('originalVisits')) {
+                        setOriginalCustomVisits(data.originalVisits);
+                        setOriginalCustomDevices(data.originalUniqueDevices || 0);
+                    } else {
+                        setOriginalCustomVisits(null);
+                        setOriginalCustomDevices(null);
+                    }
+                } else {
+                    setCustomVisits(0);
+                    setCustomDevices(0);
+                    setOriginalCustomVisits(null);
+                    setOriginalCustomDevices(null);
+                }
+            } catch (error) {
+                console.error("Error fetching custom date stats:", error);
+            } finally {
+                setIsFetchingCustom(false);
+            }
+        };
+        fetchCustomDateStats();
+    }, [customDate]);
 
     const handleToggleSetting = async (key) => {
         const newSettings = { ...statsSettings, [key]: !statsSettings[key] };
@@ -63,6 +118,134 @@ const Dashboard = () => {
         } catch (error) {
             showNotification('儲存失敗', 'error');
             setStatsSettings(statsSettings); // Revert
+        }
+    };
+
+    const handleRestoreCustomDate = async () => {
+        setIsSavingCustom(true);
+        try {
+            await restoreDailyStats(customDate);
+            showNotification(`${customDate} 已復原為真實數據`, 'success');
+            
+            // Re-fetch to update UI
+            const docRef = doc(db, 'site_stats', customDate);
+            const docSnap = await getDoc(docRef);
+            if (docSnap.exists()) {
+                const data = docSnap.data();
+                setCustomVisits(data.visits || 0);
+                setCustomDevices(data.uniqueDevices || 0);
+                setOriginalCustomVisits(null);
+                setOriginalCustomDevices(null);
+            }
+        } catch (error) {
+            showNotification('復原失敗', 'error');
+        } finally {
+            setIsSavingCustom(false);
+        }
+    };
+
+    const handleRestoreAll = async () => {
+        showConfirmation({
+            message: '此操作將會把所有曾經被您修改過的日期，全部還原為最初的真實數據，且無法復原。確定要還原所有數據？',
+            onConfirm: async () => {
+                setIsRestoringAll(true);
+                try {
+                    const restoredCount = await restoreAllDailyStats();
+                    showNotification(`已成功還原 ${restoredCount} 天的數據！`, 'success');
+                    
+                    // Re-fetch custom date to update UI if needed
+                    const docRef = doc(db, 'site_stats', customDate);
+                    const docSnap = await getDoc(docRef);
+                    if (docSnap.exists()) {
+                        const data = docSnap.data();
+                        setCustomVisits(data.visits || 0);
+                        setCustomDevices(data.uniqueDevices || 0);
+                        setOriginalCustomVisits(null);
+                        setOriginalCustomDevices(null);
+                    }
+                } catch (error) {
+                    showNotification('還原失敗，請稍後再試', 'error');
+                } finally {
+                    setIsRestoringAll(false);
+                }
+            }
+        });
+    };
+
+    const handleOverrideChange = (index, field, value) => {
+        const newData = [...overrideData];
+        newData[index] = { ...newData[index], [field]: value };
+        setOverrideData(newData);
+    };
+
+    const handleRandomizeTraffic = async () => {
+        setIsRandomizing(true);
+        try {
+            // Target total visits around 3200 to 4500 across the days
+            const targetTotal = Math.floor(Math.random() * 1300) + 3200;
+            const weights = overrideData.map(() => Math.random() * 10 + 5);
+            const sumWeights = weights.reduce((a, b) => a + b, 0);
+
+            let remainingTarget = targetTotal;
+            const newData = overrideData.map((day, index) => {
+                let visits;
+                if (index === overrideData.length - 1) {
+                    visits = Math.max(100, remainingTarget);
+                } else {
+                    visits = Math.floor((weights[index] / sumWeights) * targetTotal);
+                    visits = Math.max(100, visits); // ensure a realistic minimum
+                    remainingTarget -= visits;
+                }
+                
+                // Unique devices roughly 70% to 92% of visits
+                const ratio = Math.random() * 0.22 + 0.70;
+                const uniqueDevices = Math.floor(visits * ratio);
+                
+                return {
+                    ...day,
+                    visits,
+                    uniqueDevices
+                };
+            });
+            
+            setOverrideData(newData);
+            
+            // Bypass save button and write directly to DB
+            await updateDailyStats(newData);
+            showNotification('隨機流量已注入並即時生效！', 'success');
+        } catch (error) {
+            console.error(error);
+            showNotification('注入失敗', 'error');
+        } finally {
+            setIsRandomizing(false);
+        }
+    };
+
+    const handleSaveOverride = async () => {
+        setIsSavingOverride(true);
+        try {
+            await updateDailyStats(overrideData);
+            showNotification('數據覆寫已儲存', 'success');
+        } catch (error) {
+            showNotification('儲存失敗', 'error');
+        } finally {
+            setIsSavingOverride(false);
+        }
+    };
+
+    const handleSaveCustomOverride = async () => {
+        setIsSavingCustom(true);
+        try {
+            await updateDailyStats([{
+                fullDate: customDate,
+                visits: parseInt(customVisits, 10) || 0,
+                uniqueDevices: parseInt(customDevices, 10) || 0
+            }]);
+            showNotification(`日期 ${customDate} 數據已覆寫`, 'success');
+        } catch (error) {
+            showNotification('儲存失敗', 'error');
+        } finally {
+            setIsSavingCustom(false);
         }
     };
 
@@ -330,17 +513,17 @@ const Dashboard = () => {
         }
     };
 
-    const CustomTooltip = ({ active, payload, label }) => {
+    const CustomTooltip = ({ active, payload }) => {
         if (active && payload && payload.length) {
             const data = payload[0].payload;
             return (
                 <div className="bg-[#1e1e1e]/90 backdrop-blur-md border border-white/10 p-3 rounded-lg shadow-xl">
-                    <p className="text-gray-400 text-xs mb-1">{data.date}</p>
-                    <p className="text-[#709CEF] font-bold text-sm mb-1 line-clamp-1 max-w-[200px]">
-                        {data.title}
-                    </p>
+                    <p className="text-[#709CEF] font-bold text-sm mb-1">{data.fullDate}</p>
                     <p className="text-white font-bold text-lg">
-                        {data.views} <span className="text-xs text-gray-500 font-normal">瀏覽</span>
+                        {data.visits} <span className="text-xs text-gray-500 font-normal">瀏覽</span>
+                    </p>
+                    <p className="text-gray-300 text-sm">
+                        {data.uniqueDevices} <span className="text-xs text-gray-500 font-normal">裝置</span>
                     </p>
                 </div>
             );
@@ -467,18 +650,20 @@ const Dashboard = () => {
                         <SpotlightCard className="p-6 h-full" spotlightColor="rgba(112, 156, 239, 0.1)">
                             <div className="mb-6 flex justify-between items-end">
                                 <div>
-                                    <h3 className="text-lg font-bold text-white">瀏覽量趨勢</h3>
-                                    <p className="text-gray-500 text-xs mt-1">View Trends</p>
+                                    <h3 className="text-lg font-bold text-white">7日瀏覽趨勢</h3>
+                                    <p className="text-gray-500 text-xs mt-1">7 Days Traffic</p>
                                 </div>
                                 <div className="text-right">
-                                    <span className="text-2xl font-bold text-white">{stats.totalViews}</span>
-                                    <span className="text-xs text-gray-500 ml-1">次總瀏覽</span>
+                                    <span className="text-2xl font-bold text-white">
+                                        {overrideData.reduce((acc, day) => acc + (parseInt(day.visits, 10) || 0), 0)}
+                                    </span>
+                                    <span className="text-xs text-gray-500 ml-1">次瀏覽</span>
                                 </div>
                             </div>
                             <div className="h-[300px] w-full">
                                 <ResponsiveContainer width="100%" height="100%">
                                     <AreaChart
-                                        data={viewData}
+                                        data={overrideData}
                                         margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
                                     >
                                         <defs>
@@ -489,7 +674,7 @@ const Dashboard = () => {
                                         </defs>
                                         <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
                                         <XAxis
-                                            dataKey="name"
+                                            dataKey="date"
                                             stroke="#4b5563"
                                             tick={{ fill: '#6b7280', fontSize: 10 }}
                                             tickLine={false}
@@ -505,7 +690,7 @@ const Dashboard = () => {
                                         <Tooltip content={<CustomTooltip />} />
                                         <Area
                                             type="monotone"
-                                            dataKey="views"
+                                            dataKey="visits"
                                             stroke="#709CEF"
                                             strokeWidth={3}
                                             fillOpacity={1}
@@ -550,35 +735,185 @@ const Dashboard = () => {
                     {activeTab === 'comments' ? (
                         <AdminCommentTable />
                     ) : activeTab === 'settings' ? (
-                        <SpotlightCard className="overflow-hidden" spotlightColor="rgba(234, 88, 12, 0.05)">
-                            <div className="p-6 border-b border-white/10 bg-black/20">
-                                <h2 className="text-lg font-bold text-white">
-                                    數據面板顯示設定
-                                </h2>
-                                <p className="text-sm text-gray-500 mt-1">控制公開數據頁面 (Data Analytics) 上的資訊顯示</p>
-                            </div>
-                            <div className="p-6 divide-y divide-white/5">
-                                {[
-                                    { key: 'showPageViewsCurve', title: '顯示「總瀏覽次數」走勢線', desc: '圖表上的藍色數據曲線' },
-                                    { key: 'showUniqueDevicesCurve', title: '顯示「實際訪問裝置」走勢線', desc: '圖表上的紫色數據曲線' },
-                                    { key: 'showUniqueDevicesCard', title: '顯示「實際訪問裝置」卡片', desc: '頂部的核心數據卡片' },
-                                    { key: 'showYesterdayViewsCard', title: '顯示「昨日瀏覽」卡片', desc: '頂部的核心數據卡片' }
-                                ].map(({ key, title, desc }) => (
-                                    <div key={key} className="py-4 flex items-center justify-between hover:bg-white/[0.02] -mx-6 px-6 transition-colors">
-                                        <div>
-                                            <h3 className="text-white font-medium text-sm">{title}</h3>
-                                            <p className="text-gray-500 text-xs mt-0.5">{desc}</p>
+                        <div className="flex flex-col gap-6">
+                            <SpotlightCard className="overflow-hidden" spotlightColor="rgba(234, 88, 12, 0.05)">
+                                <div className="p-6 border-b border-white/10 bg-black/20">
+                                    <h2 className="text-lg font-bold text-white">
+                                        數據面板顯示設定
+                                    </h2>
+                                    <p className="text-sm text-gray-500 mt-1">控制公開數據頁面 (Data Analytics) 上的資訊顯示</p>
+                                </div>
+                                <div className="p-6 divide-y divide-white/5">
+                                    {[
+                                        { key: 'showPageViewsCurve', title: '顯示「總瀏覽次數」走勢線', desc: '圖表上的藍色數據曲線' },
+                                        { key: 'showUniqueDevicesCurve', title: '顯示「實際訪問裝置」走勢線', desc: '圖表上的紫色數據曲線' },
+                                        { key: 'showUniqueDevicesCard', title: '顯示「實際訪問裝置」卡片', desc: '頂部的核心數據卡片' },
+                                        { key: 'showYesterdayViewsCard', title: '顯示「昨日瀏覽」卡片', desc: '頂部的核心數據卡片' }
+                                    ].map(({ key, title, desc }) => (
+                                        <div key={key} className="py-4 flex items-center justify-between hover:bg-white/[0.02] -mx-6 px-6 transition-colors">
+                                            <div>
+                                                <h3 className="text-white font-medium text-sm">{title}</h3>
+                                                <p className="text-gray-500 text-xs mt-0.5">{desc}</p>
+                                            </div>
+                                            <button 
+                                                onClick={() => handleToggleSetting(key)}
+                                                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 focus:ring-offset-gray-900 ${statsSettings[key] ? 'bg-orange-500' : 'bg-gray-600'}`}
+                                            >
+                                                <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${statsSettings[key] ? 'translate-x-6' : 'translate-x-1'}`} />
+                                            </button>
                                         </div>
-                                        <button 
-                                            onClick={() => handleToggleSetting(key)}
-                                            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 focus:ring-offset-gray-900 ${statsSettings[key] ? 'bg-orange-500' : 'bg-gray-600'}`}
+                                    ))}
+                                </div>
+                            </SpotlightCard>
+
+                            <SpotlightCard className="overflow-hidden" spotlightColor="rgba(239, 68, 68, 0.05)">
+                                <div className="p-6 border-b border-white/10 bg-black/20 flex justify-between items-center">
+                                    <div>
+                                        <h2 className="text-lg font-bold text-white flex items-center gap-2">
+                                            <i className="fas fa-magic text-red-500"></i> 數據覆寫 (Data Override)
+                                        </h2>
+                                        <p className="text-sm text-gray-500 mt-1">手動修改過去 7 天的流量紀錄，將直接影響前台顯示</p>
+                                    </div>
+                                    <div className="flex gap-3">
+                                        <motion.button
+                                            whileHover={{ scale: 1.05 }}
+                                            whileTap={{ scale: 0.95 }}
+                                            transition={{ type: "spring", stiffness: 500, damping: 15 }}
+                                            onClick={handleRandomizeTraffic}
+                                            disabled={isSavingOverride || isRestoringAll || isRandomizing}
+                                            className="px-4 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white rounded-lg transition-colors disabled:opacity-50 flex items-center gap-2 text-sm font-medium shadow-[0_0_15px_rgba(168,85,247,0.4)] border border-purple-500/50"
                                         >
-                                            <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${statsSettings[key] ? 'translate-x-6' : 'translate-x-1'}`} />
+                                            {isRandomizing ? (
+                                                <i className="fas fa-circle-notch fa-spin"></i>
+                                            ) : (
+                                                <i className="fas fa-dice"></i>
+                                            )}
+                                            {isRandomizing ? '注入中...' : '隨機爆發流量'}
+                                        </motion.button>
+                                        <button
+                                            onClick={handleRestoreAll}
+                                            disabled={isRestoringAll}
+                                            className="px-4 py-2 bg-gray-800 hover:bg-gray-700 text-gray-300 rounded-lg transition-colors disabled:opacity-50 flex items-center gap-2 text-sm font-medium border border-gray-700"
+                                        >
+                                            {isRestoringAll ? <LogoLoader size="w-4 h-4" animate={true} /> : <i className="fas fa-undo-alt"></i>}
+                                            還原所有修改
+                                        </button>
+                                        <button
+                                            onClick={handleSaveOverride}
+                                            disabled={isSavingOverride}
+                                            className="px-4 py-2 bg-red-600 hover:bg-red-500 text-white rounded-lg transition-colors disabled:opacity-50 flex items-center gap-2 text-sm font-medium"
+                                        >
+                                            {isSavingOverride ? <LogoLoader size="w-4 h-4" animate={true} /> : <i className="fas fa-save"></i>}
+                                            儲存修改
                                         </button>
                                     </div>
-                                ))}
-                            </div>
-                        </SpotlightCard>
+                                </div>
+                                <div className="p-6">
+                                    <div className="grid grid-cols-3 gap-4 mb-4 text-xs font-bold text-gray-500 uppercase tracking-wider px-2">
+                                        <div>日期</div>
+                                        <div>總瀏覽次數 (Page Views)</div>
+                                        <div>實際訪問裝置 (Unique Devices)</div>
+                                    </div>
+                                    <div className="space-y-3">
+                                        {overrideData.map((day, index) => (
+                                            <div key={day.fullDate} className="grid grid-cols-3 gap-4 items-center bg-white/5 p-3 rounded-xl border border-white/10 hover:border-red-500/30 transition-colors">
+                                                <div className="font-mono text-sm text-gray-300 font-medium pl-2">{day.fullDate}</div>
+                                                <div>
+                                                    <input
+                                                        type="number"
+                                                        value={day.visits}
+                                                        onChange={(e) => handleOverrideChange(index, 'visits', e.target.value)}
+                                                        className="w-full bg-black/50 border border-white/10 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-all"
+                                                    />
+                                                </div>
+                                                <div>
+                                                    <input
+                                                        type="number"
+                                                        value={day.uniqueDevices}
+                                                        onChange={(e) => handleOverrideChange(index, 'uniqueDevices', e.target.value)}
+                                                        className="w-full bg-black/50 border border-white/10 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-all"
+                                                    />
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                    
+                                    <div className="mt-8 pt-6 border-t border-white/10">
+                                        <div className="flex items-center justify-between mb-4">
+                                            <div>
+                                                <h3 className="text-white font-medium text-sm">指定日期覆寫</h3>
+                                                <p className="text-gray-500 text-xs mt-0.5">選擇特定日期進行數據修改</p>
+                                            </div>
+                                            <button
+                                                onClick={handleSaveCustomOverride}
+                                                disabled={isSavingCustom || isFetchingCustom}
+                                                className="px-4 py-2 bg-red-600/20 text-red-400 hover:bg-red-600 hover:text-white border border-red-500/30 rounded-lg transition-colors disabled:opacity-50 flex items-center gap-2 text-sm font-medium"
+                                            >
+                                                {isSavingCustom ? <LogoLoader size="w-4 h-4" animate={true} /> : <i className="fas fa-edit"></i>}
+                                                覆寫指定日期
+                                            </button>
+                                        </div>
+                                        <div className="grid grid-cols-3 gap-4 items-center bg-white/5 p-3 rounded-xl border border-white/10 focus-within:border-red-500/50 transition-colors">
+                                            <div>
+                                                <DatePicker
+                                                    selected={customDate ? new Date(customDate) : null}
+                                                    onChange={(date) => {
+                                                        if (date) {
+                                                            const year = date.getFullYear();
+                                                            const month = String(date.getMonth() + 1).padStart(2, '0');
+                                                            const day = String(date.getDate()).padStart(2, '0');
+                                                            setCustomDate(`${year}-${month}-${day}`);
+                                                        }
+                                                    }}
+                                                    dateFormat="yyyy/MM/dd"
+                                                    className="w-full bg-black/50 border border-white/10 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-all"
+                                                    wrapperClassName="w-full"
+                                                />
+                                            </div>
+                                            <div>
+                                                <input
+                                                    type="number"
+                                                    value={customVisits}
+                                                    onChange={(e) => setCustomVisits(e.target.value)}
+                                                    placeholder={isFetchingCustom ? "載入中..." : "觀看次數"}
+                                                    disabled={isFetchingCustom}
+                                                    className="w-full bg-black/50 border border-white/10 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-all disabled:opacity-50"
+                                                />
+                                            </div>
+                                            <div>
+                                                <input
+                                                    type="number"
+                                                    value={customDevices}
+                                                    onChange={(e) => setCustomDevices(e.target.value)}
+                                                    placeholder={isFetchingCustom ? "載入中..." : "訪問人數"}
+                                                    disabled={isFetchingCustom}
+                                                    className="w-full bg-black/50 border border-white/10 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-all disabled:opacity-50"
+                                                />
+                                            </div>
+                                        </div>
+                                        
+                                        {originalCustomVisits !== null && (
+                                            <div className="mt-4 flex flex-col sm:flex-row sm:items-center justify-between bg-blue-900/20 border border-blue-500/30 rounded-xl p-4 gap-3">
+                                                <div>
+                                                    <p className="text-xs text-blue-300 font-medium">此日期的真實數據已被修改。最初的真實記錄為：</p>
+                                                    <p className="text-sm font-bold text-blue-100 mt-1">
+                                                        觀看次數：{originalCustomVisits} <span className="mx-2 text-blue-500/50">|</span> 訪問人數：{originalCustomDevices}
+                                                    </p>
+                                                </div>
+                                                <button
+                                                    onClick={handleRestoreCustomDate}
+                                                    disabled={isSavingCustom}
+                                                    className="px-4 py-2 bg-blue-600/20 text-blue-400 hover:bg-blue-600 hover:text-white border border-blue-500/30 rounded-lg transition-colors disabled:opacity-50 flex items-center justify-center gap-2 text-sm font-medium whitespace-nowrap"
+                                                >
+                                                    <i className="fas fa-undo"></i>
+                                                    一鍵復原
+                                                </button>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            </SpotlightCard>
+                        </div>
                     ) : (
                         <SpotlightCard className="overflow-hidden" spotlightColor="rgba(112, 156, 239, 0.05)">
                             <div className="p-6 border-b border-white/10 flex justify-between items-center bg-black/20">
