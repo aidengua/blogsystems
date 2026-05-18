@@ -5,6 +5,7 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react()],
   build: {
+    chunkSizeWarningLimit: 1000,
     rollupOptions: {
       output: {
         manualChunks(id) {
@@ -15,7 +16,7 @@ export default defineConfig({
             if (id.includes('firebase')) {
               return 'firebase';
             }
-            if (id.includes('framer-motion') || id.includes('recharts') || id.includes('@fortawesome')) {
+            if (id.includes('framer-motion') || id.includes('recharts') || id.includes('@fortawesome') || id.includes('react-datepicker')) {
               return 'ui-vendor';
             }
             if (id.includes('react') || id.includes('react-dom') || id.includes('react-router-dom')) {
